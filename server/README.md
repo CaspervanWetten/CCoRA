@@ -24,7 +24,13 @@ Regardless of whether you're getting a single user, or a list of them, each user
 ### Setting Users
 To set a user you need to send a JSON object to the provided url. This JSON object requires only one key: `name`. The server responds with JSON containing the `id`for the user, and a URL belonging to the User resource.
 
-## Graphs
-1. POST: `graphs/{id}/new` uploads a new .lola file and puts it in the correct folder.
+## Petri nets
+1. GET `petrinet/{id}` get a specific Petri net
+2. GET `petrinet/{limit}/{page}` get a page of Petri nets
+3. GET `petrinet/{id}/image` get an SVG image of a specific Petri net
+4. POST `petrinet/{uid}/new` upload a new Petri net. The Petri net is associated with the user with `user_id=uid`
+5. POST `petrinet/{uid}/{pid}/{sid}/feedback` Receive feedback for a coverability graph. This coverability graph is about the Petri net with `id=pid`. The coverability graph is logged with `session_id=sid`. Send the coverability graph is JSON format.
 
-# Dependencies
+## Sessions
+1. GET `session/{uid}` get the current session for the user with `id=uid`
+2. POST `session/{uid}/new_session` start a new session for the user with `id=uid`
