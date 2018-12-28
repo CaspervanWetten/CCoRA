@@ -1,0 +1,4 @@
+enum ModelingDifficulty {
+    NOVICE,
+    ADVANCED
+}

@@ -1,0 +1,4 @@
+interface Action
+{
+    Invoke();
+}
