@@ -1,1 +1,3 @@
+server/application/user/
+server/application/log/
 *.js

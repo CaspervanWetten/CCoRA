@@ -17,4 +17,6 @@ A list of required features and improvements, sorted by the MoSCoW method:
 * (server) The ability to provide hints. In case the user gets stuck, the user needs to be able to request (part of) the answer so they won't get stuck for too long.
 * (server) Feedback messages regarding the introduction and use of the \omega identifier for Petri net places.
 * (server) Refactoring of the Petri net model. The current model is inefficient and incredibly taxing on the file system.
+* (server) A more sophisticated logger that. The new logger should split the sessions over multiple files, instead of keeping all the logs regarding a specific user in a single file. This is less taxing on the server's file system.
 * (client) The ability to scale and pan the view of the modeller.
+* (both) Add install script to automatically configure deployment
