@@ -1,0 +1,25 @@
+.dialog {
+    // positioning
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    // sizing
+    padding: 2rem;
+    margin: 0;
+
+    // coloring and such
+    background: white;
+    border: 2px solid darkgrey;
+    border-radius: 5px;
+
+    & > h1, > h2, > h3, > h4, > h5, > h6 {
+        margin-top: 0;
+    }
+
+    & #mainDialog {
+        background: red;
+    }
+}

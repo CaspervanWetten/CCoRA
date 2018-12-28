@@ -1,0 +1,62 @@
+.edit.state {
+    & > .popup {
+        & > .body {
+            & > .places {
+                display: flex;
+                border-bottom: 1px solid #aaa;
+                & > .place {
+                    flex: 1;
+                    display: flex;
+                    max-width: 5rem;
+                    flex-wrap: wrap;
+                    padding: .25rem;
+                    border-right : 1px solid #aaa;
+                    &:last-child {
+                        border-right: 0;
+                    }
+
+                    & .name {
+                        display: block;
+                        width: 100%;
+                        line-height: 2rem;
+                    }
+                    
+                    & .input {
+                        display: block;
+                        width: 100%;
+                        margin-bottom: 0;
+                        font-family: monospace;
+                        text-align: center;
+                    }
+                    
+                    & .buttons {
+                        margin-top: .25rem;
+                        display: flex;
+                        width: 100%;
+                        flex: 1;
+                        flex-wrap: nowrap;
+                        border: 1px solid #aaa;
+                        // border-radius: 3px;
+
+                        & button {
+                            flex: 1;
+                            padding: 0;
+                            margin: 0;
+                            border: 0;
+                            border-right: 1px solid #aaa;
+                            text-transform: none;
+                            
+                            &:last-child {
+                                border-right: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        & > .close {
+            display: none;
+        }
+    }
+}

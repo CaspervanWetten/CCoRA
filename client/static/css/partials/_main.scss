@@ -1,0 +1,45 @@
+main {
+    display: block;
+    position: absolute;
+    top: 3rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    .stretch {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        height: 100%;
+        width: 20%;
+
+        // border: 1px solid green;
+        // background: red;
+    }
+}
+
+#petrinetContainer {
+    left: 0rem;
+    width: 49.5%;
+    padding: .5rem;
+}
+
+#divider {
+    left: 49.5%;
+    width: 1%;
+    background: #e6e6e6;
+    border-right: 1px solid #d2d2d2;
+    border-left: 1px solid #d2d2d2;
+    cursor: ew-resize;
+}
+
+
+#graphContainer {
+    left: 50.5%;
+    width: 49.5%;
+    overflow: scroll;
+    // background: red;
+}

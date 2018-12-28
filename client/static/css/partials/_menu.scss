@@ -1,0 +1,190 @@
+$menu: __MENU__;
+$menuToggle: menuToggle;
+$menuOverlay: menuOverlay;
+$menuTitle: menuTitle;
+$menuIcon : menuIcon;
+$bar: bar;
+
+$menuWidth: 30rem;
+
+.__MENU__
+{
+    display: block;
+    position: fixed;
+    top: 3rem;
+    left: -$menuWidth;
+    z-index: 11;
+
+    padding: 2rem 2rem 2rem 2rem;    
+
+    width: $menuWidth;
+    height: 100%;
+    
+    background: $lightGrey;
+    color: $black;
+    border-right: 1px solid #d2d2d2;
+    overflow: auto;
+
+    transition: left .3s ease-out;
+
+    &.open{
+        left: 0rem;
+    }
+
+    &.closed{
+        left: -$menuWidth;
+    }
+
+    & > .category {
+        display: block;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        border-bottom: 1px solid $black;
+
+        &:first-child {
+            padding-top: 0;
+        }
+
+        &:last-child {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        & > .header {
+            font-size: 1.5rem;
+            line-height: 3rem;
+        }
+
+        & > .list {
+            list-style: none;
+
+            & > li{
+                display: flex;
+                line-height: 3rem;
+                border-bottom: 1px solid $grey;
+
+                &:last-child {
+                    border-bottom: 0;
+                }
+
+                & .description {
+                    flex: 4;
+                    display: block;
+                }
+
+                & .option {
+                    flex: 6;
+                    display: block;
+
+                    & > * {
+                        width: 100%;
+                    }
+                }
+            }
+        }
+    }
+}
+
+##{$menuToggle}
+{
+    position: fixed;
+    top: 0rem;
+    left: 0rem;
+    
+    display: block;
+    width: 4rem;
+    height: 3rem;
+
+    margin: 0;
+    padding: 0;
+    
+    background: $orange;
+    // border-radius: 5px;
+    z-index: 11;
+    cursor: pointer;
+
+    transition: background .2s ease;
+
+    &:hover {
+        // background: rgba(0,0,0,.2);
+        background: $darkOrange;
+    }
+
+    &.active
+    {
+        & > .#{$bar}{
+            background: transparent;
+            transition-delay: 0s, .1s, 0s;
+
+            &:first-child {
+                top: 1.35rem;
+                transform: rotate(45deg);
+            }
+
+            &:last-child {
+                top: 1.35em;
+                transform: rotate(-45deg);
+            }
+
+            &:first-child, &:last-child {
+                background: $white;
+            }
+        }
+    }
+
+    & > .#{$bar}
+    {
+        top: 1.35rem;
+        left: 1rem;
+        // left: 17.5%;
+        position: absolute;
+        display: block;
+        width: 50%;
+        height: .3rem;
+
+        background: $white;
+        // border-radius: 2px;
+
+        transition-property: top, transform, background-color;
+        transition-duration: .2s, .2s, .2s;
+        transition-timing-function: ease;
+        transition-delay: .1s ,0s, 0s;
+
+        &:first-child {
+            top: 0.75rem;
+        }
+
+        &:last-child {
+            top: 1.95rem;
+        }
+    }
+}
+
+##{$menuTitle}
+{
+    display: block;
+    margin: 0 0 1rem 0;
+
+    font-size: 2.5rem;
+    font-weight: bold;
+    line-height: 7rem;
+    text-align: center;
+
+    border-top: 2px solid $black;
+    border-bottom: 2px solid $black;
+
+    text-transform: capitalize;
+}
+
+##{$menuOverlay}
+{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 5;
+    width: 100%;
+    height: 100%;
+    background: $grey;
+}

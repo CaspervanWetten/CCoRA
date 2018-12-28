@@ -1,0 +1,82 @@
+$switcher : __SWITCHER__;
+
+/*
+    Code for switch adapted from: http://callmenick.com/post/css-toggle-switch-examples 
+*/
+
+.#{$switcher} {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+
+    & .label {
+        flex: 3;
+        margin: 0 1rem;
+        text-align: center;
+
+        &:first-child {
+            margin-left: 0;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+    }
+
+    & .switch {
+        flex: 3;
+
+        display: block;
+        position: relative;
+        cursor: pointer;
+
+        padding: 2px;
+        width: 4rem;
+        height: 2rem;
+        background-color: #dddddd;
+        border-radius: 2rem;
+
+        &::before,
+        &::after {
+            display: block;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            bottom: 1px;
+            content: "";
+        }
+
+        &::before {
+            right: 1px;
+            background-color: #f1f1f1;
+            border-radius: 2rem;
+            transition: background 0.2s ease;
+        }
+
+        &::after {
+            width: calc(2rem - 2px);
+            background-color: #fff;
+            border-radius: 100%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease-out;
+        }
+    }
+
+    &.on {
+        justify-content: end;
+        & .switch {
+            &::before {
+                // background-color: green;
+                background: $green;
+            }
+            &::after {
+                left: calc(100% - 2rem + 1px);
+            }
+        }
+    }
+
+    &.off{
+        justify-content: start;
+    }
+}

@@ -1,0 +1,63 @@
+.__SPLIT_CONTAINER__
+{
+    display: block;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    // border: 1px solid red;
+
+    &.divider {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 49%;
+        width: 2%;
+        height: 100%;
+        background: #ddd;
+        border-left: 1px solid #B6B6B3;
+        border-right: 1px solid #b6b6b3;
+        cursor: ew-resize;
+
+        &::after {
+            content: "···";
+            
+            font-family: serif;
+            display: block;
+            position: absolute;
+            color: #444;
+            font-size: 3rem;
+            line-height: 2.5rem;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(90deg);
+            // transform: rotate(90deg);
+        }
+    }
+
+    & > .left, > .right {
+        display: block;
+        position: absolute;
+        width: 49%;
+
+        & > div {
+            display: flex;
+            height: 100%;
+            justify-content: center;
+        }
+    }
+
+    & > .left {
+        top: 0;
+        left: 0;
+        background:$white;
+    }
+
+    & > .right {
+        top: 0;
+        left: 51%;
+        background: $white;
+    }
+}

@@ -1,0 +1,26 @@
+button.modeler {
+    display: block;
+    outline: 0;
+    border: 2px solid black;
+    color: black;
+    font-weight: bold;
+
+    font-size: 1rem;    
+    position: absolute;
+    right: .5rem;
+
+    &:hover {
+        background: white;
+    }
+
+    &.add {
+        bottom: 2rem;
+    }
+
+    &.feedback {
+        bottom: 5rem;
+        &.disabled{
+            display: none;
+        }
+    }
+}

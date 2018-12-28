@@ -1,0 +1,20 @@
+canvas {
+    display: block;
+    margin: 0;
+    padding: 0;
+    background: white;
+}
+
+#graphCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+}
+
+#graphGridCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
