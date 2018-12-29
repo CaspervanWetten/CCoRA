@@ -7,7 +7,7 @@ you want to host from. Then, git clone this repository.
 Make sure the server user has permission to write in this directory.
 
 ## Configuration
-In order to work properly you need to configure Cozp to work well with your server. Follow the instructions in `config.php`. You need to configure the database connection, where you want to store user data, and some Slim internal settings.
+CoRA requires some configuration  to work well with your server. Follow the instructions in `config.php`. You need to configure the database connection, where you want to store user data, and some Slim internal settings. In case you use a database that uses different table names than the standard database implementation, then you can also specify those name in the configuration file.
 
 # Api
 The application works with JSON only. There is no support for xml or other formats.
@@ -29,7 +29,7 @@ To set a user you need to send a JSON object to the provided url. This JSON obje
 2. GET `petrinet/{limit}/{page}` get a page of Petri nets
 3. GET `petrinet/{id}/image` get an SVG image of a specific Petri net
 4. POST `petrinet/{uid}/new` upload a new Petri net. The Petri net is associated with the user with `user_id=uid`
-5. POST `petrinet/{uid}/{pid}/{sid}/feedback` Receive feedback for a coverability graph. This coverability graph is about the Petri net with `id=pid`. The coverability graph is logged with `session_id=sid`. Send the coverability graph is JSON format.
+5. POST `petrinet/{uid}/{pid}/{sid}/feedback` Receive feedback for a coverability graph. This coverability graph is about the Petri net with `id=pid`. The coverability graph is logged with `session_id=sid`. Send the coverability graph in JSON format.
 
 ## Sessions
 1. GET `session/{uid}` get the current session for the user with `id=uid`
