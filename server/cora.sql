@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 29, 2018 at 11:11 PM
+-- Generation Time: Dec 30, 2018 at 11:25 PM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.3.0
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `cora`
+-- Database: `cora_model_update_trunc`
 --
 
 -- --------------------------------------------------------
@@ -30,36 +30,46 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `petrinet` (
   `id` int(11) NOT NULL,
-  `creator` int(11) NOT NULL,
   `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `creator` int(11) NOT NULL,
   `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `petrinet_element`
+-- Table structure for table `petrinet_flow_pt`
 --
 
-CREATE TABLE `petrinet_element` (
-  `id` int(11) NOT NULL,
+CREATE TABLE `petrinet_flow_pt` (
   `petrinet` int(11) NOT NULL,
-  `type` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL
+  `from_element` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `to_element` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `weight` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `petrinet_flow`
+-- Table structure for table `petrinet_flow_tp`
 --
 
-CREATE TABLE `petrinet_flow` (
-  `id` int(11) NOT NULL,
+CREATE TABLE `petrinet_flow_tp` (
   `petrinet` int(11) NOT NULL,
-  `from_element` int(11) NOT NULL,
-  `to_element` int(11) NOT NULL,
-  `weight` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL
+  `from_element` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `to_element` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `weight` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `petrinet_marking`
+--
+
+CREATE TABLE `petrinet_marking` (
+  `petrinet` int(11) NOT NULL,
+  `id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -69,10 +79,31 @@ CREATE TABLE `petrinet_flow` (
 --
 
 CREATE TABLE `petrinet_marking_pair` (
-  `id` int(11) NOT NULL,
-  `petrinet` int(11) NOT NULL,
-  `place` int(11) NOT NULL,
+  `marking` int(11) NOT NULL,
+  `place` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL,
   `tokens` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `petrinet_place`
+--
+
+CREATE TABLE `petrinet_place` (
+  `petrinet` int(11) NOT NULL,
+  `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `petrinet_transition`
+--
+
+CREATE TABLE `petrinet_transition` (
+  `petrinet` int(11) NOT NULL,
+  `name` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -96,31 +127,46 @@ CREATE TABLE `user` (
 --
 ALTER TABLE `petrinet`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `petrinet_creator` (`creator`);
+  ADD KEY `creator` (`creator`);
 
 --
--- Indexes for table `petrinet_element`
+-- Indexes for table `petrinet_flow_pt`
 --
-ALTER TABLE `petrinet_element`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `petrinet_petrinetElement` (`petrinet`);
+ALTER TABLE `petrinet_flow_pt`
+  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`);
 
 --
--- Indexes for table `petrinet_flow`
+-- Indexes for table `petrinet_flow_tp`
 --
-ALTER TABLE `petrinet_flow`
+ALTER TABLE `petrinet_flow_tp`
+  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`);
+
+--
+-- Indexes for table `petrinet_marking`
+--
+ALTER TABLE `petrinet_marking`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `petrinet_petrinetFlow` (`petrinet`),
-  ADD KEY `petrinetFlow_from` (`from_element`),
-  ADD KEY `petrinetFlow_to` (`to_element`);
+  ADD KEY `petrinet` (`petrinet`),
+  ADD KEY `petrinet_2` (`petrinet`);
 
 --
 -- Indexes for table `petrinet_marking_pair`
 --
 ALTER TABLE `petrinet_marking_pair`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `petrinet_markingPair` (`petrinet`),
-  ADD KEY `markingPair_place` (`place`);
+  ADD PRIMARY KEY (`marking`,`place`);
+
+--
+-- Indexes for table `petrinet_place`
+--
+ALTER TABLE `petrinet_place`
+  ADD PRIMARY KEY (`petrinet`,`name`);
+
+--
+-- Indexes for table `petrinet_transition`
+--
+ALTER TABLE `petrinet_transition`
+  ADD PRIMARY KEY (`petrinet`,`name`),
+  ADD KEY `petrinet` (`petrinet`);
 
 --
 -- Indexes for table `user`
@@ -136,31 +182,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `petrinet`
 --
 ALTER TABLE `petrinet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
--- AUTO_INCREMENT for table `petrinet_element`
+-- AUTO_INCREMENT for table `petrinet_marking`
 --
-ALTER TABLE `petrinet_element`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1769;
-
---
--- AUTO_INCREMENT for table `petrinet_flow`
---
-ALTER TABLE `petrinet_flow`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2146;
-
---
--- AUTO_INCREMENT for table `petrinet_marking_pair`
---
-ALTER TABLE `petrinet_marking_pair`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=376;
+ALTER TABLE `petrinet_marking`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- Constraints for dumped tables
@@ -170,28 +204,43 @@ ALTER TABLE `user`
 -- Constraints for table `petrinet`
 --
 ALTER TABLE `petrinet`
-  ADD CONSTRAINT `petrinet_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`);
+  ADD CONSTRAINT `petrinet_creator` FOREIGN KEY (`creator`) REFERENCES `user` (`id`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `petrinet_element`
+-- Constraints for table `petrinet_flow_pt`
 --
-ALTER TABLE `petrinet_element`
-  ADD CONSTRAINT `petrinet_petrinetElement` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+ALTER TABLE `petrinet_flow_pt`
+  ADD CONSTRAINT `petrinet_flow_pt` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
 
 --
--- Constraints for table `petrinet_flow`
+-- Constraints for table `petrinet_flow_tp`
 --
-ALTER TABLE `petrinet_flow`
-  ADD CONSTRAINT `petrinetFlow_from` FOREIGN KEY (`from_element`) REFERENCES `petrinet_element` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `petrinetFlow_to` FOREIGN KEY (`to_element`) REFERENCES `petrinet_element` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `petrinet_petrinetFlow` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+ALTER TABLE `petrinet_flow_tp`
+  ADD CONSTRAINT `petrinet_flow_tp` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `petrinet_marking`
+--
+ALTER TABLE `petrinet_marking`
+  ADD CONSTRAINT `petrinet_marking` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `petrinet_marking_pair`
 --
 ALTER TABLE `petrinet_marking_pair`
-  ADD CONSTRAINT `markingPair_place` FOREIGN KEY (`place`) REFERENCES `petrinet_element` (`id`) ON UPDATE CASCADE,
-  ADD CONSTRAINT `petrinet_markingPair` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `markingPair_marking` FOREIGN KEY (`marking`) REFERENCES `petrinet_marking` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `petrinet_place`
+--
+ALTER TABLE `petrinet_place`
+  ADD CONSTRAINT `petrinet_place` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `petrinet_transition`
+--
+ALTER TABLE `petrinet_transition`
+  ADD CONSTRAINT `petrinet_transition` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
