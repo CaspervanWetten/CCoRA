@@ -13,117 +13,112 @@ class PetrinetModel extends Model
      * @param int $id The identifier of the petrinet
      * @return mixed;
      */
-    public function getPetrinet($id)
-    {
+    public function getPetrinet($id) {
+        // filter input
+        $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
+        // does the Petri net exist?
         $builder = new QueryBuilder();
-        $builder->select(["name"]);
+        $builder->select();
         $builder->from(PETRINET_TABLE);
         $builder->where("id", ":id");
-
         $statement = $this->db->prepare($builder->toString());
         $statement->bindValue(":id", $id);
-
         $this->executeQuery($statement);
-
-        $rows = $statement->fetchAll();
-        if(count($rows) < 1) {
+        if(empty($statement->fetchAll())) {
             return NULL;
         }
-
-        $row = $rows[0];
-
-        $res["name"] = $row["name"];
-
-        // get places and transitions
+        // collect places
         $builder = new QueryBuilder();
-        $builder->select(["name", "id"]);
-        $builder->from(PETRINET_ELEMENT_TABLE);
-        $builder->where("petrinet", ":petrinetId");
-        $builder->and("type", ":type");
-
-        $query = $builder->toString();
-
-        $statement = $this->db->prepare($query);
-        $statement->bindValue(":petrinetId", $id);
-        $statement->bindValue(":type", "place");
-
-        $this->executeQuery($statement);
-
-        $rows = $statement->fetchAll();
-        $places = [];
-        foreach($rows as $i => $place) {
-            $key = filter_var($place["id"], FILTER_SANITIZE_STRING);
-            $value = $place["name"];
-            // $places[$place["id"]] = $place["name"];
-            $places[$key] = $value;
-        }
-
-        $statement = $this->db->prepare($query);
-        $statement->bindValue(":petrinetId", $id);
-        $statement->bindValue(":type", "transition");
-
-        $this->executeQuery($statement);
-
-        $transitions = [];
-        $rows = $statement->fetchAll();
-        foreach($rows as $i => $transition) {
-            $transitions[$transition["id"]] = $transition["name"];
-        }
-
-        // get flows
-        $builder = new QueryBuilder();
-        $builder->select(["from_element", "to_element", "weight"]);
-        $builder->from(PETRINET_FLOW_TABLE);
-        $builder->where("petrinet", ":petrinetId");
+        $builder->select(["name"]);
+        $builder->from(PETRINET_PLACE_TABLE);
+        $builder->where("petrinet", ":pid");
 
         $statement = $this->db->prepare($builder->toString());
-        $statement->bindValue(":petrinetId", $id);
+        $statement->bindValue(":pid", $id);
 
         $this->executeQuery($statement);
+        $places = array_map(function($k) { return $k["name"]; }, $statement->fetchAll());
 
-        $rows = $statement->fetchAll();
-        $flows = [];
-        foreach($rows as $i => $flow)
-        {
-            $from;
-            $to;
-            if( array_key_exists($flow["from_element"] , $places) ) {
-                $from = $places[$flow["from_element"]];
-            } else {
-                $from = $transitions[$flow["from_element"]];
-            }
-            if( array_key_exists($flow["to_element"] , $places) ) {
-                $to = $places[$flow["to_element"]];
-            } else {
-                $to = $transitions[$flow["to_element"]];
-            }
-            $flows[$i] = new Systems\Petrinet\Flow($from, $to, intval($flow["weight"]));
-        }
+        // collect transitions
+        $builder = new QueryBuilder();
+        $builder->select(["name"]);
+        $builder->from(PETRINET_TRANSITION_TABLE);
+        $builder->where("petrinet", ":pid");
 
-        // get marking
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $id);
+
+        $this->executeQuery($statement);
+        $transitions = array_map(function($k) { return $k["name"]; }, $statement->fetchAll());
+
+        // collect flows
+        $from_col   = "from_element";
+        $to_col     = "to_element";
+        $weight_col = "weight";
+        // place -> transition flows
+        $builder  = new QueryBuilder();
+        $builder->select([$from_col, $to_col, $weight_col]);
+        $builder->from(PETRINET_FLOW_PT_TABLE);
+        $builder->where("petrinet", ":pid");
+
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $id);
+        $this->executeQuery($statement);
+        $flows_pt = $statement->fetchAll();
+        // transition -> place flows
+        $builder = new QueryBuilder();
+        $builder->select([$from_col, $to_col, $weight_col]);
+        $builder->from(PETRINET_FLOW_TP_TABLE);
+        $builder->where("petrinet", ":pid");
+
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $id);
+        $this->executeQuery($statement);
+        $flows_tp = $statement->fetchAll();
+
+        $flows = array_merge($flows_pt, $flows_tp);
+        $flows = array_map( function($trip) use($from_col, $to_col, $weight_col) {
+            return new Systems\Petrinet\Flow(
+                $trip[$from_col],
+                $trip[$to_col],
+                intval($trip[$weight_col])
+            );
+        }, $flows );
+        // get the initial marking
+        // first get the id of the marking
+        $builder = new QueryBuilder();
+        $builder->select(["id"]);
+        $builder->from(PETRINET_MARKING_TABLE);
+        $builder->where("petrinet", ":pid");
+
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $id);
+        $this->executeQuery($statement);
+        // assumption that there is only one marking associated with a Petri net
+        // therefore we pick the first marking that is returned
+        $initialMarkingId = intval($statement->fetchAll()[0]["id"]);
+
+        // get the place-token pairs
         $builder = new QueryBuilder();
         $builder->select(["place", "tokens"]);
         $builder->from(PETRINET_MARKING_PAIR_TABLE);
-        $builder->where("petrinet", ":petrinetId");
-
+        $builder->where("marking", ":mid");
         $statement = $this->db->prepare($builder->toString());
-        $statement->bindValue(":petrinetId", $id);
+        $statement->bindValue(":mid", $initialMarkingId);
 
         $this->executeQuery($statement);
-
-        $rows = $statement->fetchAll();
+        $markingPairs = $statement->fetchAll();
         $marking = [];
-        foreach($rows as $i => $pair) {
-            $marking[$places[$pair["place"]]] = intval($pair["tokens"]);
+        foreach($markingPairs as $i => $m) {
+            $marking[$m["place"]] = intval($m["tokens"]);
         }
-        $res = new Systems\Petrinet\Petrinet($places, $transitions, $flows, $marking);
-        return $res;
+
+        $petrinet = new Systems\Petrinet\Petrinet($places, $transitions, $flows, $marking);
+        return $petrinet;
     }
 
     public function getPetrinets($limit = 0, $page = 0)
     {
-        $offset = 0;
-
         $builder = new QueryBuilder();
         $builder->select(["id", "name"]);
         $builder->from(PETRINET_TABLE);
@@ -134,134 +129,148 @@ class PetrinetModel extends Model
         } else {
             throw new \Exception('Illegal parameters');
         }
-
         $statement = $this->db->prepare($builder->toString());
         $this->executeQuery($statement);
         return $statement->fetchAll();
     }
 
-    public function setPetrinet($petrinet, $user)
+    public function setPetrinet($petrinet, $user, $name=NULL)
     {
+        // set a name for the Petri net if it is not availabe
+        if(is_null($name)) {
+            $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
+        } else { // prevent xss (somewhat)
+            $name = filter_var($name, FILTER_SANITIZE_STRING);
+        }
         // register meta information
         $builder = new QueryBuilder();
         $builder->insert(PETRINET_TABLE, ['creator', 'name']);
         $builder->values([":creator", ":name"]);
-
-        $query = $builder->toString();
-
-        $statement = $this->db->prepare($query);
-        $statement->bindValue(':creator', $user, \PDO::PARAM_STR);
-        $statement->bindValue(':name', "test", \PDO::PARAM_STR);
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":creator", $user, \PDO::PARAM_INT);
+        $statement->bindValue(":name", $name, \PDO::PARAM_STR);
         $petrinetId = $this->executeQuery($statement);
 
-        // register places and transitions
-        foreach($petrinet->getPlaces() as $i => $place) {
-            $builder = new QueryBuilder();
-            $builder->insert(PETRINET_ELEMENT_TABLE, ["petrinet", "name", "type"]);
-            $builder->values([":petrinet", ":name", ":type"]);
+        $places      = $petrinet->getPlaces();
+        $transitions = $petrinet->getTransitions();
+        $flows       = $petrinet->getFlows();
 
-            $query = $builder->toString();
-
-            $statement = $this->db->prepare($query);
-            $statement->bindValue(':petrinet', $petrinetId);
-            $statement->bindValue(':name', $place);
-            $statement->bindValue(':type', "place");
-            $this->executeQuery($statement);
+        // register places
+        $builder = new QueryBuilder();
+        $builder->insert(PETRINET_PLACE_TABLE, ["petrinet", "name"]);
+        $place_values = [];
+        foreach($places as $i => $place) {
+            array_push($place_values, [":pid", sprintf(":%sname", $i)]);
         }
-
-        foreach($petrinet->getTransitions() as $i => $transition) {
-            $builder = new QueryBuilder();
-            $builder->insert(PETRINET_ELEMENT_TABLE, ["petrinet", "name", "type"]);
-            $builder->values([":petrinet", ":name", ":type"]);
-
-            $query = $builder->toString();
-
-            $statement = $this->db->prepare($query);
-            $statement->bindValue(':petrinet', $petrinetId);
-            $statement->bindValue(':name', $transition);
-            $statement->bindValue(':type', "transition");
-            $this->executeQuery($statement);
+        $builder->values($place_values);
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
+        foreach($places as $i => $place) {
+            $statement->bindValue(sprintf(":%sname", $i), $place, \PDO::PARAM_STR);
         }
+        $this->executeQuery($statement);
 
-        // register flows
-        foreach($petrinet->getFlows() as $i => $flow) {
-            // get the id's for the from and to elements
-            $builder = new QueryBuilder();
-            $builder->select(["id"]);
-            $builder->from(PETRINET_ELEMENT_TABLE);
-            $builder->where("petrinet", ":petrinetId");
-            $builder->and("name", ":from");
-
-            $statement = $this->db->prepare($builder->toString());
-            $statement->bindValue(":petrinetId", $petrinetId);
-            $statement->bindValue(":from", $flow->from);
-
-            $this->executeQuery($statement);
-
-            $fromId = intval($statement->fetchAll()[0]["id"]);
-
-            $builder = new QueryBuilder();
-            $builder->select(["id"]);
-            $builder->from(PETRINET_ELEMENT_TABLE);
-            $builder->where("petrinet", ":petrinetId");
-            $builder->and("name", ":to");
-
-            $statement = $this->db->prepare($builder->toString());
-            $statement->bindValue(":petrinetId", $petrinetId);
-            $statement->bindValue(":to", $flow->to);
-
-            $this->executeQuery($statement);
-
-            $toId = intval($statement->fetchAll()[0]["id"]);
-
-            // register
-            $builder = new QueryBuilder();
-            $builder->insert(PETRINET_FLOW_TABLE, ["petrinet", "from_element", "to_element", "weight"]);
-            $builder->values([":petrinet" ,":from", ":to", ":weight"]);
-
-            $statement = $this->db->prepare($builder->toString());
-            $statement->bindValue(":petrinet", $petrinetId);
-            $statement->bindValue(":from", $fromId);
-            $statement->bindValue(":to", $toId);
-            $statement->bindValue(":weight", $flow->weight);
-
-            $this->executeQuery($statement);
+        // register transitions
+        $builder = new QueryBuilder();
+        $builder->insert(PETRINET_TRANSITION_TABLE, ["petrinet", "name"]);
+        $transition_values = [];
+        foreach($transitions as $i => $transition) {
+            array_push($transition_values, [":pid", sprintf(":%sname", $i)]);
         }
+        $builder->values($transition_values);
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
+        foreach($transitions as $i => $transition) {
+            $statement->bindValue(sprintf(":%sname", $i), $transition, \PDO::PARAM_STR);
+        }
+        $this->executeQuery($statement);
 
-        // register marking
+        $builderPT = new QueryBuilder();
+        $builderTP = new QueryBuilder();
+
+        $builderPT->insert(PETRINET_FLOW_PT_TABLE,
+            ["petrinet", "from_element", "to_element", "weight"]);
+        $builderTP->insert(PETRINET_FLOW_TP_TABLE,
+            ["petrinet", "from_element", "to_element", "weight"]);
+        $ptValues = [];
+        $tpValues = [];
+        foreach($flows as $i => $flow) {
+            // place -> transition flow
+            if($places->contains($flow->from) && $transitions->contains($flow->to)) {
+                $pt = [":pid", sprintf(":%sfrom", $i), sprintf(":%sto", $i), sprintf(":%sweight", $i)];
+                array_push($ptValues, $pt);
+            }
+            // transition -> place flow
+            elseif($transitions->contains($flow->from) && $places->contains($flow->to)) {
+                $tp = [":pid", sprintf(":%sfrom", $i), sprintf(":%sto", $i), sprintf(":%sweight", $i)];
+                array_push($tpValues, $tp);
+            }
+            else { // error!
+                throw new \Exception(sprintf(
+                    "Inconsistent Flow. From: %s, to: %s",
+                    $flow->from,
+                    $flow->to)
+                );
+            }
+        }
+        $builderPT->values($ptValues);
+        $builderTP->values($tpValues);
+        $statementPT = $this->db->prepare($builderPT->toString());
+        $statementTP = $this->db->prepare($builderTP->toString());
+        $statementPT->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
+        $statementTP->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
+        foreach($flows as $i => $flow) {
+            // place -> transition flow
+            if($places->contains($flow->from)) {
+                $statementPT->bindValue(sprintf(":%sfrom",   $i), $flow->from  , \PDO::PARAM_STR);
+                $statementPT->bindValue(sprintf(":%sto",     $i), $flow->to    , \PDO::PARAM_STR);
+                $statementPT->bindValue(sprintf(":%sweight", $i), $flow->weight, \PDO::PARAM_INT);
+            }
+            // transition -> place flow
+            else {
+                $statementTP->bindValue(sprintf(":%sfrom",   $i), $flow->from  , \PDO::PARAM_STR);
+                $statementTP->bindValue(sprintf(":%sto",     $i), $flow->to    , \PDO::PARAM_STR);
+                $statementTP->bindValue(sprintf(":%sweight", $i), $flow->weight, \PDO::PARAM_INT);
+            }
+        }
+        $this->executeQuery($statementPT);
+        $this->executeQuery($statementTP);
+
+        $builder = new QueryBuilder();
+        $builder->insert(PETRINET_MARKING_TABLE, ["petrinet"]);
+        $builder->values([":pid"]);
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
+        $markingId = $this->executeQuery($statement);
+
         $marking = $petrinet->getInitialMarking();
-        foreach($marking as $place => $tokenCount) {
-            if($tokenCount->value <= 0)
-                continue;
-            // get the place id
-            $builder = new QueryBuilder();
-            $builder->select(["id"]);
-            $builder->from(PETRINET_ELEMENT_TABLE);
-            $builder->where("petrinet", ":petrinetId");
-            $builder->and("name", ":place");
-            $builder->and("type", ":type");
-
-            $statement = $this->db->prepare($builder->toString());
-            $statement->bindValue(":petrinetId", $petrinetId);
-            $statement->bindValue(":place", $place);
-            $statement->bindValue(":type", "place");
-
-            $this->executeQuery($statement);
-
-            $placeId = $statement->fetchAll()[0]["id"];
-
-            // register
-            $builder = new QueryBuilder();
-            $builder->insert(PETRINET_MARKING_PAIR_TABLE, ["petrinet", "place", "tokens"]);
-            $builder->values([":petrinet", ":place", ":tokens"]);
-
-            $statement = $this->db->prepare($builder->toString());
-            $statement->bindValue(":petrinet", $petrinetId);
-            $statement->bindValue(":place", $placeId);
-            $statement->bindValue(":tokens", $tokenCount);
-
-            $this->executeQuery($statement);
+        $builder = new QueryBuilder();
+        $builder->insert(PETRINET_MARKING_PAIR_TABLE, ["marking", "place", "tokens"]);
+        $markingValues = [];
+        foreach($marking as $place => $tokens) {
+            if($tokens instanceof Systems\IntegerTokenCount &&
+               $places->contains($place) && $tokens->value > 0) {
+                array_push(
+                    $markingValues,
+                    [":mid", sprintf(":%spid", $place), sprintf(":%stok", $place)]
+                );
+            } elseif(!$places->contains($place)) {
+                throw new \Exception(
+                    sprintf("Tokens assigned to place that is not part of the Petri net: %s", $place));
+            } elseif(!$tokens instanceof Systems\IntegerTokenCount) {
+                throw new \Exception(
+                    sprintf("Could not store marking: improper type: %s", get_class($tokens)));
+            }
         }
+        $builder->values($markingValues);
+        $statement = $this->db->prepare($builder->toString());
+        $statement->bindValue(":mid", $markingId, \PDO::PARAM_INT);
+        foreach($marking as $place => $tokens) {
+            if($tokens->value <= 0) continue;
+            $statement->bindValue(sprintf(":%spid", $place), $place,         \PDO::PARAM_STR);
+            $statement->bindValue(sprintf(":%stok", $place), $tokens->value, \PDO::PARAM_INT);
+        }
+        $this->executeQuery($statement);
         return $petrinetId;
     }
 
