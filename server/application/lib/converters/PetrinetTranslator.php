@@ -2,6 +2,8 @@
 
 namespace Cozp\Converters;
 
+use Ds\Map;
+
 use \Cozp\Systems\Petrinet as Petrinet;
 
 class PetrinetTranslator extends Converter
@@ -19,10 +21,10 @@ class PetrinetTranslator extends Converter
 
     public function convert()
     {
-        $places = $this->convertPlaces();
+        $places      = $this->convertPlaces();
         $transitions = $this->convertTransitions();
-        $flows = $this->convertFlows();
-        $marking = $this->convertMarking();
+        $flows       = $this->convertFlows();
+        $marking     = $this->convertMarking();
 
         $this->petrinet->setPlaces($places);
         $this->petrinet->setTransitions($transitions);
@@ -71,8 +73,8 @@ class PetrinetTranslator extends Converter
     protected function convertFlows()
     {
         $flows = $this->petrinet->getFlows();
-        $result = [];
-        foreach($flows as $i => $flow){
+        $result = new Map();
+        foreach($flows as $flow => $weight){
             $from = $flow->from;
             $to   = $flow->to;
             
@@ -90,8 +92,8 @@ class PetrinetTranslator extends Converter
                 $to = $this->transitionTranslationTable[$to];
             }
 
-            $f = new Petrinet\Flow($from, $to, $flow->weight);
-            array_push($result, $f);
+            $f = new Petrinet\Flow($from, $to);
+            $result->put($f, $weight);
         }
         return $result;
     }

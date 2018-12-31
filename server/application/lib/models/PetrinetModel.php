@@ -194,16 +194,16 @@ class PetrinetModel extends Model
             ["petrinet", "from_element", "to_element", "weight"]);
         $ptValues = [];
         $tpValues = [];
-        foreach($flows as $i => $flow) {
+        $i = 0;
+        foreach($flows as $flow => $weight) {
+            $s = [":pid", sprintf(":%sfrom", $i), sprintf(":%sto", $i), sprintf(":%sweight", $i)];
             // place -> transition flow
             if($places->contains($flow->from) && $transitions->contains($flow->to)) {
-                $pt = [":pid", sprintf(":%sfrom", $i), sprintf(":%sto", $i), sprintf(":%sweight", $i)];
-                array_push($ptValues, $pt);
+                array_push($ptValues, $s);
             }
             // transition -> place flow
             elseif($transitions->contains($flow->from) && $places->contains($flow->to)) {
-                $tp = [":pid", sprintf(":%sfrom", $i), sprintf(":%sto", $i), sprintf(":%sweight", $i)];
-                array_push($tpValues, $tp);
+                array_push($tpValues, $s);
             }
             else { // error!
                 throw new \Exception(sprintf(
@@ -212,6 +212,7 @@ class PetrinetModel extends Model
                     $flow->to)
                 );
             }
+            $i++;
         }
         $builderPT->values($ptValues);
         $builderTP->values($tpValues);
@@ -219,19 +220,21 @@ class PetrinetModel extends Model
         $statementTP = $this->db->prepare($builderTP->toString());
         $statementPT->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
         $statementTP->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
-        foreach($flows as $i => $flow) {
+        $i = 0;
+        foreach($flows as $flow => $weight) {
             // place -> transition flow
             if($places->contains($flow->from)) {
                 $statementPT->bindValue(sprintf(":%sfrom",   $i), $flow->from  , \PDO::PARAM_STR);
                 $statementPT->bindValue(sprintf(":%sto",     $i), $flow->to    , \PDO::PARAM_STR);
-                $statementPT->bindValue(sprintf(":%sweight", $i), $flow->weight, \PDO::PARAM_INT);
+                $statementPT->bindValue(sprintf(":%sweight", $i), $weight      , \PDO::PARAM_INT);
             }
             // transition -> place flow
             else {
                 $statementTP->bindValue(sprintf(":%sfrom",   $i), $flow->from  , \PDO::PARAM_STR);
                 $statementTP->bindValue(sprintf(":%sto",     $i), $flow->to    , \PDO::PARAM_STR);
-                $statementTP->bindValue(sprintf(":%sweight", $i), $flow->weight, \PDO::PARAM_INT);
+                $statementTP->bindValue(sprintf(":%sweight", $i), $weight      , \PDO::PARAM_INT);
             }
+            $i++;
         }
         $this->executeQuery($statementPT);
         $this->executeQuery($statementTP);

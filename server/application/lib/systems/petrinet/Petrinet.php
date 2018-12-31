@@ -256,7 +256,7 @@ class Petrinet
 
     public function SetFlows($flows)
     {
-        $f = $flows instanceof Set ? $flows : new Set($flows);
+        $f = $flows instanceof Map ? $flows : new Map($flows);
         $this->flows = $f;
     }
 

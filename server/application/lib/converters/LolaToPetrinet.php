@@ -22,7 +22,7 @@ class LolaToPetrinet extends Converter
         
         $places = new Set();
         $transitions = new Set();
-        $flows = new Set();
+        $flows = new Map();
         $marking = null;
 
         foreach ($contents as $i => $line) {
@@ -43,7 +43,6 @@ class LolaToPetrinet extends Converter
             }
         }
         $p = new Petrinet\Petrinet($places, $transitions, $flows, $marking);
-
         return $p;
     }
 
@@ -94,23 +93,18 @@ class LolaToPetrinet extends Converter
     protected static function parseLolaTransition($lines)
     {
         $res = array();
-        $flows = [];
+        $flows = new Map();
         // line 1
         $line = $lines[0];
-        list($t) = sscanf($line, "TRANSITION %s");
-        $transition = $t;
+        list($transition) = sscanf($line, "TRANSITION %s");
         // line 2
         $line = $lines[1];
         $c = trim(preg_replace('/CONSUME|[ ;]/i', '', $line));
         $c = preg_split("/,/", $c, -1, PREG_SPLIT_NO_EMPTY);
-
         foreach ($c as $j => $cons) {
             list($from, $amount) = sscanf($cons, "%[^:]:%d");
-            array_push($flows, new Petrinet\Flow(
-                $from,
-                $t,
-                $amount
-            ));
+            $flow = new Petrinet\Flow($from, $transition);
+            $flows->put($flow, intval($amount));
         }
         // line 3
         $line = $lines[2];
@@ -118,14 +112,11 @@ class LolaToPetrinet extends Converter
         $p = preg_split("/,/", $p, -1, PREG_SPLIT_NO_EMPTY);
         foreach ($p as $j => $pros) {
             list($to, $amount) = sscanf($pros, "%[^:]:%d");
-            array_push($flows, new Petrinet\Flow(
-                $t,
-                $to,
-                $amount
-            ));
+            $flow = new Petrinet\Flow($transition, $to);
+            $flows->put($flow, intval($amount));
         }
         $res["transition"] = $transition;
-        $res["flows"] = new Set($flows);
+        $res["flows"] = $flows;
         return $res;
     }
 }
