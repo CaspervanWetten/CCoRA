@@ -93,6 +93,9 @@ class PetrinetController extends Controller
         $id = intval(filter_var($id, FILTER_SANITIZE_NUMBER_INT));
 
         $model = new Models\PetrinetModel($this->container->get('db'));
+        if(!$model->petrinetExists($id)) {
+            throw new \Exception("A Petri net with this id does not exist");
+        }
         $petrinet = $model->getPetrinet($id);
         $image = $this->generateImage($petrinet);
 

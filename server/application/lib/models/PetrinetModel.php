@@ -282,7 +282,7 @@ class PetrinetModel extends Model
         return $petrinetId;
     }
 
-    public function PetrinetExists($id)
+    public function petrinetExists($id)
     {
         $p = $this->getPetrinet($id);
         return !is_null($p);
