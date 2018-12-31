@@ -6,13 +6,11 @@ class Flow
 {
     public $from;
     public $to;
-    public $weight;
 
-    public function __construct($from, $to, $weight=1)
+    public function __construct($from, $to)
     {
         $this->from = $from;
         $this->to = $to;
-        $this->weight = $weight;
     }
 }
  ?>

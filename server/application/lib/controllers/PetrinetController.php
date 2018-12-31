@@ -31,10 +31,12 @@ class PetrinetController extends Controller
         $model = new Models\PetrinetModel($this->container->get('db'));
 
         $petrinet = $model->getPetrinet($id);
+        $converter = new Converters\PetrinetToJson($petrinet);
+        $p = $converter->convert();
         
         if(!is_null($petrinet)) {
             return $response->withJson(
-                $petrinet
+                $p
             );
         } else {
             return $this->showErrors($response, "The petrinet could not be found.", 404);

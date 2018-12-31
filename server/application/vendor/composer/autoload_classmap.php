@@ -15,6 +15,7 @@ return array(
     'Cozp\\Converters\\JsonToGraph' => $baseDir . '/lib/converters/JsonToGraph.php',
     'Cozp\\Converters\\LolaToPetrinet' => $baseDir . '/lib/converters/LolaToPetrinet.php',
     'Cozp\\Converters\\PetrinetToDot' => $baseDir . '/lib/converters/PetrinetToDot.php',
+    'Cozp\\Converters\\PetrinetToJson' => $baseDir . '/lib/converters/PetrinetToJson.php',
     'Cozp\\Converters\\PetrinetTranslator' => $baseDir . '/lib/converters/PetrinetTranslator.php',
     'Cozp\\Enumerators\\Enumerator' => $baseDir . '/lib/enumerators/Enumerator.php',
     'Cozp\\Enumerators\\GraphSetType' => $baseDir . '/lib/enumerators/GraphSetType.php',

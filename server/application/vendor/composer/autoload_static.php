@@ -89,6 +89,7 @@ class ComposerStaticInit0eebd33000cafaa666f9a461e5ff9abe
         'Cozp\\Converters\\JsonToGraph' => __DIR__ . '/../..' . '/lib/converters/JsonToGraph.php',
         'Cozp\\Converters\\LolaToPetrinet' => __DIR__ . '/../..' . '/lib/converters/LolaToPetrinet.php',
         'Cozp\\Converters\\PetrinetToDot' => __DIR__ . '/../..' . '/lib/converters/PetrinetToDot.php',
+        'Cozp\\Converters\\PetrinetToJson' => __DIR__ . '/../..' . '/lib/converters/PetrinetToJson.php',
         'Cozp\\Converters\\PetrinetTranslator' => __DIR__ . '/../..' . '/lib/converters/PetrinetTranslator.php',
         'Cozp\\Enumerators\\Enumerator' => __DIR__ . '/../..' . '/lib/enumerators/Enumerator.php',
         'Cozp\\Enumerators\\GraphSetType' => __DIR__ . '/../..' . '/lib/enumerators/GraphSetType.php',

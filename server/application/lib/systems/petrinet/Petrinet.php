@@ -10,19 +10,19 @@ class Petrinet
 {
     public $places;         // set of strings
     public $transitions;    // set of strings
-    public $flows;          // set of triples (from, to, weight)
+    public $flows;          // bag of flows ((P x T) U (T x P) -> N)
     public $initialMarking; // set of pairs (place, tokens)
 
     public function __construct($places=null, $transitions=null, $flows=null, $initial = NULL)
     {
         $places = is_null($places) ? new Set() : $places;
         $transitions = is_null($transitions) ? new Set() : $transitions;
-        $flows = is_null($flows) ? new Set() : $flows;
+        $flows = is_null($flows) ? new Map() : $flows;
 
         $places = $places instanceof Set ? $places : new Set($places);
         $transitions = $transitions instanceof Set ? $transitions : new Set($transitions);
-        $flows = $flows instanceof Set ? $flows : new Set($flows);
-        
+        $flows = $flows instanceof Map ? $flows : new Map($flows);
+
         $this->places = $places;
         $this->transitions = $transitions;
         $this->flows = $flows;
@@ -34,7 +34,7 @@ class Petrinet
         $preWeights = $this->getTransitionPreSetWeights($transition);
 
         $result = true;
-        foreach($preWeights as $place=>$weight) {
+        foreach($preWeights as $place => $weight) {
             $m = $marking->get($place);
             $w = $weight;
             if ($m instanceof Systems\IntegerTokenCount && $m->value < $w) {
@@ -125,7 +125,7 @@ class Petrinet
     {
         $f = $this->getFlows();
         $s = new Set();
-        foreach($f as $i => $flow) {
+        foreach($f as $flow => $weight) {
             if($flow->to == $transition) {
                 $s->add($flow->from);
             }
@@ -143,7 +143,7 @@ class Petrinet
     {
         $f = $this->getFlows();
         $s = new Set();
-        foreach($f as $i => $flow) {
+        foreach($f as $flow => $weight) {
             if($flow->from == $transition) {
                 $s->add($flow->to);
             }
@@ -160,10 +160,10 @@ class Petrinet
     protected function getTransitionPreSetFlows($transition)
     {
         $f = $this->getFlows();
-        $s = [];
-        foreach($f as $i => $flow) {
+        $s = new Set();
+        foreach($f as $flow => $weight) {
             if($flow->to == $transition) {
-                array_push($s, $flow);
+                $s->add($flow);
             }
         }
         return $s;
@@ -178,10 +178,10 @@ class Petrinet
     protected function getTransitionPostSetFlows($transition)
     {
         $f = $this->getFlows();
-        $s = [];
-        foreach($f as $i => $flow) {
+        $s = new Set();
+        foreach($f as $flow => $weight) {
             if($flow->from == $transition) {
-                array_push($s, $flow);
+                $s->add($flow);
             }
         }
         return $s;
@@ -198,9 +198,9 @@ class Petrinet
     {
         $f = $this->getFlows();
         $map = new Map();
-        foreach($f as $i => $flow) {
+        foreach($f as $flow => $weight) {
             if($flow->to == $transition) {
-                $map->put($flow->from, $flow->weight);
+                $map->put($flow->from, $weight);
             }
         }
         return $map;
@@ -217,9 +217,9 @@ class Petrinet
     {
         $f = $this->getFlows();
         $map = new Map();
-        foreach($f as $i => $flow) {
+        foreach($f as $flow => $weight) {
             if($flow->from == $transition) {
-                $map->put($flow->to, $flow->weight);
+                $map->put($flow->to, $weight);
             }
         }
         return $map;

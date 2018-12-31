@@ -2,6 +2,7 @@
 
 namespace Cozp\Models;
 
+use Ds\Map as Map;
 use Cozp\Systems as Systems;
 use Cozp\querybuilder\QueryBuilder as QueryBuilder;
 
@@ -77,13 +78,12 @@ class PetrinetModel extends Model
         $flows_tp = $statement->fetchAll();
 
         $flows = array_merge($flows_pt, $flows_tp);
-        $flows = array_map( function($trip) use($from_col, $to_col, $weight_col) {
-            return new Systems\Petrinet\Flow(
-                $trip[$from_col],
-                $trip[$to_col],
-                intval($trip[$weight_col])
-            );
-        }, $flows );
+        $flowMap = new Map();
+        foreach($flows as $i => $flow) {
+            $pair = new Systems\Petrinet\Flow($flow[$from_col], $flow[$to_col]);
+            $weight = intval($flow[$weight_col]);
+            $flowMap->put($pair, $weight);
+        }
         // get the initial marking
         // first get the id of the marking
         $builder = new QueryBuilder();
@@ -113,7 +113,7 @@ class PetrinetModel extends Model
             $marking[$m["place"]] = intval($m["tokens"]);
         }
 
-        $petrinet = new Systems\Petrinet\Petrinet($places, $transitions, $flows, $marking);
+        $petrinet = new Systems\Petrinet\Petrinet($places, $transitions, $flowMap, $marking);
         return $petrinet;
     }
 
