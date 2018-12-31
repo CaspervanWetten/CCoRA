@@ -109,10 +109,9 @@ class PetrinetToDot extends Converter
     {
         $flows = $this->petrinet->getFlows();
         $s = [];
-        foreach($flows as $i => $flow) {
+        foreach($flows as $flow => $weight) {
             $from = $flow->from;
             $to   = $flow->to;
-            $weight = $flow->weight;
             $sub  = sprintf("%s -> %s", $from, $to);
             if($weight > 1) {
                 $sub .= sprintf("[label=%d]", $weight);
