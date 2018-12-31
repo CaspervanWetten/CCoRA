@@ -140,8 +140,6 @@ class PetrinetModel extends Model
         // set a name for the Petri net if it is not availabe
         if(is_null($name)) {
             $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
-        } else { // prevent xss (somewhat)
-            $name = filter_var($name, FILTER_SANITIZE_STRING);
         }
         // register meta information
         $builder = new QueryBuilder();
