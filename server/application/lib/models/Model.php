@@ -23,6 +23,7 @@ abstract class Model
     {
         $this->db = $pdo;
     }
+    
     /**
      * execute a PDOStatement. Pass by reference
      * @param  PDOStatement $query The prepared PDOStatement to execute
@@ -30,10 +31,8 @@ abstract class Model
      */
     public function executeQuery(\PDOStatement &$query, array $params = NULL)
     {
-        $this->db->beginTransaction();
         $query->execute($params);
         $res = $this->db->lastInsertId();
-        $this->db->commit();
         return $res;
     }
 
@@ -46,6 +45,21 @@ abstract class Model
     public function setAttribute(int $attribute, mixed $value)
     {
         $this->db->setAttribute($attribute, $value);
+    }
+
+    protected function beginTransaction()
+    {
+        return $this->db->beginTransaction();
+    }
+
+    protected function commit()
+    {
+        return $this->db->commit();
+    }
+
+    protected function rollBack()
+    {
+        return $this->db->rollBack();
     }
 }
 ?>

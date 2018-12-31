@@ -136,6 +136,7 @@ class PetrinetModel extends Model
 
     public function setPetrinet($petrinet, $user, $name=NULL)
     {
+        $this->beginTransaction();
         // set a name for the Petri net if it is not availabe
         if(is_null($name)) {
             $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
@@ -206,6 +207,7 @@ class PetrinetModel extends Model
                 array_push($tpValues, $s);
             }
             else { // error!
+                $this->rollBack();
                 throw new \Exception(sprintf(
                     "Inconsistent Flow. From: %s, to: %s",
                     $flow->from,
@@ -258,9 +260,11 @@ class PetrinetModel extends Model
                     [":mid", sprintf(":%spid", $place), sprintf(":%stok", $place)]
                 );
             } elseif(!$places->contains($place)) {
+                $this->rollBack();
                 throw new \Exception(
                     sprintf("Tokens assigned to place that is not part of the Petri net: %s", $place));
             } elseif(!$tokens instanceof Systems\IntegerTokenCount) {
+                $this->rollBack();
                 throw new \Exception(
                     sprintf("Could not store marking: improper type: %s", get_class($tokens)));
             }
@@ -274,6 +278,7 @@ class PetrinetModel extends Model
             $statement->bindValue(sprintf(":%stok", $place), $tokens->value, \PDO::PARAM_INT);
         }
         $this->executeQuery($statement);
+        $this->commit();
         return $petrinetId;
     }
 

@@ -57,6 +57,7 @@ class UserModel extends Model
      */
     public function setUser($name)
     {
+        $this->beginTransaction();
         $qb = new QueryBuilder();
         $qb->insert(USER_TABLE, ['name']);
         $qb->values([':name']);
@@ -64,7 +65,9 @@ class UserModel extends Model
         $query = $qb->toString();
         $statement = $this->db->prepare($query);
         $statement->bindValue(':name', $name, \PDO::PARAM_STR);
-        return $this->executeQuery($statement);
+        $result = $this->executeQuery($statement);
+        $this->commit();
+        return $result;
     }
 
     /**
@@ -74,12 +77,14 @@ class UserModel extends Model
      */
     public function delUser($id)
     {
+        $this->beginTransaction();
         $builder = new QueryBuilder();
         $builder->delete(USER_TABLE, "id", "?");
         $column = "id";
         $statement = $this->db->prepare($builder->toString());
         $statement->bindParam(1, $id, \PDO::PARAM_INT);
         $this->executeQuery($statement);
+        $this->commit();
     }
 
     public function userExists($id)
