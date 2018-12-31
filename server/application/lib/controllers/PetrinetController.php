@@ -112,6 +112,11 @@ class PetrinetController extends Controller
         $userId = $args['id'];
         $file = $request->getUploadedFiles()['petrinet'];
 
+        $model = new Models\UserModel($this->container->get('db'));
+        if(!$model->userExists($userId)) {
+            return $this->showErrors($response, "This user does not exist", 400);
+        }
+
         if(!is_null($file))
             $error = $file->getError();
         else

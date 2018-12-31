@@ -82,7 +82,7 @@ class UserModel extends Model
         $this->executeQuery($statement);
     }
 
-    public function UserExists($id)
+    public function userExists($id)
     {
         $u = $this->getUser("id", $id);
         return !empty($u);
