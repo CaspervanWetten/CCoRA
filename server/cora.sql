@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 30, 2018 at 11:25 PM
+-- Generation Time: Dec 31, 2018 at 02:44 PM
 -- Server version: 10.1.37-MariaDB
 -- PHP Version: 7.3.0
 
@@ -133,13 +133,15 @@ ALTER TABLE `petrinet`
 -- Indexes for table `petrinet_flow_pt`
 --
 ALTER TABLE `petrinet_flow_pt`
-  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`);
+  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`),
+  ADD KEY `petrinet` (`petrinet`);
 
 --
 -- Indexes for table `petrinet_flow_tp`
 --
 ALTER TABLE `petrinet_flow_tp`
-  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`);
+  ADD PRIMARY KEY (`petrinet`,`from_element`,`to_element`),
+  ADD KEY `petrinet` (`petrinet`);
 
 --
 -- Indexes for table `petrinet_marking`
@@ -182,19 +184,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `petrinet`
 --
 ALTER TABLE `petrinet`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `petrinet_marking`
 --
 ALTER TABLE `petrinet_marking`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -210,13 +212,13 @@ ALTER TABLE `petrinet`
 -- Constraints for table `petrinet_flow_pt`
 --
 ALTER TABLE `petrinet_flow_pt`
-  ADD CONSTRAINT `petrinet_flow_pt` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `petrinet_flow_pt` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `petrinet_flow_tp`
 --
 ALTER TABLE `petrinet_flow_tp`
-  ADD CONSTRAINT `petrinet_flow_tp` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `petrinet_flow_tp` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `petrinet_marking`
@@ -228,19 +230,19 @@ ALTER TABLE `petrinet_marking`
 -- Constraints for table `petrinet_marking_pair`
 --
 ALTER TABLE `petrinet_marking_pair`
-  ADD CONSTRAINT `markingPair_marking` FOREIGN KEY (`marking`) REFERENCES `petrinet_marking` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `markingPair_marking` FOREIGN KEY (`marking`) REFERENCES `petrinet_marking` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `petrinet_place`
 --
 ALTER TABLE `petrinet_place`
-  ADD CONSTRAINT `petrinet_place` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `petrinet_place` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `petrinet_transition`
 --
 ALTER TABLE `petrinet_transition`
-  ADD CONSTRAINT `petrinet_transition` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `petrinet_transition` FOREIGN KEY (`petrinet`) REFERENCES `petrinet` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

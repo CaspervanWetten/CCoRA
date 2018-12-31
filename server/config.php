@@ -182,19 +182,19 @@ $config = array(
  * dbdriver:dbname=name;host=myhost.com.
  * @var string
  */
-$dsn = "mysql:dbname=cora_model_update_test;host=localhost";
+$dsn = "mysql:dbname=test;host=localhost";
 
 /**
  * The user for the database
  * @var string
  */
-$dbuser = 'root';
+$dbuser = '';
 
 /**
  * The password for the database
  * @var string
  */
-$dbpass = 'Lancaster';
+$dbpass = '';
 
 /**
  * An array containing extra settings for the database, which is required for
