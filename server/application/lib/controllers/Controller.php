@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Controllers;
+namespace Cora\Controllers;
 
-use Cozp\Utils as Utils;
+use \Cora\Utils as Utils;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 

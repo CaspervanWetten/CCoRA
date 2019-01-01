@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Systems;
+namespace Cora\Systems;
 
-use Cozp\Enumerators\GraphSetType as GraphSetType;
+use \Cora\Enumerators\GraphSetType as GraphSetType;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 

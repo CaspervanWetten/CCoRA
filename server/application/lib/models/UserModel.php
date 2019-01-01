@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Models;
+namespace Cora\Models;
 
-use Cozp\QueryBuilder\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
 
 class UserModel extends Model
 {

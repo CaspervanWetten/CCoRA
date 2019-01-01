@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Enumerators;
+namespace Cora\Enumerators;
 
 class TrailingSlashOptions extends Enumerator
 {

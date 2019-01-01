@@ -1,11 +1,11 @@
 <?php
 
-namespace Cozp\ErrorHandlers;
+namespace Cora\ErrorHandlers;
 
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
-use Cozp\Exceptions\CozpException as CozpException;
+use \Cora\Exceptions\CoraException as CoraException;
 
 class JSONErrorHandler
 {
@@ -22,7 +22,7 @@ class JSONErrorHandler
         $json["error"] = $message;
 
         $statusCode = 500;
-        if($exception instanceof CozpException) {
+        if($exception instanceof CoraException) {
             $statusCode = $exception->getHttpStatus();
         }
 

@@ -2,13 +2,13 @@
 defined('APPLICATION_FOLDER') or exit('No direct script access allowed.');
 
 /** Own classes **/
-use \Cozp\Utils as Utils;
-use \Cozp\Models as Models;
-use \Cozp\MiddleWare as MiddleWare;
-use \Cozp\Controllers as Controllers;
-use \Cozp\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
-use \Cozp\ErrorHandlers as ErrorHandlers;
-use \Cozp\Converters as Converters;
+use \Cora\Utils as Utils;
+use \Cora\Models as Models;
+use \Cora\MiddleWare as MiddleWare;
+use \Cora\Controllers as Controllers;
+use \Cora\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
+use \Cora\ErrorHandlers as ErrorHandlers;
+use \Cora\Converters as Converters;
 
 /** Slim classes **/
 use \Psr\Http\Message\RequestInterface as Request;

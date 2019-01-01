@@ -1,11 +1,11 @@
 <?php
 
-namespace Cozp\Search;
+namespace Cora\Search;
 
-use Cozp\Systems;
-use Ds\Queue as Queue;
-use Ds\Set as Set;
-use Ds\Map as Map;
+use \Cora\Systems;
+use \Ds\Queue as Queue;
+use \Ds\Set as Set;
+use \Ds\Map as Map;
 
 class BreadthFirstSearch
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Utils;
+namespace Cora\Utils;
 
 use \Exception as Exception;
 

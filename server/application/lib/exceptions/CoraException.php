@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Exceptions;
+namespace Cora\Exceptions;
 
-class CozpException extends \Exception {
+class CoraException extends \Exception {
 
     protected $http;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Systems\Petrinet;
+namespace Cora\Systems\Petrinet;
 
 class Flow
 {

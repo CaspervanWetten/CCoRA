@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\ErrorHandlers;
+namespace Cora\ErrorHandlers;
 
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;

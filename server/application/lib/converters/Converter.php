@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Converters;
+namespace Cora\Converters;
 
 abstract class Converter
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Converters;
+namespace Cora\Converters;
 
-use Cozp\Systems as Systems;
+use \Cora\Systems as Systems;
 use \Ds\Set as Set;
 
 class JsonToGraph extends Converter

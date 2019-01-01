@@ -1,9 +1,10 @@
 <?php
 
-namespace Cozp\Controllers;
+namespace Cora\Controllers;
 
-use Cozp\Logger as Logger;
-use Cozp\Models as Models;
+use \Cora\Logger as Logger;
+use \Cora\Models as Models;
+use \Cora\Exceptions\CoraException as CoraException;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -27,7 +28,7 @@ class SessionController extends Controller
             return $this->show404($request, $response);
         }
         if($session < 0) {
-            return $this->showErrors($response, "A session for this user has not yet been created", 404);
+            throw new CoraException("A session for this user has not yet been created", 404);
         }
         return $response->withJson([
             "session_id" => $session,
@@ -48,11 +49,11 @@ class SessionController extends Controller
         $pid = filter_var($args["pid"], FILTER_SANITIZE_NUMBER_INT);
         $model = new Models\UserModel($this->container->get("db"));
         if(!$model->userExists($id)) {
-            return $this->showErrors($response, "Could not start a session for this user as it does not exist", 404);
+            throw new CoraException("Could not start a session for this user as it does not exist", 404);
         }
         $model = new Models\PetrinetModel($this->container->get("db"));
         if(!$model->petrinetExists($pid)) {
-            return $this->showErrors($response, "Could not start a session for this Petri net as it does not exist", 404);
+            throw new CoraException("Could not start a session for this Petri net as it does not exist", 404);
         }
         $session = Logger::startNewSession($id, $pid);
         return $response->withJson([

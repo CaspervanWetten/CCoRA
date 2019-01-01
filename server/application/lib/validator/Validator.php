@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Validator;
+namespace Cora\Validator;
 
 
 class Validator

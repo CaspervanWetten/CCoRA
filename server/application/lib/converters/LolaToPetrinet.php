@@ -1,9 +1,9 @@
 <?php
 
-namespace Cozp\Converters;
+namespace Cora\Converters;
 
-use \Cozp\Systems as Systems;
-use \Cozp\Systems\Petrinet as Petrinet;
+use \Cora\Systems as Systems;
+use \Cora\Systems\Petrinet as Petrinet;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 

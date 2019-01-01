@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\ErrorHandlers;
+namespace Cora\ErrorHandlers;
 
-use Cozp\Exceptions\CozpException as CozpException;
+use \Cora\Exceptions\CoraException as CoraException;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -10,7 +10,7 @@ class NotFoundHandler extends PreDefinedErrorHandler
 {
     public function __invoke(Request $request, Response $response)
     {
-        throw new CozpException("The requested resource could not be found", 404);
+        throw new CoraException("The requested resource could not be found", 404);
     }
 }
 

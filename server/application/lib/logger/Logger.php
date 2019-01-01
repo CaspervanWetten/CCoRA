@@ -1,9 +1,9 @@
 <?php
 
-namespace Cozp;
+namespace Cora;
 
-use Cozp\Systems as Systems;
-use Cozp\Converters as Converters;
+use \Cora\Systems as Systems;
+use \Cora\Converters as Converters;
 
 class Logger
 {

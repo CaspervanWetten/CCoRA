@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Enumerators;
+namespace Cora\Enumerators;
 
-use ReflectionClass;
+use \ReflectionClass as ReflectionClass;
 
 abstract class Enumerator
 {

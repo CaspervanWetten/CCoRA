@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\QueryBuilder;
+namespace Cora\QueryBuilder;
 
-use Cozp\Utils as Utils;
+use \Cora\Utils as Utils;
 
 class QueryBuilder
 {

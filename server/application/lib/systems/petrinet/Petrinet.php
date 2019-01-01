@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Systems\Petrinet;
+namespace Cora\Systems\Petrinet;
 
-use \Cozp\Systems as Systems;
+use \Cora\Systems as Systems;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 

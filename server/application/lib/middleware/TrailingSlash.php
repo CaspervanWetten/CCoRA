@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\MiddleWare;
+namespace Cora\MiddleWare;
 
-use \Cozp\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
+use \Cora\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 

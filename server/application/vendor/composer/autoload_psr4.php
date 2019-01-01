@@ -12,5 +12,5 @@ return array(
     'Interop\\Container\\' => array($vendorDir . '/container-interop/container-interop/src/Interop/Container'),
     'FastRoute\\' => array($vendorDir . '/nikic/fast-route/src'),
     'Ds\\' => array($vendorDir . '/php-ds/php-ds/src'),
-    'Cozp\\' => array($baseDir . '/lib'),
+    'Cora\\' => array($baseDir . '/lib'),
 );

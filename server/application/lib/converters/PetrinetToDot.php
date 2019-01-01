@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Converters;
+namespace Cora\Converters;
 
-use \Cozp\Systems\Petrinet as Petrinet;
+use \Cora\Systems\Petrinet as Petrinet;
 
 class PetrinetToDot extends Converter
 {

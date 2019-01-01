@@ -1,9 +1,9 @@
 <?php
 
-namespace Cozp\Converters;
+namespace Cora\Converters;
 
-use Cozp\Systems as Systems;
-use Cozp\Search as Search;
+use \Cora\Systems as Systems;
+use \Cora\Search as Search;
 
 class JsonToCoverabilityGraph extends JsonToGraph
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Search;
+namespace Cora\Search;
 
 class SearchNode
 {

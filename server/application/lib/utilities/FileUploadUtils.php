@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Utils;
+namespace Cora\Utils;
 
-use Slim\Http\UploadedFile;
+use \Slim\Http\UploadedFile;
 
 class FileUploadUtils
 {

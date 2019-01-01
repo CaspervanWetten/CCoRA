@@ -1,12 +1,12 @@
 <?php
 
-namespace Cozp\Controllers;
+namespace Cora\Controllers;
 
-use Cozp\Models as Models;
-use Cozp\Utils as Utils;
-use Cozp\Logger as Logger;
-use Cozp\Validator\Validator as Validator;
-use Cozp\Exceptions\CozpException as CozpException;
+use \Cora\Models as Models;
+use \Cora\Utils as Utils;
+use \Cora\Logger as Logger;
+use \Cora\Validator\Validator as Validator;
+use \Cora\Exceptions\CoraException as CoraException;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -68,13 +68,13 @@ class UserController extends Controller
         // check whether the user already exists
         $u = $model->getUser('name', $data['name']);
         if ($u) { // result found: user exists
-            throw new CozpException("This username is already being used", 409);
+            throw new CoraException("This username is already being used", 409);
         }
         // else; new user
         // validate the user input
         $validator = new Validator($this->getUserRegistrationConfiguration());
         if (!$validator->validate($data['name'])) {
-            throw new CozpException($validator->getError(), 400);
+            throw new CoraException($validator->getError(), 400);
         }
         $id = $model->setUser($data['name']);
         // set up variables for the response
@@ -87,7 +87,7 @@ class UserController extends Controller
         if(!Logger::createLog($id)){
             // we have to undo the creation of this user if the creation of the logging did not work
             $model->delUser($id);
-            throw new CozpException("Could not write logging file", 500);
+            throw new CoraException("Could not write logging file", 500);
         }
         
         return $response->withJson([

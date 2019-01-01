@@ -4,9 +4,9 @@
  * @author Lucas Steehouwer
  */
 
-namespace Cozp\Models;
+namespace Cora\Models;
 
-use Cozp\QueryBuilder\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
 
 abstract class Model
 {

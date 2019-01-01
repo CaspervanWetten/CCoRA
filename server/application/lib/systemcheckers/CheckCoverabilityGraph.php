@@ -1,10 +1,10 @@
 <?php
 
-namespace Cozp\SystemCheckers;
+namespace Cora\SystemCheckers;
 
-use Cozp\Feedback as Feedback;
-use Cozp\Systems as Systems;
-use Cozp\Enumerators\GraphSetType as GraphSetType;
+use \Cora\Feedback as Feedback;
+use \Cora\Systems as Systems;
+use \Cora\Enumerators\GraphSetType as GraphSetType;
 
 use \Ds\Queue as Queue;
 use \Ds\Set as Set;
@@ -81,7 +81,7 @@ class CheckCoverabilityGraph extends SystemChecker
                 $label = $edge->label;
                 $discoveredMarking = $graph->getVertex($to);
 
-                $pair = new \Cozp\Systems\Petrinet\MarkingTransitionPair($discoveredMarking->asMarking($petrinet), $label);
+                $pair = new \Cora\Systems\Petrinet\MarkingTransitionPair($discoveredMarking->asMarking($petrinet), $label);
                 // correct
                 // no new unbounded places detected
                 if ($reachables->contains($pair)) {

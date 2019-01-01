@@ -1,8 +1,8 @@
 <?php
 
-namespace Cozp\Feedback;
+namespace Cora\Feedback;
 
-use Cozp\Enumerators as Enumerators;
+use \Cora\Enumerators as Enumerators;
 
 class FeedbackCode extends Enumerators\Enumerator
 {

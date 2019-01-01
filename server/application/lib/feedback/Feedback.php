@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Feedback;
+namespace Cora\Feedback;
 
 use \Ds\Map as Map;
 use \Ds\Set as Set;

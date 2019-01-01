@@ -1,18 +1,18 @@
 <?php
 
-namespace Cozp\Controllers;
+namespace Cora\Controllers;
 
-use Cozp\Utils as Utils;
-use Cozp\Models as Models;
-use Cozp\Systems as Systems;
-use Cozp\Systems\Petrinet as Petrinet;
-use Cozp\Converters as Converters;
-use Cozp\SystemCheckers as Checkers;
-use Cozp\Logger as Logger;
-use Cozp\Exceptions\CozpException as CozpException;
-use Slim\Http\UploadedFile as UploadedFile;
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use \Cora\Utils as Utils;
+use \Cora\Models as Models;
+use \Cora\Systems as Systems;
+use \Cora\Systems\Petrinet as Petrinet;
+use \Cora\Converters as Converters;
+use \Cora\SystemCheckers as Checkers;
+use \Cora\Logger as Logger;
+use \Cora\Exceptions\CoraException as CoraException;
+use \Slim\Http\UploadedFile as UploadedFile;
+use \Psr\Http\Message\RequestInterface as Request;
+use \Psr\Http\Message\ResponseInterface as Response;
 
 class PetrinetController extends Controller
 {
@@ -40,7 +40,7 @@ class PetrinetController extends Controller
                 $p
             );
         } else {
-            throw new CozpException("The Petri net could not be found", 404);
+            throw new CoraException("The Petri net could not be found", 404);
         }
     }
     /**
@@ -95,7 +95,7 @@ class PetrinetController extends Controller
 
         $model = new Models\PetrinetModel($this->container->get('db'));
         if(!$model->petrinetExists($id)) {
-            throw new CozpException("A Petri net with this id does not exist", 404);
+            throw new CoraException("A Petri net with this id does not exist", 404);
         }
         $petrinet = $model->getPetrinet($id);
         $image = $this->generateImage($petrinet);
@@ -118,7 +118,7 @@ class PetrinetController extends Controller
 
         $model = new Models\UserModel($this->container->get('db'));
         if(!$model->userExists($userId)) {
-            throw new CozpException("This user does not exist", 400);
+            throw new CoraException("This user does not exist", 400);
         }
 
         if(!is_null($file))
@@ -131,7 +131,7 @@ class PetrinetController extends Controller
             $fileExtension = pathinfo($file->getClientFilename(), PATHINFO_EXTENSION);
             // wrong file extension
             if ($fileExtension != "lola") {
-                throw new CozpException("Only files with a lola extension are accepted", 400);
+                throw new CoraException("Only files with a lola extension are accepted", 400);
             }
             // correct file extension, place in file system
             try {
@@ -166,7 +166,7 @@ class PetrinetController extends Controller
             return $response;
         }
         else {
-            throw new CozpException(\Cozp\Utils\FileUploadUtils::getErrorMessage($error), 400);
+            throw new CoraException(\Cora\Utils\FileUploadUtils::getErrorMessage($error), 400);
         }
     }
 

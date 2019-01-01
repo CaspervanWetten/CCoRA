@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\Systems;
+namespace Cora\Systems;
 
 use \Ds\Set as Set;
 
@@ -22,7 +22,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     {
         $m = new Marking($petrinet, $this->vector);
         foreach($places as $i => $place) {
-            $m->vector[$place] = new \Cozp\Systems\OmegaTokenCount();   
+            $m->vector[$place] = new \Cora\Systems\OmegaTokenCount();
         }
         return $m;
     }
@@ -98,7 +98,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         // rewrite for each place that is defined
         foreach($list as $place => $tokens)
         {
-            $count = \Cozp\Systems\TokenCountFactory::getTokenCount($tokens);
+            $count = \Cora\Systems\TokenCountFactory::getTokenCount($tokens);
             $vector[$place] = $count;
         }
         return $vector;

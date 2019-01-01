@@ -1,10 +1,10 @@
 <?php
 
-namespace Cozp\Models;
+namespace Cora\Models;
 
-use Ds\Map as Map;
-use Cozp\Systems as Systems;
-use Cozp\querybuilder\QueryBuilder as QueryBuilder;
+use \Ds\Map as Map;
+use \Cora\Systems as Systems;
+use \Cora\querybuilder\QueryBuilder as QueryBuilder;
 
 class PetrinetModel extends Model
 {

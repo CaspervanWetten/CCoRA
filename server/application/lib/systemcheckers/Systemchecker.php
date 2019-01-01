@@ -1,6 +1,6 @@
 <?php
 
-namespace Cozp\SystemCheckers;
+namespace Cora\SystemCheckers;
 
 abstract class SystemChecker
 {
