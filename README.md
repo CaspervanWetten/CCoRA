@@ -21,5 +21,5 @@ A list of required features and improvements, sorted by the MoSCoW method:
 * ~~(server) A better implementation of the Petri net data structure. The current data structure works fine, but the way flows are stored is inefficient and filtering flows based on certain properties is a headache. A proposed solution would be to store the flows in a way that is more analogous to the mathmatical description of Petri nets, i.e. `(P x T) U (T x P) -> N)`.~~
 * (client) The ability to scale and pan the view of the modeller.
 * ~~(server) Implement CoRA's own exception class. This class should have an http status code to be served with the exception itself. We then would have a uniform method of throwing errors. The current solution is calling the `showError` method of the `Controller` class, but this is horribly ugly and is often forgotten, resulting in a mishmash of exceptions and `showError` calls.~~
-* (server) Rename namespaces. CoRA was initially known under the name `Cozp`. This name persists as the base name for all the namespaces of the server. These need to be updated.
+* ~~(server) Rename namespaces. CoRA was initially known under the name `Cozp`. This name persists as the base name for all the namespaces of the server. These need to be updated.~~
 * (both) Add install script to automatically configure deployment
