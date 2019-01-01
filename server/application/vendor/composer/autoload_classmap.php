@@ -24,6 +24,7 @@ return array(
     'Cozp\\ErrorHandlers\\JSONErrorHandler' => $baseDir . '/lib/errorhandlers/jsonErrorHandler.php',
     'Cozp\\ErrorHandlers\\NotFoundHandler' => $baseDir . '/lib/errorhandlers/notFoundHandler.php',
     'Cozp\\ErrorHandlers\\PreDefinedErrorHandler' => $baseDir . '/lib/errorhandlers/errorHandler.php',
+    'Cozp\\Exceptions\\CozpException' => $baseDir . '/lib/exceptions/CoraException.php',
     'Cozp\\Feedback\\Feedback' => $baseDir . '/lib/feedback/Feedback.php',
     'Cozp\\Feedback\\FeedbackCode' => $baseDir . '/lib/feedback/FeedbackCodes.php',
     'Cozp\\Logger' => $baseDir . '/lib/logger/Logger.php',

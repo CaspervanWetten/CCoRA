@@ -36,20 +36,6 @@ abstract class Controller
     }
     
     /**
-     * Json encodes an array of errors and puts it in the response
-     *
-     * @param Response $response
-     * @param string $error
-     * @param integer $code
-     * @return Response $response
-     */
-    protected function showErrors(Response $response, $error, $code = 400)
-    {
-        $e = ["error" => $error];
-        return $response->withJson($e, $code);
-    }
-
-    /**
      * Move a file to the supplied directory and return its (new) file name
      * @param  UploadedFile $file   The uploaded file object
      * @param  string $directory    The directory where the file needs to be

@@ -98,6 +98,7 @@ class ComposerStaticInit0eebd33000cafaa666f9a461e5ff9abe
         'Cozp\\ErrorHandlers\\JSONErrorHandler' => __DIR__ . '/../..' . '/lib/errorhandlers/jsonErrorHandler.php',
         'Cozp\\ErrorHandlers\\NotFoundHandler' => __DIR__ . '/../..' . '/lib/errorhandlers/notFoundHandler.php',
         'Cozp\\ErrorHandlers\\PreDefinedErrorHandler' => __DIR__ . '/../..' . '/lib/errorhandlers/errorHandler.php',
+        'Cozp\\Exceptions\\CozpException' => __DIR__ . '/../..' . '/lib/exceptions/CoraException.php',
         'Cozp\\Feedback\\Feedback' => __DIR__ . '/../..' . '/lib/feedback/Feedback.php',
         'Cozp\\Feedback\\FeedbackCode' => __DIR__ . '/../..' . '/lib/feedback/FeedbackCodes.php',
         'Cozp\\Logger' => __DIR__ . '/../..' . '/lib/logger/Logger.php',

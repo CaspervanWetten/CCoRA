@@ -9,6 +9,7 @@ use Cozp\Systems\Petrinet as Petrinet;
 use Cozp\Converters as Converters;
 use Cozp\SystemCheckers as Checkers;
 use Cozp\Logger as Logger;
+use Cozp\Exceptions\CozpException as CozpException;
 use Slim\Http\UploadedFile as UploadedFile;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
@@ -31,15 +32,15 @@ class PetrinetController extends Controller
         $model = new Models\PetrinetModel($this->container->get('db'));
 
         $petrinet = $model->getPetrinet($id);
-        $converter = new Converters\PetrinetToJson($petrinet);
-        $p = $converter->convert();
         
         if(!is_null($petrinet)) {
+            $converter = new Converters\PetrinetToJson($petrinet);
+            $p = $converter->convert();
             return $response->withJson(
                 $p
             );
         } else {
-            return $this->showErrors($response, "The petrinet could not be found.", 404);
+            throw new CozpException("The Petri net could not be found", 404);
         }
     }
     /**
@@ -94,7 +95,7 @@ class PetrinetController extends Controller
 
         $model = new Models\PetrinetModel($this->container->get('db'));
         if(!$model->petrinetExists($id)) {
-            throw new \Exception("A Petri net with this id does not exist");
+            throw new CozpException("A Petri net with this id does not exist", 404);
         }
         $petrinet = $model->getPetrinet($id);
         $image = $this->generateImage($petrinet);
@@ -117,7 +118,7 @@ class PetrinetController extends Controller
 
         $model = new Models\UserModel($this->container->get('db'));
         if(!$model->userExists($userId)) {
-            return $this->showErrors($response, "This user does not exist", 400);
+            throw new CozpException("This user does not exist", 400);
         }
 
         if(!is_null($file))
@@ -130,40 +131,42 @@ class PetrinetController extends Controller
             $fileExtension = pathinfo($file->getClientFilename(), PATHINFO_EXTENSION);
             // wrong file extension
             if ($fileExtension != "lola") {
-                return $this->showErrors($response, "Only files with a lola extension are accepted", 400);
+                throw new CozpException("Only files with a lola extension are accepted", 400);
             }
             // correct file extension, place in file system
-            $filename = $this->moveUploadedFile(
-                $file,
-                USER_FOLDER . DIRECTORY_SEPARATOR . $userId
-            );
-            // generate image
-            $k = new Converters\LolaToPetrinet(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
-            $petrinet = $k->convert();
+            try {
+                $filename = $this->moveUploadedFile(
+                    $file,
+                    USER_FOLDER . DIRECTORY_SEPARATOR . $userId
+                );
+                // generate image
+                $k = new Converters\LolaToPetrinet(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
+                $petrinet = $k->convert();
 
-            $translate = true;
+                $translate = true;
 
-            if($translate) {
-                $translator = new Converters\PetrinetTranslator($petrinet);
-                $petrinet = $translator->convert();
+                if($translate) {
+                    $translator = new Converters\PetrinetTranslator($petrinet);
+                    $petrinet = $translator->convert();
+                }
+
+                $model = new Models\PetrinetModel($this->container->get('db'));
+                $petrinetId = $model->setPetrinet($petrinet, $userId);
+
+                $response = $response->withJson([
+                    "petrinetId" => $petrinetId,
+                    "petrinetUrl" => $this->container->get('router')->pathFor('getPetrinet', ["id" => $petrinetId])
+                ]);
+            } finally {
+                // cleanup the file system.
+                unlink(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
+                rmdir(USER_FOLDER . DIRECTORY_SEPARATOR . $userId);
             }
-
-            $model = new Models\PetrinetModel($this->container->get('db'));
-            $petrinetId = $model->setPetrinet($petrinet, $userId);
-
-            $response = $response->withJson([
-                "petrinetId" => $petrinetId,
-                "petrinetUrl" => $this->container->get('router')->pathFor('getPetrinet', ["id" => $petrinetId])
-            ]);
-
-            // cleanup the file system.
-            unlink(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
-            rmdir(USER_FOLDER . DIRECTORY_SEPARATOR . $userId);
 
             return $response;
         }
         else {
-            return $this->showErrors($response, \Cozp\Utils\FileUploadUtils::getErrorMessage($error), 400);
+            throw new CozpException(\Cozp\Utils\FileUploadUtils::getErrorMessage($error), 400);
         }
     }
 

@@ -23,6 +23,11 @@ class Petrinet
         $transitions = $transitions instanceof Set ? $transitions : new Set($transitions);
         $flows = $flows instanceof Map ? $flows : new Map($flows);
 
+        $disjoint = ($places->intersect($transitions))->isEmpty();
+        if(!$disjoint) {
+            throw new \Exception("Petri net places and transitions are not disjoint");
+        }
+
         $this->places = $places;
         $this->transitions = $transitions;
         $this->flows = $flows;

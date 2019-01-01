@@ -2,7 +2,7 @@
 
 namespace Cozp\Utils;
 
-use Exception;
+use \Exception as Exception;
 
 class DatabaseUtils
 {
@@ -17,7 +17,6 @@ class DatabaseUtils
 
             return $db;
         } catch (Exception $e) {
-            // die('Connection to database failed: ' . $e->getMessage());
             throw $e;
         }
     }
