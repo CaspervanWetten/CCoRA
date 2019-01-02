@@ -34,15 +34,15 @@ $userFolder = "application". DIRECTORY_SEPARATOR . "user";
  */
 $logFolder = "application" . DIRECTORY_SEPARATOR . "log";
 
-defined("PUBLIC_FOLDER") or  define('PUBLIC_FOLDER', $publicFolder);
+defined("PUBLIC_FOLDER")      or define('PUBLIC_FOLDER',      $publicFolder);
 defined("APPLICATION_FOLDER") or define('APPLICATION_FOLDER', $applicationFolder);
-defined("VENDOR_FOLDER") or define('VENDOR_FOLDER', $applicationFolder . DIRECTORY_SEPARATOR . 'vendor');
-defined("USER_FOLDER") or define('USER_FOLDER', $userFolder);
-defined("LOG_FOLDER") or define("LOG_FOLDER", $logFolder);
+defined("VENDOR_FOLDER")      or define('VENDOR_FOLDER',      $applicationFolder . DIRECTORY_SEPARATOR . 'vendor');
+defined("USER_FOLDER")        or define('USER_FOLDER',        $userFolder);
+defined("LOG_FOLDER")         or define("LOG_FOLDER",         $logFolder);
 
 // EXTERNAL PROGRAM SETTINGS
 /**
- * Path to Graphviz. If the program is available globally just "dot" is enough.
+ * Path to Graphviz. If the program is available globally (via $PATH) just "dot" is enough.
  * @var string
  */
 $dotPath = "dot";
