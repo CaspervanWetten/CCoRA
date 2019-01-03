@@ -68,6 +68,21 @@ class Logger
         return $data;
     }
 
+    public static function appendGraph($userId, $graph, $session, $pid) {
+        $sessionLog = Logger::getSessionLog($userId, $session);
+        if(!$sessionLog) {
+            throw new CoraException(
+                "Could not append graph as session log file does not exist",
+                500
+            );
+        }
+        array_push($sessionLog["graphs"], [
+            "graph"     => $graph,
+            "timestamp" => Logger::timeStamp(),
+        ]);
+        Logger::write(Logger::getSessionLogPath($userId, $session), $sessionLog);
+    }
+
    /**
     * Create and write a new session log for a specific user and session
     * @param int $userId the user for whom the session is to be created
@@ -87,7 +102,7 @@ class Logger
     }
 
    /**
-    * Get the current log data for a specific user
+    * Get the log data for a specific user
     * @param int $userId the user id for the user
     * @return array|bool the log data for the user or FALSE if there
     *    is no log for this user
@@ -102,13 +117,29 @@ class Logger
     }
 
    /**
+    * Get the session log data for a specific user and session
+    * @param int $userId The user associated with the session
+    * @param int $sessionId The session identifier
+    * @return array|bool the log data regarding the session or FALSE if
+    *    there is no log for this session
+    */
+    protected static function getSessionLog($userId, $sessionId) {
+        $logPath = Logger::getSessionLogPath($userId, $sessionId);
+        if(!file_exists($logPath)) {
+            return FALSE;
+        }
+        $contents = file_get_contents($logPath);
+        return json_decode($contents, TRUE);
+    }
+
+   /**
     * Write data (assoc array) to a file in JSON format
     * @param string $path The file path for the file that is to be written
     * @param array $data The data that is to be written to the file
     * @param int $mode The mode for the JSON output (standard JSON_PRETTY_PRINT)
     * @return void
     */
-    protected static function write($path, $data, $mode=0) {
+    protected static function write($path, $data, $mode=JSON_PRETTY_PRINT) {
         $handler = fopen($path, "w");
         if($handler === FALSE) {
             return FALSE;
