@@ -39,9 +39,15 @@ class Logger
     *    could not be started
     */
     public static function startNewSession($userId, $petrinetId) {
+        // get the current session id
         $currentSessionId = Logger::getCurrentSession($userId);
+        // increment the session id
         $newSessionId     = $currentSessionId + 1;
-        Logger::createSessionLog($userId, $newSessionId, $petrinetId);
+        // create a new session log file
+        if(!Logger::createSessionLog($userId, $newSessionId, $petrinetId)) {
+            throw new CoraException("Could not create session log file: name conflict", 500);
+        }
+        // increment the session counter
         Logger::setSessionCounter($userId, $newSessionId + 1);
         return $newSessionId;
     }
@@ -49,7 +55,7 @@ class Logger
    /**
     * Create and write a new user log file for a specific user
     * @param int $userId the id for the user
-    * @return bool returns FALSE if the log could not be created
+    * @return array|bool returns FALSE if the log could not be created
     *    otherwise returns the written data
     */
     public static function createUserLog($userId) {
@@ -67,15 +73,17 @@ class Logger
     * @param int $userId the user for whom the session is to be created
     * @param int $sessionId the identifier for the new session
     * @param int $petrinetId the Petri net identifier for the new session
-    * @return void
+    * @return array|bool returns FALSE if the log could not be created
+    *    otherwise returns the written data
     */
     protected static function createSessionLog($userId, $sessionId, $petrinetId) {
         $logPath = Logger::getSessionLogPath($userId, $sessionId);
         if(file_exists($logPath)) {
-            throw new CoraException("A log file for this user and session already exists", 400);
+            return FALSE;
         }
         $data = Logger::createSessionLogData($userId, $sessionId, $petrinetId);
         Logger::write($logPath, $data);
+        return $data;
     }
 
    /**
@@ -110,6 +118,13 @@ class Logger
         return TRUE;
     }
 
+   /**
+    * Set a new value for the session counter belonging to a particular
+    * user.
+    * @param int $userId The id for the user
+    * @param int $counter The new value for the counter
+    * @return void
+    */
     protected static function setSessionCounter($userId, $counter) {
         $data = Logger::getUserLog($userId);
         $data["session_counter"] = $counter;
