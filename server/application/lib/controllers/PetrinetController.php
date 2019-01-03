@@ -176,7 +176,7 @@ class PetrinetController extends Controller
         $pid   = filter_var($args["petrinet_id"], FILTER_SANITIZE_NUMBER_INT);
         $sid   = filter_var($args["session_id"],  FILTER_SANITIZE_NUMBER_INT);
 
-        $userModel = new Models\PetrinetModel($this->container->get('db'));
+        $userModel = new Models\UserModel($this->container->get('db'));
         if(!$userModel->userExists($user)) {
             throw new CoraException("Could not receive feedback as the user does not exist");
         }
@@ -184,7 +184,7 @@ class PetrinetController extends Controller
         if(!$petrinetModel->petrinetExists($pid)) {
             throw new CoraException("Could not receive feedback for Petri net as it does not exist", 404);
         }
-        $petrinet = $model->getPetrinet($pid);
+        $petrinet = $petrinetModel->getPetrinet($pid);
         $graph = $request->getParsedBody();
 
         $converter = new Converters\JsonToCoverabilityGraph($graph, $petrinet);
