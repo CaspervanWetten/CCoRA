@@ -193,7 +193,7 @@ class PetrinetController extends Controller
         $checker = new Checkers\CheckCoverabilityGraph($graph, $petrinet);      
         $feedback = $checker->check();
         
-        Logger::appendGraph($user, $graph, $sid, $pid);
+        Logger::appendGraph($user, $graph, $sid);
 
         return $response->withJson($feedback);
     }

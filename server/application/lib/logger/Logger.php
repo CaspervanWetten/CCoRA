@@ -68,7 +68,7 @@ class Logger
         return $data;
     }
 
-    public static function appendGraph($userId, $graph, $session, $pid) {
+    public static function appendGraph($userId, $graph, $session) {
         $sessionLog = Logger::getSessionLog($userId, $session);
         if(!$sessionLog) {
             throw new CoraException(
