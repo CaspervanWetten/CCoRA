@@ -41,17 +41,8 @@ class Logger
     public static function startNewSession($userId, $petrinetId) {
         $currentSessionId = Logger::getCurrentSession($userId);
         $newSessionId     = $currentSessionId + 1;
-        $sessionLogPath   = Logger::getSessionLogPath($userId, $newSessionId);
-        if(file_exists($sessionLogPath)) {
-            throw new CoraException("Could not start new session: log file name conflict", 500);
-        }
-        $logData = Logger::createSessionLogData($userId, $newSessionId, $petrinetId);
-        $handler = fopen($sessionLogPath, "w");
-        if($handler === FALSE) {
-            return FALSE;
-        }
-        fwrite($handler, $logData);
-        fclose($handler);
+        Logger::createSessionLog($userId, $newSessionId, $petrinetId);
+        Logger::setSessionCounter($userId, $newSessionId + 1);
         return $newSessionId;
     }
 
@@ -78,7 +69,7 @@ class Logger
     * @param int $petrinetId the Petri net identifier for the new session
     * @return void
     */
-    public static function createSessionLog($userId, $sessionId, $petrinetId) {
+    protected static function createSessionLog($userId, $sessionId, $petrinetId) {
         $logPath = Logger::getSessionLogPath($userId, $sessionId);
         if(file_exists($logPath)) {
             throw new CoraException("A log file for this user and session already exists", 400);
@@ -109,7 +100,7 @@ class Logger
     * @param int $mode The mode for the JSON output (standard JSON_PRETTY_PRINT)
     * @return void
     */
-    protected static function write($path, $data, $mode=JSON_PRETTY_PRINT) {
+    protected static function write($path, $data, $mode=0) {
         $handler = fopen($path, "w");
         if($handler === FALSE) {
             return FALSE;
@@ -117,6 +108,18 @@ class Logger
         fwrite($handler, json_encode($data, $mode));
         fclose($handler);
         return TRUE;
+    }
+
+    protected static function setSessionCounter($userId, $counter) {
+        $data = Logger::getUserLog($userId);
+        $data["session_counter"] = $counter;
+        $logPath = Logger::getUserLogPath($userId);
+        if(!file_exists($logPath)) {
+            throw new CoraException(
+                "Could not set session counter: user log file does not exist"
+            );
+        }
+        Logger::write($logPath, $data);
     }
 
    /**
