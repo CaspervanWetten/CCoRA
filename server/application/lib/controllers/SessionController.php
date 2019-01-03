@@ -10,7 +10,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 class SessionController extends Controller
 {
-        /**
+    /**
      * Get the session the user is currently working on
      *
      * @param Request $request      The Psr request object
@@ -21,12 +21,11 @@ class SessionController extends Controller
     public function getCurrentSession(Request $request, Response $response, $args)
     {
         $id = filter_var($args["id"], FILTER_SANITIZE_NUMBER_INT);
-        $session = Logger::getCurrentSession($id);
         $model = new Models\UserModel($this->container->get("db"));
-        $user = $model->getUser('id', $id);
-        if (empty($user)) {
-            return $this->show404($request, $response);
+        if(!$model->userExists($id)) {
+            throw new CoraException("This user does not exist", 404);
         }
+        $session = Logger::getCurrentSession($id);
         if($session < 0) {
             throw new CoraException("A session for this user has not yet been created", 404);
         }

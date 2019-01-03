@@ -4,169 +4,228 @@ namespace Cora;
 
 use \Cora\Systems as Systems;
 use \Cora\Converters as Converters;
+use \Cora\Exceptions\CoraException as CoraException;
 
 class Logger
 {
-    /**
-     * Create a log file for a user with a certain id
-     *
-     * @param int $id
-     * @return bool returns false on error, true otherwise
-     */
-    public static function createLog($id)
-    {
-        $logPath = Logger::getLogPath($id);
-        if(!file_exists($logPath) || empty(trim(file_get_contents($logPath)))) {
-            // @ suppresses the warning if fopen goes wrong
-            $handler = @fopen($logPath, "w");
-            if($handler == FALSE) {
-                return false;
+   /**
+    * Get the current session id for the user with id $userId
+    * @param int $userId the user for which to retrieve the session id
+    * @return int the session id for the user
+    */
+    public static function getCurrentSession($userId) {
+        // get the user log file
+        $userLog = Logger::getUserLog($userId);
+        if($userLog === FALSE) {
+            // log file does not exist, create new one
+            $userLog = createUserLog($userId);
+            if($userLog === FALSE) {
+                // could not create a new log file, throw exception
+                throw new CoraException("Could not create logging file", 500);
             }
-            $e = [
-                "user_id"           => $id,
-                "log_created_on"    => Logger::timeStamp(),
-                "session_counter"   => 0,
-                "sessions"          => [],
-            ];
-            fwrite($handler, json_encode($e, JSON_PRETTY_PRINT));
-            fclose($handler);
         }
-        return true;
+        // current session pointer points at the last element of the abstract
+        // session array
+        $session = $userLog["session_counter"] - 1;
+        return $session;
     }
 
-    /**
-     * Gets the current session the user is working on.
-     * If no session yet exists it is created.
-     *
-     * @param int $id   The user id
-     * @return int      The current session id
-     */
-    public static function getCurrentSession($id)
-    {
-        $log = Logger::getLog($id);
-        if($log == FALSE) {
-            Logger::createLog($id);
-            $log = Logger::getLog($id);
+   /**
+    * Start a new session for a user who wants to model a coverability graph
+    * for a certain Petri net
+    * @param int $userId the user for whom to start the new session
+    * @param int $petrinetId the Petri net associated with the new session
+    * @return int|bool the id for the new session or FALSE when a new session
+    *    could not be started
+    */
+    public static function startNewSession($userId, $petrinetId) {
+        // get the current session id
+        $currentSessionId = Logger::getCurrentSession($userId);
+        // increment the session id
+        $newSessionId     = $currentSessionId + 1;
+        // create a new session log file
+        if(!Logger::createSessionLog($userId, $newSessionId, $petrinetId)) {
+            throw new CoraException("Could not create session log file: name conflict", 500);
         }
-        $log = json_decode($log, true);
-        $sess = $log["session_counter"] - 1;
-        return $sess;
-    }
-    
-    /**
-     * Starts a new session and returns the identifier
-     * for this session.
-     *
-     * @param int $id   The user id
-     * @param int $pid  The Petri net id
-     * @return int      The new session id
-     */
-    public static function startNewSession($id, $pid)
-    {
-        $res = Logger::getCurrentSession($id);
-        $log = Logger::getLog($id);
-        $newSession = Logger::createSession($pid);
-        $contents = json_decode($log, true);        
-        $sessions = $contents["sessions"];
-        array_push($sessions, $newSession);
-        $session_counter = count($sessions);
-        $contents["sessions"] = $sessions;
-        $contents["session_counter"] = $session_counter;
-
-        Logger::writeLog($id, $contents);
-        return $res  + 1;
-    }
-    
-    public static function appendGraph($userId, $graph, $session, $pid = 0)
-    {
-        $log = Logger::getLog($userId);
-        if($log == FALSE) {
-            Logger::createLog($userId);
-            $log = Logger::getLog($userId);
-            $session = Logger::getCurrentSession($userId);
-        }
-        $contents = json_decode($log, true);
-        $sessions = $contents["sessions"];
-        if(empty($sessions[$session])) {
-            $newSession = Logger::createSession($pid);
-            $sessions[$session] = $newSession;
-        }
-        $attempts = $sessions[$session]["attempts"];
-        array_push($attempts, [ 
-            "graph" => $graph,
-            "timestamp" => Logger::timeStamp()
-            ]);
-        $sessions[$session]["attempts"] = $attempts;
-        $contents["sessions"] = $sessions;
-        Logger::writeLog($userId, $contents);
+        // increment the session counter
+        Logger::setSessionCounter($userId, $newSessionId + 1);
+        return $newSessionId;
     }
 
-    /**
-     * Get the contents of the log file for a user
-     *
-     * @param int $id   the user belonging to this log
-     * @return string   the log file's contents
-     */
-    protected static function getLog($id)
-    {
-        $logPath = Logger::getLogPath($id);
+   /**
+    * Create and write a new user log file for a specific user
+    * @param int $userId the id for the user
+    * @return array|bool returns FALSE if the log could not be created
+    *    otherwise returns the written data
+    */
+    public static function createUserLog($userId) {
+        $logPath = Logger::getUserLogPath($userId);
+        if(file_exists($logPath)) {
+            return FALSE;
+        }
+        $data = Logger::createUserLogData($userId);
+        Logger::write($logPath, $data);
+        return $data;
+    }
+
+    public static function appendGraph($userId, $graph, $session, $pid) {
+        $sessionLog = Logger::getSessionLog($userId, $session);
+        if(!$sessionLog) {
+            throw new CoraException(
+                "Could not append graph as session log file does not exist",
+                500
+            );
+        }
+        array_push($sessionLog["graphs"], [
+            "graph"     => $graph,
+            "timestamp" => Logger::timeStamp(),
+        ]);
+        Logger::write(Logger::getSessionLogPath($userId, $session), $sessionLog);
+    }
+
+   /**
+    * Create and write a new session log for a specific user and session
+    * @param int $userId the user for whom the session is to be created
+    * @param int $sessionId the identifier for the new session
+    * @param int $petrinetId the Petri net identifier for the new session
+    * @return array|bool returns FALSE if the log could not be created
+    *    otherwise returns the written data
+    */
+    protected static function createSessionLog($userId, $sessionId, $petrinetId) {
+        $logPath = Logger::getSessionLogPath($userId, $sessionId);
+        if(file_exists($logPath)) {
+            return FALSE;
+        }
+        $data = Logger::createSessionLogData($userId, $sessionId, $petrinetId);
+        Logger::write($logPath, $data);
+        return $data;
+    }
+
+   /**
+    * Get the log data for a specific user
+    * @param int $userId the user id for the user
+    * @return array|bool the log data for the user or FALSE if there
+    *    is no log for this user
+    */
+    protected static function getUserLog($userId) {
+        $logPath = Logger::getUserLogPath($userId);
         if(!file_exists($logPath)) {
             return FALSE;
         }
         $contents = file_get_contents($logPath);
-        return $contents;
+        return json_decode($contents, TRUE);
     }
 
-    /**
-     * Write data to the log file belonging to some user.
-     * Note: this data should be an (associative array), not JSON!
-     *
-     * @param int $id       The id of the user whose log file to write to
-     * @param array $data   The data to write
-     * @return void
-     */
-    protected static function writeLog($id, $data)
-    {
-        $logPath = Logger::getLogPath($id);
-        $handle = fopen($logPath, "w");
-        fwrite($handle, json_encode($data));
-        fclose($handle);
+   /**
+    * Get the session log data for a specific user and session
+    * @param int $userId The user associated with the session
+    * @param int $sessionId The session identifier
+    * @return array|bool the log data regarding the session or FALSE if
+    *    there is no log for this session
+    */
+    protected static function getSessionLog($userId, $sessionId) {
+        $logPath = Logger::getSessionLogPath($userId, $sessionId);
+        if(!file_exists($logPath)) {
+            return FALSE;
+        }
+        $contents = file_get_contents($logPath);
+        return json_decode($contents, TRUE);
     }
 
-    /**
-     * Create a session array belonging to some Petri net
-     *
-     * @param int $petrinetId   The Petri net for which to create the new session.
-     * @return void
-     */
-    protected static function createSession($petrinetId)
-    {
-        $e = [
-            "petrinet" => $petrinetId,
-            "attempts" => []
+   /**
+    * Write data (assoc array) to a file in JSON format
+    * @param string $path The file path for the file that is to be written
+    * @param array $data The data that is to be written to the file
+    * @param int $mode The mode for the JSON output (standard JSON_PRETTY_PRINT)
+    * @return void
+    */
+    protected static function write($path, $data, $mode=JSON_PRETTY_PRINT) {
+        $handler = fopen($path, "w");
+        if($handler === FALSE) {
+            return FALSE;
+        }
+        fwrite($handler, json_encode($data, $mode));
+        fclose($handler);
+        return TRUE;
+    }
+
+   /**
+    * Set a new value for the session counter belonging to a particular
+    * user.
+    * @param int $userId The id for the user
+    * @param int $counter The new value for the counter
+    * @return void
+    */
+    protected static function setSessionCounter($userId, $counter) {
+        $data = Logger::getUserLog($userId);
+        $data["session_counter"] = $counter;
+        $logPath = Logger::getUserLogPath($userId);
+        if(!file_exists($logPath)) {
+            throw new CoraException(
+                "Could not set session counter: user log file does not exist"
+            );
+        }
+        Logger::write($logPath, $data);
+    }
+
+   /**
+    * Create the user data array for the creation of a new log file
+    * @param int $userId the id for the user
+    * @return array the data array for the user
+    */
+    protected static function createUserLogData($userId) {
+        $data = [
+            "user_id"         => $userId,
+            "log_created_on"  => Logger::timeStamp(),
+            "session_counter" => 0,
         ];
-        return $e;
+        return $data;
     }
 
-    /**
-     * Get the path to the log file of a user
-     *
-     * @param int $id   The user for which to get the path
-     * @return void
-     */
-    protected static function getLogPath($id)
-    {
-        $logPath = LOG_FOLDER . DIRECTORY_SEPARATOR . $id . ".json";
+   /**
+    * Create the session data array for the creation of a new log file
+    * @param int $userId the id for the user corresponding to the new session
+    * @param int $sessionId the id for the new session that is to be created
+    * @param int $petrinetId the id for the Petri net for which
+    *    the session is started
+    * @return array the data array for the session
+    */
+    protected static function createSessionLogData($userId, $sessionId, $petrinetId) {
+        $data = [
+            "session_id"    => $sessionId,
+            "session_start" => Logger::timeStamp(),
+            "petrinet_id"   => $petrinetId,
+            "graphs"        => []
+        ];
+        return $data;
+    }
+
+   /**
+    * Get the path for the user log file for a specific user
+    * @param int $userId the id for the user associated with the log file
+    * @return string the path for the user log file
+    */
+    protected static function getUserLogPath($userId) {
+        $logPath = LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . ".json";
         return $logPath;
     }
 
-    /**
-     * Generate a timestamp
-     *
-     * @return string   the current datetime
-     */
-    protected static function timeStamp()
-    {
+   /**
+    * Get the path for the session log file for a specific session
+    * @param int $userId the id for the user associated with the session
+    * @param int $sessionid the specific session to get
+    * @return string the path for the session log file
+    */
+    protected static function getSessionLogPath($userId, $sessionId) {
+        $logPath = LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . "-" . $sessionId . ".json";
+        return $logPath;
+    }
+
+   /**
+    * Generate a timestamp
+    * @return string the timestamp
+    */
+    protected static function timeStamp() {
         return date("Y-m-d H:i:s");
     }
 }

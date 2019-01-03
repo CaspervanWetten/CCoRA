@@ -84,7 +84,7 @@ class UserController extends Controller
         ]);
 
         // create log file for this user
-        if(!Logger::createLog($id)){
+        if(!Logger::createUserLog($id)){
             // we have to undo the creation of this user if the creation of the logging did not work
             $model->delUser($id);
             throw new CoraException("Could not write logging file", 500);
