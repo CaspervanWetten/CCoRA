@@ -172,11 +172,18 @@ class PetrinetController extends Controller
 
     public function getFeedback(Request $request, Response $response, $args)
     {
-        $user  = filter_var($args['user_id'], FILTER_SANITIZE_NUMBER_INT);
+        $user  = filter_var($args['user_id'],     FILTER_SANITIZE_NUMBER_INT);
         $pid   = filter_var($args["petrinet_id"], FILTER_SANITIZE_NUMBER_INT);
-        $sid   = filter_var($args["session_id"], FILTER_SANITIZE_NUMBER_INT);
+        $sid   = filter_var($args["session_id"],  FILTER_SANITIZE_NUMBER_INT);
 
-        $model = new Models\PetrinetModel($this->container->get('db'));
+        $userModel = new Models\PetrinetModel($this->container->get('db'));
+        if(!$userModel->userExists($user)) {
+            throw new CoraException("Could not receive feedback as the user does not exist");
+        }
+        $petrinetModel = new Models\PetrinetModel($this->container->get('db'));
+        if(!$petrinetModel->petrinetExists($pid)) {
+            throw new CoraException("Could not receive feedback for Petri net as it does not exist", 404);
+        }
         $petrinet = $model->getPetrinet($pid);
         $graph = $request->getParsedBody();
 
