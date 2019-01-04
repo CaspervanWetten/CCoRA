@@ -8,8 +8,8 @@ use \Cora\Systems as Systems;
 use \Cora\Systems\Petrinet as Petrinet;
 use \Cora\Converters as Converters;
 use \Cora\SystemCheckers as Checkers;
-use \Cora\Logger as Logger;
 use \Cora\Exceptions\CoraException as CoraException;
+
 use \Slim\Http\UploadedFile as UploadedFile;
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -192,8 +192,11 @@ class PetrinetController extends Controller
         
         $checker = new Checkers\CheckCoverabilityGraph($graph, $petrinet);      
         $feedback = $checker->check();
-        
-        Logger::appendGraph($user, $graph, $sid);
+
+        $sessionModel = new Models\SessionModel();
+        if($sessionModel->appendGraph($user, $sid, $graph) === FALSE) {
+            throw new CoraException("Could not log graph", 500);
+        }
 
         return $response->withJson($feedback);
     }

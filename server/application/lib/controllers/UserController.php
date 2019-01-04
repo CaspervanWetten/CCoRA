@@ -82,13 +82,6 @@ class UserController extends Controller
             "id" => $id
         ]);
 
-        // // create log file for this user
-        // if(!Logger::createUserLog($id)){
-        //     // we have to undo the creation of this user if the creation of the logging did not work
-        //     $model->delUser($id);
-        //     throw new CoraException("Could not write logging file", 500);
-        // }
-        
         return $response->withJson([
             "id" => $id,
             "selfUrl" => $selfUrl,
