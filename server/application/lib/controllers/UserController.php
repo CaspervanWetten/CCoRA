@@ -4,7 +4,6 @@ namespace Cora\Controllers;
 
 use \Cora\Models as Models;
 use \Cora\Utils as Utils;
-use \Cora\Logger as Logger;
 use \Cora\Validator\Validator as Validator;
 use \Cora\Exceptions\CoraException as CoraException;
 use \Psr\Http\Message\RequestInterface as Request;
@@ -83,12 +82,12 @@ class UserController extends Controller
             "id" => $id
         ]);
 
-        // create log file for this user
-        if(!Logger::createUserLog($id)){
-            // we have to undo the creation of this user if the creation of the logging did not work
-            $model->delUser($id);
-            throw new CoraException("Could not write logging file", 500);
-        }
+        // // create log file for this user
+        // if(!Logger::createUserLog($id)){
+        //     // we have to undo the creation of this user if the creation of the logging did not work
+        //     $model->delUser($id);
+        //     throw new CoraException("Could not write logging file", 500);
+        // }
         
         return $response->withJson([
             "id" => $id,

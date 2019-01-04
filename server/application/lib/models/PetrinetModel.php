@@ -4,9 +4,9 @@ namespace Cora\Models;
 
 use \Ds\Map as Map;
 use \Cora\Systems as Systems;
-use \Cora\querybuilder\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder as QueryBuilder;
 
-class PetrinetModel extends Model
+class PetrinetModel extends DatabaseModel
 {
     /**
      * Get a registered petrinet

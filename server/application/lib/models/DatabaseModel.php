@@ -6,9 +6,9 @@
 
 namespace Cora\Models;
 
-use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder as QueryBuilder;
 
-abstract class Model
+abstract class DatabaseModel
 {
     /**
      * @var $db PDO object

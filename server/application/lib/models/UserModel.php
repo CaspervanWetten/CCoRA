@@ -2,9 +2,9 @@
 
 namespace Cora\Models;
 
-use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder as QueryBuilder;
 
-class UserModel extends Model
+class UserModel extends DatabaseModel
 {
     /**
      * Get all users

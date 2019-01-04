@@ -21,12 +21,13 @@ class SessionController extends Controller
     public function getCurrentSession(Request $request, Response $response, $args)
     {
         $id = filter_var($args["id"], FILTER_SANITIZE_NUMBER_INT);
-        $model = new Models\UserModel($this->container->get("db"));
-        if(!$model->userExists($id)) {
+        $userModel = new Models\UserModel($this->container->get("db"));
+        if(!$userModel->userExists($id)) {
             throw new CoraException("This user does not exist", 404);
         }
-        $session = Logger::getCurrentSession($id);
-        if($session < 0) {
+        $sessionModel = new Models\SessionModel();
+        $session = $sessionModel->getCurrentSession($id);
+        if($session === FALSE) {
             throw new CoraException("A session for this user has not yet been created", 404);
         }
         return $response->withJson([
@@ -46,15 +47,16 @@ class SessionController extends Controller
     {
         $id = filter_var($args["id"], FILTER_SANITIZE_NUMBER_INT);
         $pid = filter_var($args["pid"], FILTER_SANITIZE_NUMBER_INT);
-        $model = new Models\UserModel($this->container->get("db"));
-        if(!$model->userExists($id)) {
+        $userModel = new Models\UserModel($this->container->get("db"));
+        if(!$userModel->userExists($id)) {
             throw new CoraException("Could not start a session for this user as it does not exist", 404);
         }
-        $model = new Models\PetrinetModel($this->container->get("db"));
-        if(!$model->petrinetExists($pid)) {
+        $petrinetModel = new Models\PetrinetModel($this->container->get("db"));
+        if(!$petrinetModel->petrinetExists($pid)) {
             throw new CoraException("Could not start a session for this Petri net as it does not exist", 404);
         }
-        $session = Logger::startNewSession($id, $pid);
+        $sessionModel = new Models\SessionModel();
+        $session = $sessionModel->startNewSession($id, $pid);
         return $response->withJson([
             "session_id" => $session
         ]);
