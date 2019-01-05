@@ -229,15 +229,5 @@ class PetrinetController extends Controller
 
         return $res;
     }
-    /**
-     * Encodes an image given a filename and format in base64.
-     * Function was written by "luke", @see http://php.net/manual/en/function.base64-encode.php
-     **/
-    protected function base64EncodeImage ($filename ,$filetype ) {
-        if ($filename) {
-            $imgbinary = fread(fopen($filename, "r"), filesize($filename));
-            return 'data:image/' . $filetype . ';base64,' . base64_encode($imgbinary);
-        }
-    }
 }
 ?>
