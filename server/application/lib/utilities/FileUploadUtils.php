@@ -27,17 +27,4 @@ class FileUploadUtils
             return $errors[$errorCode];
         return "Unknown error";
     }
-    // 
-    // /**
-    //  * Move a file to the supplied directory and return its (new) file name
-    //  * @param  UploadedFile $file   The uploaded file object
-    //  * @param  string $directory    The directory where the file needs to be
-    //  * @return string               The new file name
-    //  */
-    // public static function moveUploadedFile($file, $directory)
-    // {
-    //     $filename = $file->getClientFilename();
-    //     $file->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
-    //     return $filename;
-    // }
 }
