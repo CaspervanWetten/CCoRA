@@ -35,22 +35,6 @@ abstract class Controller
         $handler = $this->container->get('notFoundHandler');
         return $handler($request, $response);
     }
-    
-    /**
-     * Move a file to the supplied directory and return its (new) file name
-     * @param  UploadedFile $file   The uploaded file object
-     * @param  string $directory    The directory where the file needs to be
-     * @return string               The new file name
-     */
-    protected static function moveUploadedFile($file, $directory)
-    {
-        if (!is_dir($directory) && !file_exists($directory))
-            Utils\FileUtils::mkdir($directory);
-
-        $filename = $file->getClientFilename();
-        $file->moveTo($directory . DIRECTORY_SEPARATOR . $filename);
-        return $filename;
-    }
 }
 
  ?>

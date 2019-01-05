@@ -135,12 +135,19 @@ class PetrinetController extends Controller
             }
             // correct file extension, place in file system
             try {
-                $filename = $this->moveUploadedFile(
-                    $file,
-                    USER_FOLDER . DIRECTORY_SEPARATOR . $userId
-                );
-                // generate image
-                $k = new Converters\LolaToPetrinet(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
+                // file name for temp file
+                $lolaFilename = USER_FOLDER
+                    . DIRECTORY_SEPARATOR
+                    . $userId
+                    . DIRECTORY_SEPARATOR
+                    . date("Y-m-d-H:i:s");
+                // directory name for the temp file
+                $userDir = USER_FOLDER . DIRECTORY_SEPARATOR . $userId;
+                // create directory
+                Utils\FileUtils::mkdir($userDir);
+                // move uploaded file to directory with new file name
+                $file->moveTo($lolaFilename);
+                $k = new Converters\LolaToPetrinet($lolaFilename);
                 $petrinet = $k->convert();
 
                 $translate = true;
@@ -159,8 +166,8 @@ class PetrinetController extends Controller
                 ]);
             } finally {
                 // cleanup the file system.
-                unlink(USER_FOLDER . DIRECTORY_SEPARATOR . $userId . DIRECTORY_SEPARATOR . $filename);
-                rmdir(USER_FOLDER . DIRECTORY_SEPARATOR . $userId);
+                unlink($lolaFilename);
+                rmdir($userDir);
             }
 
             return $response;
