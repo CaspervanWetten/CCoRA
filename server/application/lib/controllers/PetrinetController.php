@@ -185,7 +185,7 @@ class PetrinetController extends Controller
 
         $userModel = new Models\UserModel($this->container->get('db'));
         if(!$userModel->userExists($user)) {
-            throw new CoraException("Could not receive feedback as the user does not exist");
+            throw new CoraException("Could not receive feedback as the user does not exist", 404);
         }
         $petrinetModel = new Models\PetrinetModel($this->container->get('db'));
         if(!$petrinetModel->petrinetExists($pid)) {
