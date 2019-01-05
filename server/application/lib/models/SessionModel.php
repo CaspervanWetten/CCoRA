@@ -60,7 +60,10 @@ class SessionModel
         if($sessionLog === FALSE) {
             return FALSE;
         }
-        array_push($sessionLog["graphs"], $graph);
+        array_push($sessionLog["graphs"], [
+            "graph"     => $graph,
+            "timestamp" => SessionModel::timeStamp()
+            ]);
         return SessionModel::write(
             SessionModel::getSessionLogPath($userId, $sessionId),
             $sessionLog
