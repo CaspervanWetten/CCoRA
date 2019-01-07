@@ -246,7 +246,7 @@ class PetrinetModel extends DatabaseModel
         $statement->bindValue(":pid", $petrinetId, \PDO::PARAM_INT);
         $markingId = $this->executeQuery($statement);
 
-        $marking = $petrinet->getInitialMarking();
+        $marking = $petrinet->getInitial();
         $builder = new QueryBuilder();
         $builder->insert(PETRINET_MARKING_PAIR_TABLE, ["marking", "place", "tokens"]);
         $markingValues = [];

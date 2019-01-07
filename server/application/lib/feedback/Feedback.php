@@ -16,7 +16,7 @@ class Feedback
         $this->specific = new Map();
     }
 
-    public function addFeedback($code, $element = NULL)
+    public function add($code, $element = NULL)
     {
         if(is_null($element)) {
             $this->general->add($code);
@@ -29,7 +29,7 @@ class Feedback
         }
     }
 
-    public function getFeedback($element = NULL)
+    public function get($element = NULL)
     {
         if(is_null($element)) {
             return $this->general;
@@ -43,7 +43,7 @@ class Feedback
         }
     }
 
-    public function removeFeedback($code, $element)
+    public function remove($code, $element)
     {
         if($this->specific->hasKey($element)) {
             $f = $this->specific->get($element);

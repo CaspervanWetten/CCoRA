@@ -10,7 +10,7 @@ class Flow
     public function __construct($from, $to)
     {
         $this->from = $from;
-        $this->to = $to;
+        $this->to   = $to;
     }
 }
  ?>

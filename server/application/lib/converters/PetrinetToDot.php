@@ -124,7 +124,7 @@ class PetrinetToDot extends Converter
 
     protected function markingToDotStringArray()
     {
-        $marking = $this->petrinet->getInitialMarking();
+        $marking = $this->petrinet->getInitial();
         $s = [];
         foreach($marking as $place => $tokens)
         {

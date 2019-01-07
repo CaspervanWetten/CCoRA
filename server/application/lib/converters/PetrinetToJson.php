@@ -17,7 +17,7 @@ class PetrinetToJson extends Converter {
         $places = $p->getPlaces();
         $transitions = $p-> getTransitions();
         $flows = $p->getFlows();
-        $initMarking = $p->getInitialMarking();
+        $initMarking = $p->getInitial();
 
         $f = [];
         foreach($flows as $pair => $weight) {

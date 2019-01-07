@@ -15,6 +15,9 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
 
     public function get($place)
     {
+        if(!isset($this->vector[$place])) {
+            return 0;
+        }
         return $this->vector[$place];
     }
     
@@ -27,7 +30,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         return $m;
     }
 
-    public function unboundedPlaces()
+    public function unbounded()
     {
         $res = new Set();
         foreach($this->vector as $place => $tokens) {
@@ -38,7 +41,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         return $res;
     }
 
-        /**
+    /**
      * Does this marking cover another marking?
      *
      * @param Marking $other
@@ -67,7 +70,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
      * @param Petrinet $petrinet
      * @return Set of places
      */
-    public function coveredPlaces($other, $petrinet)
+    public function covered($other, $petrinet)
     {
         $places = $petrinet->getPlaces();
         $res = new Set();

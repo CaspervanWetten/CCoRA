@@ -29,7 +29,7 @@ class PetrinetTranslator extends Converter
         $this->petrinet->setPlaces($places);
         $this->petrinet->setTransitions($transitions);
         $this->petrinet->setFlows($flows);
-        $this->petrinet->setInitialMarking($marking);
+        $this->petrinet->setInitial($marking);
 
         return $this->petrinet;
     }
@@ -100,7 +100,7 @@ class PetrinetTranslator extends Converter
 
     protected function convertMarking()
     {
-        $marking = $this->petrinet->getInitialMarking();
+        $marking = $this->petrinet->getInitial();
         $result = [];
         foreach($marking as $place => $tokens) {
             $p = $place;

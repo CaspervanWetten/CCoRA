@@ -2,21 +2,20 @@
 
 namespace Cora\Systems;
 
-use \Cora\Enumerators\GraphSetType as GraphSetType;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
 class Graph
 {
-    public $vertexes;
-    public $edges;
-    public $initial;
+    protected $vertexes;
+    protected $edges;
+    protected $initial;
 
-    public function __construct($vertexes = NULL, $edges = NULL, $initialMarking = NULL)
+    public function __construct($vertexes = NULL, $edges = NULL, $initial = NULL)
     {
         $this->vertexes = new Map();
-        $this->edges = new Map();
-        $this->initial = NULL;
+        $this->edges    = new Map();
+        $this->initial  = NULL;
 
         if(!is_null($vertexes)) {
             foreach($vertexes as $id => $vertex) {
@@ -30,70 +29,69 @@ class Graph
             }
         }
 
-        if(!is_null($initialMarking)) {
-            $this->initial = $initialMarking;
+        if(!is_null($initial)) {
+            $this->initial = $initial;
         }
     }
 
+   /**
+    * Add a vertex (node) to the graph
+    * @param int $id The identifier for the vertex
+    * @param mixed $vertex The vertex to add
+    * @return void
+    **/
+    public function addVertex($id, $vertex)
+    {
+        $this->vertexes->put($id, $vertex);
+    }
+
+   /**
+    * Add an edge to the graph
+    * @param int $id The identifier for the edge
+    * @param Edge $edge The edge to add
+    * @return void
+    **/
     public function addEdge($id, $edge)
     {
         $this->edges->put($id, $edge);
     }
 
-    public function addMarking($id, $marking)
+   /**
+    * Get all the edges pointing to the given vertex
+    * @param int $id The identifier for the vertex
+    * @return Map Map: EdgeId -> Edge
+    **/
+    public function preset($id)
     {
-        $this->markings->put($id, $marking);
-    }
-
-    public function getPostSet($id, $mode = GraphSetType::Vertex)
-    {
-        $edges = $this->edges;
         $res = new Map();
-        foreach($edges as $edgeId => $edge)
-        {
-            if($edge->fromId == $id) {
-                $element;
-                switch($mode) {
-                    case GraphSetType::Vertex:
-                        $element = $edge->toId;
-                        break;
-                    case GraphSetType::Edge:
-                        $element = $edge;
-                        break;
-                    default:
-                        $element = $edge->toId;
-                }
-                $res->put($edgeId, $element);
-            }
-        }
-        return $res;
-    }
-
-    public function getPreSet($id, $mode = GraphSetType::Vertex)
-    {
-        $edges = $this->edges;
-        $res = new Map();
-        foreach($edges as $edgeId => $edge)
-        {
-            if($edge->toId == $id) {
-                $element;
-                switch($mode) {
-                    case GraphSetType::Vertex:
-                        $element = $edge->fromId;
-                        break;
-                    case GraphSetType::Edge:
-                        $element = $edge;
-                        break;
-                    default:
-                        $element = $edge->fromId;
-                }
-		    $res->put($edgeId, $element);
+        foreach($this->edges as $edgeId => $edge) {
+            if($edge->to == $id) {
+                $res->put($edgeId, $edge);
             }
         }
         return $res;
     }
     
-    public function getInitialVertex()
+   /**
+    * Get all the edges pointing from the given vertex
+    * @param int $id The identifier for the vertex
+    * @return Map Map: EdgeId -> Edge
+    **/
+    public function postset($id)
+    {
+        $res = new Map();
+        foreach($this->edges as $edgeId => $edge) {
+            if($edge->from == $id) {
+                $res->put($edgeId, $edge);
+            }
+        }
+        return $res;
+    }
+
+   /**
+    * Get the initial vertex (by id) of the graph
+    **/
+    public function getInitial()
     {
         if(!is_null($this->initial)) {
             return $this->initial;
@@ -101,14 +99,20 @@ class Graph
         return NULL;
     }
 
-    public function getVertex($id)
+   /**
+    * Get the value of belonging to a vertex id
+    **/
+    public function getKey($id)
     {
-        if($this->vertexes->hasKey($id)) {
+        if(!is_null($id) && $this->vertexes->hasKey($id)) {
             return $this->vertexes->get($id);
         }
         return NULL;
     }
 
+   /**
+    * Get the vertex map
+    **/
     public function getVertexes()
     {
         return $this->vertexes;

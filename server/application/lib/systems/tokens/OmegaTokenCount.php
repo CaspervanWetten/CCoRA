@@ -9,17 +9,11 @@ class OmegaTokenCount extends TokenCount
 
     public function greater($b)
     {
-        // if($b instanceof IntegerTokenCount) {
-        //     return true;
-        // }
         return true;
     }
 
     public function geq($b)
     {
-        // if($b instanceof IntegerTokenCount) {
-        //     return true;
-        // }
         return true;
     }
 

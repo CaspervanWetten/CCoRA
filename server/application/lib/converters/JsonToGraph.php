@@ -24,7 +24,7 @@ class JsonToGraph extends Converter
         $states = $json["states"];
         $edges  = $json["edges"];
         $initial = NULL;
-        if(isset($json["initial"])) {
+        if(isset($json["initial"]) && !is_null($json["initial"]["id"])) {
             $initial = intval($json["initial"]["id"]);
         }
 

@@ -99,7 +99,6 @@ class PetrinetController extends Controller
         }
         $petrinet = $model->getPetrinet($id);
         $image = $this->generateImage($petrinet);
-
         return $response->withJson($image);
     }
 
@@ -194,9 +193,9 @@ class PetrinetController extends Controller
         $petrinet = $petrinetModel->getPetrinet($pid);
         $graph = $request->getParsedBody();
 
-        $converter = new Converters\JsonToCoverabilityGraph($graph, $petrinet);
+        $converter = new Converters\JsonToGraph($graph, $petrinet);
         $graph = $converter->convert();
-        
+
         $checker = new Checkers\CheckCoverabilityGraph($graph, $petrinet);      
         $feedback = $checker->check();
 

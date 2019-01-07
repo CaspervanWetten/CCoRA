@@ -25,6 +25,7 @@ class FeedbackCode extends Enumerators\Enumerator
     const ENABLED_INCORRECT_POST           = 441;
     const DISABLED                         = 442;
     const DISABLED_CORRECT_POST            = 443;
+    const MISSED_SELF_LOOP                 = 444;
 }
 
 ?>

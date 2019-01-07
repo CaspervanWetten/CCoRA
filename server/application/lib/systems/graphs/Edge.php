@@ -4,13 +4,13 @@ namespace Cora\Systems;
 
 class Edge
 {
-    public $fromId;
-    public $toId;
+    public $from;
+    public $to;
     public $label;
 
     public function __construct($from, $to, $label = "") {
-        $this->fromId = $from;
-        $this->toId = $to;
+        $this->from  = $from;
+        $this->to    = $to;
         $this->label = $label;
     }
 }

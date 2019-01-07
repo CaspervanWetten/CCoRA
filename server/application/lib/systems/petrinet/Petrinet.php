@@ -3,25 +3,26 @@
 namespace Cora\Systems\Petrinet;
 
 use \Cora\Systems as Systems;
+
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
 class Petrinet
 {
-    public $places;         // set of strings
-    public $transitions;    // set of strings
-    public $flows;          // bag of flows ((P x T) U (T x P) -> N)
-    public $initialMarking; // set of pairs (place, tokens)
+    protected $places;         // set of strings
+    protected $transitions;    // set of strings
+    protected $flows;          // bag of flows ((P x T) U (T x P) -> N)
+    protected $initialMarking; // set of pairs (place, tokens)
 
     public function __construct($places=null, $transitions=null, $flows=null, $initial = NULL)
     {
-        $places = is_null($places) ? new Set() : $places;
+        $places      = is_null($places) ? new Set() : $places;
         $transitions = is_null($transitions) ? new Set() : $transitions;
-        $flows = is_null($flows) ? new Map() : $flows;
+        $flows       = is_null($flows) ? new Map() : $flows;
 
-        $places = $places instanceof Set ? $places : new Set($places);
+        $places      = $places instanceof Set ? $places : new Set($places);
         $transitions = $transitions instanceof Set ? $transitions : new Set($transitions);
-        $flows = $flows instanceof Map ? $flows : new Map($flows);
+        $flows       = $flows instanceof Map ? $flows : new Map($flows);
 
         $disjoint = ($places->intersect($transitions))->isEmpty();
         if(!$disjoint) {
@@ -31,18 +32,23 @@ class Petrinet
         $this->places = $places;
         $this->transitions = $transitions;
         $this->flows = $flows;
-        $this->setInitialMarking($initial);
+        $this->setInitial($initial);
     }
 
-    public function isEnabled($marking, $transition)
+   /**
+    * Determine whether a transition is enabled given a marking
+    * @param Marking $marking The marking in question
+    * @param string $transition The transition to check
+    * @return bool Whether the transition is enabled
+    **/
+    public function enabled($marking, $transition)
     {
-        $preWeights = $this->getTransitionPreSetWeights($transition);
+        $preset = $this->preset($transition);
 
         $result = true;
-        foreach($preWeights as $place => $weight) {
+        foreach($preset as $place => $weight) {
             $m = $marking->get($place);
-            $w = $weight;
-            if ($m instanceof Systems\IntegerTokenCount && $m->value < $w) {
+            if ($m instanceof Systems\IntegerTokenCount && $m->value < $weight) {
                 $result = false;
                 break;
             }
@@ -50,29 +56,40 @@ class Petrinet
         return $result;
     }
 
+   /**
+    * Fire a transition in a particular marking and get a new marking
+    * The transition is _not_ checked for enabledness
+    * @param Marking $marking The marking in question
+    * @param string $transition The transition to fire
+    * @return Marking The resulting marking
+    **/
     public function fire($marking, $transition)
     {
         $arr = [];
-        $pre = $this->getTransitionPreSetWeights($transition);
-        $post = $this->getTransitionPostSetWeights($transition);
+        $pre = $this->preset($transition);
+        $post = $this->postset($transition);
         
         foreach($marking as $place => $tokens) {
-            $wpre = $wpost = 0;
-            if($pre->hasKey($place)) $wpre = $pre->get($place);
-            if($post->hasKey($place)) $wpost = $post->get($place);
-            $newTokens = $tokens->add($wpost)->subtract($wpre)->__toString();
+            $wpre = $pre->get($place, 0);
+            $wpost = $post->get($place, 0);
+            $newTokens = $tokens->add($wpost)->subtract($wpre);
             $arr[$place] = $newTokens;
         }
         $m = new Systems\Marking($this, $arr);
         return $m;
     }
 
+   /**
+    * Get a set of all enabled transitions for a given marking
+    * @param Marking $marking The marking in question
+    * @return Set The set of enabled markings
+    **/
     public function enabledTransitions($marking)
     {
         $res = new Set();
         $transitions = $this->transitions;
         foreach($transitions as $i => $transition) {
-            if ($this->isEnabled($marking, $transition)) {
+            if ($this->enabled($marking, $transition)) {
                 $res->add($transition);
             }
         }
@@ -84,153 +101,52 @@ class Petrinet
      * given marking. Only enabled transitions are fired.
      *
      * @param Marking $marking
-     * @return Set
+     * @return Map Map: Transition -> Marking
      */
-    public function getMarkingPostSet($marking)
+    public function reachable($marking)
     {
-        $result = new Set();
-        $transitions = $this->getTransitions();
-        foreach($transitions as $i => $transition) {
-            if($this->isEnabled($marking, $transition)) {
-                $newmarking = $this->fire($marking, $transition);
-                $result->add($newmarking);
-            }
+        $result = new Map();
+        $transitions = $this->enabledTransitions($marking);
+        foreach($transitions as $i => $t) {
+            $newMarking = $this->fire($marking, $t);
+            $result->put($t, $newMarking);
         }
         return $result;
     }
 
-    /**
-     * Get the markings which can be reached by firing all transitions from the
-     * given marking. Only enabled transitions are fired. For each reached
-     * marking the fired transition is included.
-     *
-     * @param Marking $marking
-     * @return Set
-     */
-    public function getMarkingPostSetWithTransition($marking)
-    {
-        $result = new Set();
-        $transitions = $this->getTransitions();
-        foreach($transitions as $i => $transition) {
-            if($this->isEnabled($marking, $transition)) {
-                $newMarking = $this->fire($marking, $transition);
-                $result->add(new MarkingTransitionPair($newMarking, $transition));
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Get all the places in the preset of a supplied transition
-     *
-     * @param string $transition
-     * @return Set
-     */
-    protected function getTransitionPreSet($transition)
-    {
-        $f = $this->getFlows();
-        $s = new Set();
+   /**
+    * Get the preset of a particular element
+    * @param string $el The element in question (place or transition)
+    * @return Map Map: Element -> Weight
+    **/
+    public function preset($el) {
+        $f = $this->flows;
+        $s = new Map();
         foreach($f as $flow => $weight) {
-            if($flow->to == $transition) {
-                $s->add($flow->from);
+            if($flow->to == $el) {
+                $s->put($flow->from, $weight);
             }
         }
         return $s;
     }
 
-    /**
-     * Get all the places in the postset of a supplied transition
-     *
-     * @param string $transition
-     * @return Set
-     */
-    protected function getTransitionPostSet($transition)
-    {
-        $f = $this->getFlows();
-        $s = new Set();
+   /**
+    * Get the postset of a particular element
+    * @param string $el The element in question (place or transition)
+    * @return Map Map: Element -> weight
+    **/
+    public function postset($el) {
+        $f = $this->flows;
+        $s = new Map();
         foreach($f as $flow => $weight) {
-            if($flow->from == $transition) {
-                $s->add($flow->to);
+            if($flow->from == $el) {
+                $s->put($flow->to, $weight);
             }
         }
         return $s;
     }
 
-    /**
-     * Get all incoming flows for the supplied transition
-     *
-     * @param string $transition
-     * @return Set
-     */
-    protected function getTransitionPreSetFlows($transition)
-    {
-        $f = $this->getFlows();
-        $s = new Set();
-        foreach($f as $flow => $weight) {
-            if($flow->to == $transition) {
-                $s->add($flow);
-            }
-        }
-        return $s;
-    }
-
-    /**
-     * Get all outgoing flows for the supplied transition
-     *
-     * @param string $transition
-     * @return Set
-     */
-    protected function getTransitionPostSetFlows($transition)
-    {
-        $f = $this->getFlows();
-        $s = new Set();
-        foreach($f as $flow => $weight) {
-            if($flow->from == $transition) {
-                $s->add($flow);
-            }
-        }
-        return $s;
-    }
-
-    /**
-     * Get the places in the preset of the transition with the weight of flow.
-     * Returns a Map which is indexed by the place and maps to the weight.
-     *
-     * @param string $transition
-     * @return Map
-     */
-    protected function getTransitionPreSetWeights($transition)
-    {
-        $f = $this->getFlows();
-        $map = new Map();
-        foreach($f as $flow => $weight) {
-            if($flow->to == $transition) {
-                $map->put($flow->from, $weight);
-            }
-        }
-        return $map;
-    }
-
-    /**
-     * Get the places in the postset of the transition with the weight of the flow.
-     * Returns a Map which is indexed by the places and maps to the weights.
-     *
-     * @param string $transition
-     * @return Map
-     */
-    protected function getTransitionPostSetWeights($transition)
-    {
-        $f = $this->getFlows();
-        $map = new Map();
-        foreach($f as $flow => $weight) {
-            if($flow->from == $transition) {
-                $map->put($flow->to, $weight);
-            }
-        }
-        return $map;
-    }
-
-    // GETTERS AND SETTERS
+   // GETTERS AND SETTERS
 
     public function getPlaces()
     {
@@ -259,41 +175,21 @@ class Petrinet
         return $this->flows;
     }
 
-    public function SetFlows($flows)
+    public function setFlows($flows)
     {
         $f = $flows instanceof Map ? $flows : new Map($flows);
         $this->flows = $f;
     }
 
-    public function getInitialMarking()
+    public function getInitial()
     {
         return $this->initialMarking;
     }
 
-    public function setInitialMarking($marking)
+    public function setInitial($marking)
     {
         $marking = new Systems\Marking($this, $marking);
         $this->initialMarking = $marking;
-    }
-}
-
-class MarkingTransitionPair implements \Ds\Hashable
-{
-    public $marking;
-    public $transition;
-    public function __construct($marking, $transition)
-    {
-        $this->marking = $marking;
-        $this->transition = $transition;
-    }
-
-    public function hash()
-    {
-        return sprintf("(%s, %s)", $this->marking, $this->transition);
-    }
-
-    public function equals($other):bool{
-        return $this->hash() == $other->hash();
     }
 }
 
