@@ -5,7 +5,7 @@ namespace Cora\Systems;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
-class Graph
+class Graph implements \JsonSerializable
 {
     protected $vertexes;
     protected $edges;
@@ -86,6 +86,20 @@ class Graph
             }
         }
         return $res;
+    }
+
+   /**
+    * Format the data for JSON representation. Used for
+    * json_encode function
+    * @return array Array of data to covert to json
+    **/
+    public function jsonSerialize() {
+        $result = [
+            "vertexes" => $this->vertexes->toArray(),
+            "edges"    => $this->edges->toArray(),
+            "initial"  => $this->initial
+        ];
+        return $result;
     }
 
    /**

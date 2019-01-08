@@ -191,9 +191,9 @@ class PetrinetController extends Controller
             throw new CoraException("Could not receive feedback for Petri net as it does not exist", 404);
         }
         $petrinet = $petrinetModel->getPetrinet($pid);
-        $graph = $request->getParsedBody();
+        $jsonGraph = $request->getParsedBody();
 
-        $converter = new Converters\JsonToGraph($graph, $petrinet);
+        $converter = new Converters\JsonToGraph($jsonGraph, $petrinet);
         $graph = $converter->convert();
 
         $checker = new Checkers\CheckCoverabilityGraph($graph, $petrinet);      

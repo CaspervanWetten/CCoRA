@@ -66,7 +66,8 @@ class SessionModel
             ]);
         return SessionModel::write(
             SessionModel::getSessionLogPath($userId, $sessionId),
-            $sessionLog
+            $sessionLog,
+            0
         );
     }
 
