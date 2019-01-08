@@ -2,9 +2,11 @@
 
 namespace Cora\SystemCheckers;
 
-use \Cora\Feedback as Feedback;
 use \Cora\Systems as Systems;
-use \Cora\Enumerators\GraphSetType as GraphSetType;
+use \Cora\Feedback\Feedback as Feedback;
+use \Cora\Feedback\FeedbackCode as FeedbackCode;
+
+use \Cora\Utils as Utils;
 
 use \Ds\Queue as Queue;
 use \Ds\Set as Set;
@@ -14,272 +16,223 @@ class CheckCoverabilityGraph extends SystemChecker
 {
     public $petrinet;
 
-    public function __construct($graph, $petrinet)
-    {
+    public function __construct($graph, $petrinet) {
         parent::__construct($graph);
         $this->petrinet = $petrinet;
     }
 
-    public function check()
-    {
+    public function check() {
         $petrinet = $this->petrinet;
         $graph    = $this->system;
 
-        $initialMarking = $petrinet->getInitialMarking();
-        $initialVertex  = $graph->getInitialVertex();
-
-        $feedback = new Feedback\Feedback();
-
-        // no initial state supplied, nowhere to go from here
-        if(!isset($initialVertex)) {
-            $feedback->addFeedback(Feedback\FeedbackCode::NO_INITIAL_STATE);
+        $feedback = new Feedback();
+        // check the initial marking
+        $initial  = $graph->getKey($graph->getInitial());
+        // no initial marking supplied
+        if(is_null($initial)) {
+            $feedback->add(FeedbackCode::NO_INITIAL_STATE);
             return $feedback;
         }
-        // wrong initial state, cut off.
-        if(!$initialMarking->equals($graph->getVertex($initialVertex)))
-        {
-            $feedback->addFeedback(Feedback\FeedbackCode::INCORRECT_INITIAL_STATE);
+        // compare initial markings
+        $initialMarking = $petrinet->getInitial();
+        if(!$initial->equals($initialMarking)) {
+            $feedback->add(FeedbackCode::INCORRECT_INITIAL_STATE);
             return $feedback;
         }
-        // correct initial state, continue
-        $feedback->addFeedback(Feedback\FeedbackCode::CORRECT_INITIAL_STATE);
-        $feedback->addFeedback(Feedback\FeedbackCode::REACHABLE_FROM_PRESET, $initialVertex);
-
-        // maintain sets of states that are visited and should still be visited
-        $grey = new Set();
+        $feedback->add(FeedbackCode::CORRECT_INITIAL_STATE);
+        $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $graph->getInitial());
+        // maintain a map marking -> Set<id> to find all the vertexes belonging
+        // to a marking, to detect duplicates
+        $discovered = new Map();
+        foreach($graph->getVertexes() as $id => $marking) {
+            $discovered->put($marking, new Set());
+        }
+        // init variables for bfs
+        $grey  = new Set();
         $black = new Set();
         $queue = new Queue();
-        
-        // maintain a list of markings we have discovered, to detect duplicates
-        $discoveredMarkings = new Map();
-        $vertexes = $graph->getVertexes();
-        foreach($vertexes as $i => $vertex) {
-            $discoveredMarkings->put($vertex, new Set());
-        }
+        $queue->push($graph->getInitial());
+        $grey->add($graph->getInitial());
+        // start bfs
+        while(!$queue->isEmpty()) {
+            // retrieve the current node of the graph
+            $currentId      = $queue->pop();
+            $currentMarking = $graph->getKey($currentId);
+            // map of reachable markings according to the Petri net
+            $reachable      = $petrinet->reachable($currentMarking);
+            // map of reachable markings according to the graph
+            $postset        = $graph->postset($currentId);
 
-        // start with the initial marking
-        $queue->push($initialVertex);
-        $grey->add($initialVertex);
+            // add the current id to the discovery set for the
+            // corresponding marking
+            $discovered->get($currentMarking)->add($currentId);
+            // get the set of all enabled transtions from the current marking
+            $enabled = $reachable->keys();
+            // maintain a set of all fired transitions from the current node
+            $fired = new Set();
 
-        while(!$queue->isEmpty())
-        {            
-            $currentVertex  = $queue->pop();
-            $currentMarking = $graph->getVertex($currentVertex);
-            $reachables     = $petrinet->getMarkingPostSetWithTransition($currentMarking);
-            $post           = $graph->getPostSet($currentVertex, GraphSetType::Edge);
-         
-            $s = $discoveredMarkings->get($currentMarking);
-            $s->add($currentVertex);
-            $discoveredMarkings->put($currentMarking, $s);
-
-            // which transitions are enabled
-            $enabledTransitions = $petrinet->enabledTransitions($currentMarking);
-            $firedTransitions = new Set();
-
-            foreach($post as $edgeId => $edge) {
-                $to = $edge->toId;
-                $label = $edge->label;
-                $discoveredMarking = $graph->getVertex($to);
-
-                $pair = new \Cora\Systems\Petrinet\MarkingTransitionPair($discoveredMarking->asMarking($petrinet), $label);
-                // correct
-                // no new unbounded places detected
-                if ($reachables->contains($pair)) {
-                    $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_CORRECT_POST, $edgeId);
-                    $feedback->addFeedback(Feedback\FeedbackCode::REACHABLE_FROM_PRESET, $to);
+            // add feedback for all the nodes in the postset
+            foreach($postset as $id => $edge) {
+                // add postset to frontier
+                if(!$black->contains($edge->to) && !$grey->contains($edge->to)) {
+                    $queue->push($edge->to);
+                    $grey->add($edge->to);
                 }
-                else {
-                    // which places are marked as covered by the discovered marking
-                    $up = $pair->marking->unboundedPlaces();
-                    
-                    $correctMarking = $discoveredMarking;
-                    if($enabledTransitions->contains($label))
-                        $correctMarking = $petrinet->fire($currentMarking, $label);
+                // mark duplicate edges
+                if($fired->contains($edge->label)) {
+                    $feedback->add(FeedbackCode::DUPLICATE_EDGE, $id);
+                    foreach($postset as $eid => $ped) {
+                        if($edge->label == $ped->label) {
+                            $feedback->add(FeedbackCode::DUPLICATE_EDGE, $eid);
+                        }
+                    }
+                }
+                // add the current label the the fired set
+                $fired->add($edge->label);
+                // what marking has been discovered from the current one
+                $discoveredMarking = $graph->getKey($edge->to);
+                // can the transtion (label) fire?
+                $isEnabled = $enabled->contains($edge->label);
+                // discovered marking is reachable with correct label
+                // does not include self loops
+                if ($isEnabled && !$discoveredMarking->equals($currentMarking) &&
+                    $reachable->get($edge->label)->equals($discoveredMarking)) {
+                    $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
+                    $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
+                    continue;
+                }
+                // self loops
+                if ($discoveredMarking->equals($currentMarking)) {
+                    $isEnabled = $enabled->contains($edge->label);
+                    $correctPost = $isEnabled &&
+                        $reachable->get($edge->label)->equals($discoveredMarking);
+
+                    // correctPost and self loop
+                    if ($correctPost && $edge->from == $edge->to) {
+                        $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
+                    }
+                    // correctPost but no self loop
+                    else if($correctPost) {
+                        $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
+                    }
                     else {
-                        foreach($enabledTransitions as $i => $trans) {
-                            $m = $petrinet->fire($currentMarking, $trans);
-                            if($m->markUnbounded($petrinet, $up) == $discoveredMarking->asMarking($petrinet)) {
-                                $correctMaking = $m;
-                                break;
-                            }
+                        if ($isEnabled) {
+                            $feedback->add(FeedbackCode::ENABLED_INCORRECT_POST, $id);
+                        } else {
+                            $feedback->add(FeedbackCode::DISABLED, $id);
                         }
                     }
-                    // enforce loop
-                    $skip = false;
-                    if($correctMarking == $currentMarking->asMarking($petrinet) && $enabledTransitions->contains($label)) {
-                        if($discoveredMarking == $currentMarking) {
-                            if($enabledTransitions->contains($label)) {
-                                $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_CORRECT_POST, $edgeId);
-                            }
-                        }
-                        else {
-                            $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_INCORRECT_POST, $edgeId);
-                        }
-                        $skip = true;
+                    continue;
+                }
+                // since the Petri net does not know the history of the graph the
+                // Petri net cannot generate markings with new places marked as
+                // unbounded. Therefore, we need to find a replacement for the
+                // marking generated by the Petri net by replacing each token count
+                // with an omega identifier as provided by the graph, but only when
+                // this is correct.
+                $correctTransition = false;
+                // get the set of places that are marked as unbounded by the
+                // discovered marking
+                $unbounded = $discoveredMarking->unbounded();
+                // get the marking that the discovered marking is based on
+                $petrinetMarking = null;
+                foreach($reachable as $t => $m) {
+                    $mub = $m->markUnbounded($petrinet, $unbounded);
+                    if($mub->equals($discoveredMarking)) {
+                        $petrinetMarking = $m;
+                        $correctTransition = $t == $edge->label;
+                        break;
                     }
+                }
+                // get the set of places that could be marked as unbounded
+                // according to the marking from the Petri net
+                $coverable = is_null($petrinetMarking) ? new Set() :
+                             $this->getCoverable($edge->to, $petrinetMarking);
+                $unboundedPreset = $this->unboundedFromPreset($edge->to);
 
-                    $coverable = $this->getCoverable($to, $correctMarking);
-                    // which places are marked as covered by the preset
-                    $coveredByParents = $this->getUnboundedPlacesByPreset($to);
-                    // are the places marked as covered actually coverable
-                    // assume yes
-                    $placesAreCoverable = true;
-                    foreach($up as $i => $place) {
-                        if(!$coverable->contains($place)) {
-                            $placesAreCoverable = false;
-                            break;
-                        }
-                    }
-                    // new set of unbounded places should be a super set or equal
-                    // to the set of unbounded places marked by the preset.
-                    $diff = $coveredByParents->diff($up);
-                    // have we found a replacement for a reachable marking
-                    $found = false;
-                    if($placesAreCoverable && $diff->isEmpty()){
-                        foreach($reachables as $i => $reachable) {
-                        // correctly marked a set of places as unbounded.
-                            if($reachable->marking->markUnbounded($petrinet, $up) == $pair->marking) {
-                                // correct (=reachable) state
-                                $found = true;
-                                $feedback->addFeedback(Feedback\FeedbackCode::REACHABLE_FROM_PRESET, $to);
-                                if($pair->transition == $reachable->transition && !$skip) {
-                                    // label correct
-                                    $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_CORRECT_POST, $edgeId);
-                                    $feedback->removeFeedback(Feedback\FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $edgeId);
-                                }
-                                else {
-                                    // label not correct
-                                    // is the transition denoted by the label enabled?
-                                    if($enabledTransitions->contains($pair->transition) && !$skip) {
-                                        // enabled
-                                        $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $edgeId);
-                                    }
-                                    else if (!$skip) {
-                                        // disabled
-                                        $feedback->addFeedback(Feedback\FeedbackCode::DISABLED_CORRECT_POST, $edgeId);
-                                    }
-                                }
-                                // break;
-                            }
-                        }
-                    }
-                    if(!$found) {
-                        // we have not found a reachable marking
-                        $feedback->addFeedback(Feedback\FeedbackCode::NOT_REACHABLE_FROM_PRESET, $to);
-                        // is the transition used enabled?
-                        if($enabledTransitions->contains($pair->transition)) {
-                            // enabled transition with the wrong post
-                            $feedback->addFeedback(Feedback\FeedbackCode::ENABLED_INCORRECT_POST, $edgeId);
-                        }
-                        else {
-                            // transition used is not enabled from the current marking
-                            $feedback->addFeedback(Feedback\FeedbackCode::DISABLED, $edgeId);
-                        }
-                    }
+                $correctMarking = !is_null($petrinetMarking) &&
+                                  Utils\SetUtils::isSubset($unboundedPreset, $unbounded) &&
+                                  Utils\SetUtils::isSubset($coverable, $unbounded);
+                // give feedback to the discovered marking
+                if($correctMarking) {
+                    $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
+                } else {
+                    $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_PRESET, $edge->to);
                 }
-                
-                if($firedTransitions->contains($pair->transition)) {
-                    $feedback->addFeedback(Feedback\FeedbackCode::DUPLICATE_EDGE, $edgeId);
-                    // mark all edges with this transition as duplicate
-                    foreach($post as $eid => $edge) {
-                        if($edge->label == $pair->transition) {
-                            $feedback->addFeedback(Feedback\FeedbackCode::DUPLICATE_EDGE, $eid);
-                        }
-                    }
-                }
-                $firedTransitions->add($pair->transition);
-                
-                if(!$black->contains($to) && !$grey->contains($to)) {
-                    $queue->push($to);
-                    $grey->add($to);
+                if($correctTransition) {
+                    $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
+                } else if($isEnabled && $correctMarking) {
+                    $feedback->add(FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $id);
+                } else if($isEnabled) {
+                    $feedback->add(FeedbackCode::ENABLED_INCORRECT_POST, $id);
+                } else if($correctMarking) {
+                    $feedback->add(FeedbackCode::DISABLED_CORRECT_POST, $id);
+                } else {
+                    $feedback->add(FeedbackCode::DISABLED, $id);
                 }
             }
-            $black->add($currentVertex);
-            $grey->remove($currentVertex);
-
-            $transitiondiff = $enabledTransitions->diff($firedTransitions);
-
-            if(!$transitiondiff->isEmpty()) {
-                $feedback->addFeedback(Feedback\FeedbackCode::EDGE_MISSING, $currentVertex);
+            // get the difference between the enabled and fired set
+            $transDiff = $enabled->diff($fired);
+            // if the difference is not empty, one or more transitions
+            // have not been fired from the current marking while they
+            // should have been
+            if(!$transDiff->isEmpty()) {
+                $feedback->add(FeedbackCode::EDGE_MISSING, $currentId);
             }
+            // update bfs variables
+            $grey->remove($currentId);
+            $black->add($currentId);
         }
-
-        $vertexes = $graph->getVertexes();
-        foreach($vertexes as $i => $vertex) {
-            if(!$vertex->reachableFromInitial) {
-                $feedback->addFeedback(Feedback\FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $i);
-            }
-            // check for duplicates
-            if($discoveredMarkings->get($vertex)->count() > 1)   {
-                $set = $discoveredMarkings->get($vertex);
-                foreach($set as $j => $id) {
-                    $feedback->addFeedback(Feedback\FeedbackCode::DUPLICATE_STATE, $id);
+        // mark duplicates
+        foreach($graph->getVertexes() as $id => $marking) {
+            if($discovered->get($marking)->count() > 1) {
+                foreach($discovered->get($marking) as $element) {
+                    $feedback->add(FeedbackCode::DUPLICATE_STATE, $element);
                 }
             }
         }
-
         return $feedback;
     }
 
-    protected function getCoverable($current, $directMarking, $vertex = NULL, $covered = [], $visited = [], $j = 1)
-    {
+    protected function getCoverable($current, $marking, $covered=[], $visited=[]) {
         if(is_array($covered)) {
-            $covered = new Set($covered);
+            $covered = new Set();
         }
         if(is_array($visited)) {
-            $visited = new Set($visited);
-        }
-        if(is_null($vertex)) {
-            $vertex = $current;
+            $visited = new Set();
         }
         $graph = $this->system;
-
         $visited->add($current);
-        $preset = $graph->getPreSet($current, GraphSetType::Vertex);
-        if($preset->isEmpty() || !$graph->getVertex($current)->reachableFromInitial) {
+        $preset = $graph->preset($current);
+        if($preset->isEmpty()) { 
             return $covered;
         }
-        else {
-            foreach($preset as $i => $pre)
-            {
-                if(!$visited->contains($pre))
-                {
-                    $presetMarking = $graph->getVertex($pre);
-                    if($directMarking->covers($presetMarking, $this->petrinet)) {
-                        $places = $this->petrinet->getPlaces();
-                        foreach($places as $i => $place) {
-                            if($directMarking->get($place)->greater($presetMarking->get($place))) {
-                                $covered->add($place);
-                            }
+        foreach($preset as $id => $edge) {
+            if(!$visited->contains($edge->from)) {
+                $presetMarking = $graph->getKey($edge->from);
+                if($marking->covers($presetMarking, $this->petrinet)) {
+                    foreach($this->petrinet->getPlaces() as $i => $place) {
+                        if($marking->get($place)->greater($presetMarking->get($place))) {
+                            $covered->add($place);
                         }
                     }
                 }
-                $c = new Set();
-                if(!$visited->contains($pre))
-                    $c = $this->getCoverable($pre, $directMarking, $vertex, $covered, $visited);
+                $c = $this->getCoverable($edge->from, $marking, $covered, $visited);
                 $covered = $covered->union($c);
             }
         }
         return $covered;
     }
 
-    /**
-     * Get all places that are marked unbounded by markings in the
-     * preset of the supplied marking (supplied by vertex id
-     *
-     * @param int $vertex
-     * @return Set places
-     */
-    protected function getUnboundedPlacesByPreset($vertex)
-    {
-        $graph = $this->system;
-        $parents = $graph->getPreset($vertex, GraphSetType::Vertex);
-        $result = new Set();
-        foreach($parents as $i => $p) {
-            $marking = $graph->getVertex($p);
-            $result = $result->union($marking->unboundedPlaces());
+    protected function unboundedFromPreset($id) {
+        $graph     = $this->system;
+        $preset    = $graph->preset($id);
+        $unbounded = new Set();
+        foreach($preset as $id => $edge) {
+            $marking   = $graph->getKey($edge->from);
+            $unbounded = $unbounded->union($marking->unbounded());
         }
-        return $result;
+        return $unbounded;
     }
 }
 
