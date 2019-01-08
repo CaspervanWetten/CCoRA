@@ -27,6 +27,7 @@ class StyleManager
         c.put(FeedbackCode.DISABLED, new SetIncorrectEdgeStyle());
         c.put(FeedbackCode.DISABLED_CORRECT_POST, new SetIncorrectEdgeStyle());
         c.put(FeedbackCode.DUPLICATE_EDGE, new SetWarningEdgeStyle());
+        c.put(FeedbackCode.MISSED_SELF_LOOP, new SetIncorrectEdgeStyle());
     }
 
     //#region Standard Styles

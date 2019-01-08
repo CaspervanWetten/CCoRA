@@ -39,5 +39,6 @@ class FeedbackTranslator
         t.put(FeedbackCode.DISABLED, "This transition can't fire");
         t.put(FeedbackCode.DISABLED_CORRECT_POST, "This transition is disabled, but this state is reachable");
         t.put(FeedbackCode.DUPLICATE_EDGE, "This transition leads to multiple states");
+        t.put(FeedbackCode.MISSED_SELF_LOOP, "This edge should points to its source");
     }
 }
