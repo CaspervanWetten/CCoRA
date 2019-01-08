@@ -3,6 +3,7 @@
 namespace Cora\Converters;
 
 use \Cora\Systems as Systems;
+use \Cora\Search as Search;
 use \Ds\Set as Set;
 
 class JsonToGraph extends Converter
@@ -41,8 +42,13 @@ class JsonToGraph extends Converter
                 $newEdges[$id] = $e;
             }
         }
-        
         $graph = new Systems\Graph($vertexes, $newEdges, $initial);
+        if(isset($initial)) {
+            foreach($vertexes as $id => $marking) {
+                $bfs = new Search\BreadthFirstSearch($graph, $initial, $id);
+                $marking->reachable = $bfs->pathExists();
+            }
+        }
         return $graph;
     }
 

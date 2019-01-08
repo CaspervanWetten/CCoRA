@@ -183,6 +183,12 @@ class CheckCoverabilityGraph extends SystemChecker
             $grey->remove($currentId);
             $black->add($currentId);
         }
+        // mark unreachable states
+        foreach($graph->getVertexes() as $id => $marking) {
+            if(!$marking->reachable) {
+                $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $id);
+            }
+        }
         // mark duplicates
         foreach($graph->getVertexes() as $id => $marking) {
             if($discovered->get($marking)->count() > 1) {

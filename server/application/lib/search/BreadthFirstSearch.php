@@ -34,8 +34,7 @@ class BreadthFirstSearch
 
         $frontier->put($from, NULL);
         $q->push($from);
-        while(!$q->isEmpty())
-        {
+        while(!$q->isEmpty()) {
             $current = $q->pop();
             $parent = $frontier->get($current);
 
@@ -43,11 +42,12 @@ class BreadthFirstSearch
                 $closed->put($current, $parent);
                 return $this->backtracePath($current, $closed);
             }
-            $post = $graph->getPostSet($current);
-            foreach($post as $i => $p) {
-                if(!$frontier->hasKey($p) && !$closed->hasKey($p)) {
-                    $q->push($p);
-                    $frontier->put($p, $current);
+
+            $post = $graph->postset($current);
+            foreach($post as $id => $edge) {
+                if(!$frontier->hasKey($edge->to) && !$closed->hasKey($edge->to)) {
+                    $q->push($edge->to);
+                    $frontier->put($edge->to, $current);
                 }
             }
             $frontier->remove($current);

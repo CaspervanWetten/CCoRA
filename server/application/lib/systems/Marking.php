@@ -7,10 +7,12 @@ use \Ds\Set as Set;
 class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
 {
     public $vector;
+    public $reachable;
 
-    public function __construct($petrinet, $list = [])
+    public function __construct($petrinet, $list = [], $reachable=false)
     {
         $this->vector = $this->listToVector($petrinet->getPlaces(), $list);
+        $this->reachable = $reachable;
     }
 
     public function get($place)
