@@ -8,7 +8,8 @@ enum FeedbackCode {
 
     // states
     REACHABLE_FROM_PRESET            = 220,
-    DUPLICATE_STATE                  = 320,    
+    DUPLICATE_STATE                  = 320,
+    OMEGA_OMITTED                    = 321,
     NOT_REACHABLE_FROM_PRESET        = 420,
     EDGE_MISSING                     = 421,
     NOT_REACHABLE_FROM_INITIAL       = 422,

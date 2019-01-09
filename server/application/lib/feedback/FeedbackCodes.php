@@ -13,7 +13,8 @@ class FeedbackCode extends Enumerators\Enumerator
 
     // states
     const REACHABLE_FROM_PRESET            = 220;
-    const DUPLICATE_STATE                  = 320;    
+    const DUPLICATE_STATE                  = 320;
+    const OMEGA_OMITTED                    = 321;
     const NOT_REACHABLE_FROM_PRESET        = 420;
     const EDGE_MISSING                     = 421;
     const NOT_REACHABLE_FROM_INITIAL       = 422;

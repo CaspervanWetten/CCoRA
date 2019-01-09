@@ -30,6 +30,7 @@ class FeedbackTranslator
         t.put(FeedbackCode.REACHABLE_FROM_PRESET, "This state is reachable");
         t.put(FeedbackCode.EDGE_MISSING, "This state is missing an outgoing edge");
         t.put(FeedbackCode.DUPLICATE_STATE, "This state occurs multiple times in the graph");
+        t.put(FeedbackCode.OMEGA_OMITTED, "One of the places can be marked unbounded");
         t.put(FeedbackCode.NOT_REACHABLE_FROM_INITIAL, "This state is not reachable from the initial state of the graph");
 
         // edges
