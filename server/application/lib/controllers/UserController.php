@@ -17,15 +17,27 @@ class UserController extends Controller
      * @param  Response $response The Psr response object
      * @return Response           The response with the data, encoded in JSON.
      */
-    public function getUsers(Request $request, Response $response)
+    public function getUsers(Request $request, Response $response, $args)
     {
-        // get the User Model and query for all its users.
-        $model = new Models\UserModel($this->container->get('db'));
-        $users = $model->getUsers();
-        // return 404 when no users are found.
-        if (empty($users))
-            return $this->show404($request, $response);
-        return $response->withJson($users);
+        // get the limit and offset for retrieval by the model
+        $limit = max(1, isset($args["limit"]) ?
+            filter_var($args["limit"], FILTER_SANITIZE_NUMBER_INT) :
+            100);
+        $page = max(1, isset($args["page"]) ?
+            filter_var($args["page"], FILTER_SANITIZE_NUMBER_INT) :
+            1);
+        $offset = ($page - 1) * $limit;
+        $model  = new Models\UserModel($this->container->get('db'));
+        $users  = $model->getUsers(NULL, $limit, $offset);
+        // set up the response
+        $router   = $this->container->get('router');
+        $nextPage = $page + 1;
+        $prevPage = max(1, $page - 1);
+        return $response->withJson([
+            "users" => $users,
+            "next_page" => $router->pathFor("getUsers", ["limit" => $limit, "page" => $nextPage]),
+            "prev_page" => $router->pathFor("getUsers", ["limit" => $limit, "page" => $prevPage])
+        ]);
     }
 
     /**

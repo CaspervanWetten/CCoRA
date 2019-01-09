@@ -53,30 +53,28 @@ class PetrinetController extends Controller
      */
     public function getPetrinets(Request $request, Response $response, $args)
     {
-        $limit = 0;
-        $page  = 1;
-        if(array_key_exists("limit", $args)) {
-            $limit = intval(filter_var(trim($args["limit"]), FILTER_SANITIZE_NUMBER_INT));
-        }
-
-        if(array_key_exists("page", $args)) {
-            $page = intval(filter_var(trim($args["page"]), FILTER_SANITIZE_NUMBER_INT));
-        }
-
+        $limit = max(1, isset($args["limit"]) ?
+            filter_var($args["limit"], FILTER_SANITIZE_NUMBER_INT) :
+            100);
+        $page = max(1, isset($args["page"]) ?
+            filter_var($args["page"], FILTER_SANITIZE_NUMBER_INT) :
+            1);
+        $offset = ($page - 1) * $limit;
         $model = new Models\PetrinetModel($this->container->get('db'));
-        $res = $model->getPetrinets($limit, $page - 1);
+        $petrinets = $model->getPetrinets($limit, $offset);
+        // set up the response
         $router = $this->container->get('router');
-        foreach($res as $i => $net) {
-            $res[$i]["url"] = $router->pathFor("getPetrinet", ["id" => $net["id"]]);
-            $res[$i]["imageUrl"] = $router->pathFor("getPetrinetImage", ["id" => $net["id"]]);
+        foreach($petrinets as $i => $petrinet) {
+            $pid = $petrinet["id"];
+            $petrinets[$i]["url"] = $router->pathFor("getPetrinet", ["id" => $pid]);
+            $petrinets[$i]["image_url"] = $router->pathFor("getPetrinetImage", ["id" => $pid]);
         }
         $nextPage = $page + 1;
         $prevPage = max(1, $page - 1);
-
         return $response->withJson([
-            "petrinets" => $res,
-            "nextPage"  => $router->pathFor("getPetrinets", ["limit" => $limit, "page" => $nextPage]),
-            "prevPage"  => $router->pathFor("getPetrinets", ["limit" => $limit, "page" => $prevPage])
+            "petrinets" => $petrinets,
+            "next_page" => $router->pathFor("getPetrinets", ["limit" => $limit, "page" => $nextPage]),
+            "prev_page" => $router->pathFor("getPetrinets", ["limit" => $limit, "page" => $prevPage])
         ]);
     }
 

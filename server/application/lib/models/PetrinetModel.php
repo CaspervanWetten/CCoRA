@@ -117,17 +117,16 @@ class PetrinetModel extends DatabaseModel
         return $petrinet;
     }
 
-    public function getPetrinets($limit = 0, $page = 0)
+    public function getPetrinets($limit = 0, $offset = 0)
     {
         $builder = new QueryBuilder();
         $builder->select(["id", "name"]);
         $builder->from(PETRINET_TABLE);
-        if($limit > 0 && $page >= 0) {
-            $offset = $page * $limit;
+        if($limit > 0) {
             $builder->limit($limit);
+        }
+        if($offset > 0) {
             $builder->offset($offset);
-        } else {
-            throw new \Exception('Illegal parameters');
         }
         $statement = $this->db->prepare($builder->toString());
         $this->executeQuery($statement);
