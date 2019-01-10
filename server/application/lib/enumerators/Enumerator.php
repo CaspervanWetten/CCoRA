@@ -7,9 +7,7 @@ use \ReflectionClass as ReflectionClass;
 abstract class Enumerator
 {
     protected $reflection;
-    public function __construct()
-    {
-    }
+
     public function getConstants()
     {
         if ($this->reflection == NULL)

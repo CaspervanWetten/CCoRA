@@ -15,6 +15,12 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         $this->reachable = $reachable;
     }
 
+   /**
+    * Get the Systems\TokenCount object assigned to a particular place
+    * @param string $place The place for which to retrieve the tokens
+    * @return \Cora\Systems\TokenCount TokenCount detailing the amount
+    *    of tokens for the specified place
+    **/
     public function get($place)
     {
         if(!isset($this->vector[$place])) {
@@ -22,7 +28,15 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         }
         return $this->vector[$place];
     }
-    
+
+   /**
+    * Create a new marking from this marking with certain places
+    * marked as unbounded.
+    * @param \Cora\Systems\Petrinet The petrinet for which to create
+    *    the new marking
+    * @param Set $places the set of places to be marked as unbounded
+    * @return Marking The new marking
+    **/
     public function markUnbounded($petrinet, $places)
     {
         $m = new Marking($petrinet, $this->vector);
@@ -32,6 +46,10 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         return $m;
     }
 
+   /**
+    * Get the set of all unbounded places for this marking
+    * @return Set The set of unbounded places for this marking
+    **/
     public function unbounded()
     {
         $res = new Set();

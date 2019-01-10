@@ -13,8 +13,6 @@ class BreadthFirstSearch
     public $from;
     public $to;
 
-    public $callback;
-
     public function __construct($graph, $from, $to)
     {
         $this->graph = $graph;
