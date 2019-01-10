@@ -117,6 +117,12 @@ class PetrinetModel extends DatabaseModel
         return $petrinet;
     }
 
+   /**
+    * Get the meta data for a collection of Petri nets
+    * @param int $limit The maximum amount of Petri nets to retrieve
+    * @param int $offset The amount to offset the window by
+    * @return mixed[] Array of Petri net meta data
+    **/
     public function getPetrinets($limit = 0, $offset = 0)
     {
         $builder = new QueryBuilder();
@@ -133,6 +139,13 @@ class PetrinetModel extends DatabaseModel
         return $statement->fetchAll();
     }
 
+   /**
+    * Register a Petri net into the database
+    * @param Systems\Petrinet $petrinet The Petri net to store
+    * @param string $user The name of the Petri net owner
+    * @param string $name The name of the Petri net itself
+    * @return int The id for the Petri net
+    **/
     public function setPetrinet($petrinet, $user, $name=NULL)
     {
         $this->beginTransaction();
@@ -279,6 +292,11 @@ class PetrinetModel extends DatabaseModel
         return $petrinetId;
     }
 
+    /**
+     * Check whether a Petri net exists in the database
+     * @param int $id The id for the Petri net
+     * @return bool True if it exists, otherwise false
+     **/
     public function petrinetExists($id)
     {
         $p = $this->getPetrinet($id);
