@@ -97,9 +97,11 @@ class CheckCoverabilityGraph extends SystemChecker
                     $reachable->get($edge->label)->equals($discoveredMarking)) {
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
                     $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
-
+                    // check if all unbounded markings are marked as such
                     $coverable = $this->getCoverable($edge->to, $discoveredMarking);
                     $unbounded = $discoveredMarking->unbounded();
+                    // the set of coverables needs to be a superset of the
+                    // set of unbounded places as marked by the discovered marking
                     if(!$coverable->diff($unbounded)->isEmpty()) {
                         $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->to);
                     }
