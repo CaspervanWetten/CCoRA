@@ -32,6 +32,7 @@ class FeedbackTranslator
         t.put(FeedbackCode.DUPLICATE_STATE, "This state occurs multiple times in the graph");
         t.put(FeedbackCode.OMEGA_OMITTED, "One of the places can be marked unbounded");
         t.put(FeedbackCode.NOT_REACHABLE_FROM_INITIAL, "This state is not reachable from the initial state of the graph");
+        t.put(FeedbackCode.OMEGA_FROM_PRESET_OMITTED, "One or more places does not have ω assigned to it, while at least one of the states in the preset does.");
 
         // edges
         t.put(FeedbackCode.ENABLED_CORRECT_POST, "This transition is enabled and points to the correct state");

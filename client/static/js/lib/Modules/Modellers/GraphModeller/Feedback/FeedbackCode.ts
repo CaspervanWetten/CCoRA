@@ -13,6 +13,7 @@ enum FeedbackCode {
     NOT_REACHABLE_FROM_PRESET        = 420,
     EDGE_MISSING                     = 421,
     NOT_REACHABLE_FROM_INITIAL       = 422,
+    OMEGA_FROM_PRESET_OMITTED        = 423,
 
     // edges
     ENABLED_CORRECT_POST             = 240,

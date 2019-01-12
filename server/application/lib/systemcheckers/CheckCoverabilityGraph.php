@@ -164,6 +164,9 @@ class CheckCoverabilityGraph extends SystemChecker
                     $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
                 } else {
                     $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_PRESET, $edge->to);
+                    if(!Utils\SetUtils::isSubset($unboundedPreset, $unbounded)) {
+                        $feedback->add(FeedbackCode::OMEGA_FROM_PRESET_OMITTED, $edge->to);
+                    }
                 }
                 if($transitionIsCorrect) {
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);

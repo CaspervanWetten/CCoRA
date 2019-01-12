@@ -18,6 +18,7 @@ class FeedbackCode extends Enumerators\Enumerator
     const NOT_REACHABLE_FROM_PRESET        = 420;
     const EDGE_MISSING                     = 421;
     const NOT_REACHABLE_FROM_INITIAL       = 422;
+    const OMEGA_FROM_PRESET_OMITTED        = 423;
 
     // edges
     const ENABLED_CORRECT_POST             = 240;

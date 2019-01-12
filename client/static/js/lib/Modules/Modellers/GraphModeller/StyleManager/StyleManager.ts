@@ -20,6 +20,7 @@ class StyleManager
         c.put(FeedbackCode.DUPLICATE_STATE, new SetWarningStateStyle());
         c.put(FeedbackCode.OMEGA_OMITTED, new SetWarningStateStyle());
         c.put(FeedbackCode.NOT_REACHABLE_FROM_INITIAL, new SetWarningStateStyle());
+        c.put(FeedbackCode.OMEGA_FROM_PRESET_OMITTED, new SetIncorrectStateStyle());
 
         // edges
         c.put(FeedbackCode.ENABLED_CORRECT_POST, new SetCorrectEdgeStyle());
