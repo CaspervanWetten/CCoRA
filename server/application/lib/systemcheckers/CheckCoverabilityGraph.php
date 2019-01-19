@@ -37,6 +37,9 @@ class CheckCoverabilityGraph extends SystemChecker
         $initialMarking = $petrinet->getInitial();
         if(!$initial->equals($initialMarking)) {
             $feedback->add(FeedbackCode::INCORRECT_INITIAL_STATE);
+            if(!$initial->unbounded()->isEmpty()) {
+                $feedback->add(FeedbackCode::OMEGA_IN_INITIAL);
+            }
             return $feedback;
         }
         $feedback->add(FeedbackCode::CORRECT_INITIAL_STATE);

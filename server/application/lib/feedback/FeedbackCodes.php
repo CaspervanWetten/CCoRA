@@ -10,6 +10,7 @@ class FeedbackCode extends Enumerators\Enumerator
     const CORRECT_INITIAL_STATE            = 200;
     const NO_INITIAL_STATE                 = 400;
     const INCORRECT_INITIAL_STATE          = 401;
+    const OMEGA_IN_INITIAL                 = 402;
 
     // states
     const REACHABLE_FROM_PRESET            = 220;
