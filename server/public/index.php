@@ -117,7 +117,7 @@ $app->group('/api', function(){
     $this->group('/users', function() {
         // get all users
         $this->get(
-            '', Controllers\UserController::class . ':getUsers'
+            '[/{limit:[0-9]+}/{page:[0-9]+}]', Controllers\UserController::class . ':getUsers'
             )->setName('getUsers');
         // get a specific user
         $this->get(
