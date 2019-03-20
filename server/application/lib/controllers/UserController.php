@@ -19,20 +19,20 @@ class UserController extends Controller
      */
     public function getUsers(Request $request, Response $response, $args)
     {
-        // get the limit and offset for retrieval by the model
-        $limit = max(1, isset($args["limit"]) ?
+        $limit = isset($args["limit"]) ?
             filter_var($args["limit"], FILTER_SANITIZE_NUMBER_INT) :
-            100);
-        $page = max(1, isset($args["page"]) ?
+            100;
+        $page = isset($args["page"]) ?
             filter_var($args["page"], FILTER_SANITIZE_NUMBER_INT) :
-            1);
-        $offset = ($page - 1) * $limit;
+            1;
+        $paginator = new Utils\Paginator($limit, $page);
+
         $model  = new Models\UserModel($this->container->get('db'));
-        $users  = $model->getUsers(NULL, $limit, $offset);
+        $users  = $model->getUsers(NULL, $paginator->limit(), $paginator->offset());
         // set up the response
         $router   = $this->container->get('router');
-        $nextPage = $page + 1;
-        $prevPage = max(1, $page - 1);
+        $nextPage = $paginator->next()->page();
+        $prevPage = $paginator->prev()->page();
         return $response->withJson([
             "users" => $users,
             "next_page" => $router->pathFor("getUsers", ["limit" => $limit, "page" => $nextPage]),
