@@ -141,7 +141,7 @@ class PetrinetController extends Controller
                 // directory name for the temp file
                 $userDir = USER_FOLDER . DIRECTORY_SEPARATOR . $userId;
                 // create directory
-                Utils\FileUtils::mkdir($userDir);
+                Utils\FileUtils::mkdir($userDir, 0711);
                 // move uploaded file to directory with new file name
                 $file->moveTo($lolaFilename);
                 $k = new Converters\LolaToPetrinet($lolaFilename);
