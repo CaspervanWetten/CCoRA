@@ -7,7 +7,7 @@
  */
 
  /**********************************************************
-  *                      COZP SETTINGS                     *
+  *                      CORA SETTINGS                     *
   *********************************************************/
 
 //   FOLDER SETTINGS
@@ -111,6 +111,30 @@ defined("PETRINET_FLOW_PT_TABLE")      or define("PETRINET_FLOW_PT_TABLE",      
 defined("PETRINET_FLOW_TP_TABLE")      or define("PETRINET_FLOW_TP_TABLE",      $petrinetFlowTransitionPlaceTable);
 defined("PETRINET_MARKING_TABLE")      or define("PETRINET_MARKING_TABLE",      $petrinetMarkingTable);
 defined("PETRINET_MARKING_PAIR_TABLE") or define("PETRINET_MARKING_PAIR_TABLE", $petrinetMarkingPairTable);
+
+// QUERY RESULT SETTINGS
+/**
+ * The standard maximum results for resource array requests
+ * Can be overriden for specific controllers.
+ * @var integer
+ */
+$maxResultSize = 100;
+
+/**
+ * The maximum amount of results for user array requests
+ * @var integer
+ */
+$maxUserResultSize = $maxResultSize;
+
+/**
+ * The maximum amount of results for petrinet array requests
+ * @var integer
+ */
+$maxPetrinetResultSize = $maxResultSize;
+
+defined("MAX_RESULT_SIZE")          or define("MAX_RESULT_SIZE",          $maxResultSize);
+defined("MAX_USER_RESULT_SIZE")     or define("MAX_USER_RESULT_SIZE",     $maxUserResultSize);
+defined("MAX_PETRINET_RESULT_SIZE") or define("MAX_PETRINET_RESULT_SIZE", $maxPetrinetResultSize);
 
 /**********************************************************
  *                      SLIM SETTINGS                     *

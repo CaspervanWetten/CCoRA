@@ -54,8 +54,9 @@ class PetrinetController extends Controller
     public function getPetrinets(Request $request, Response $response, $args)
     {
         $limit = isset($args["limit"]) ?
-            filter_var($args["limit"], FILTER_SANITIZE_NUMBER_INT) :
-            100;
+            min(MAX_PETRINET_RESULT_SIZE,
+                filter_var($args["limit"], FILTER_SANITIZE_NUMBER_INT)) :
+            MAX_PETRINET_RESULT_SIZE;
         $page = isset($args["page"]) ?
             filter_var($args["page"], FILTER_SANITIZE_NUMBER_INT) :
             1;
