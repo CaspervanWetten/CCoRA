@@ -162,6 +162,7 @@ class CheckCoverabilityGraph extends SystemChecker
                 $correctMarking = !is_null($petrinetMarking) &&
                                   Utils\SetUtils::isSubset($unboundedPreset, $unbounded) &&
                                   Utils\SetUtils::isSubset($unbounded, $coverable);
+
                 // give feedback to the discovered marking
                 if($correctMarking) {
                     $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
@@ -238,6 +239,8 @@ class CheckCoverabilityGraph extends SystemChecker
                         }
                     }
                 }
+                $unbounded = $presetMarking->unbounded();
+                $covered = $covered->union($unbounded);
                 $c = $this->getCoverable($edge->from, $marking, $covered, $visited);
                 $covered = $covered->union($c);
             }
