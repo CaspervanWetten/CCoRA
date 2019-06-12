@@ -110,7 +110,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
      * to a full vector. Meaning that there is a
      * token count for each place.
      */
-    protected function listToVector($places, $list)
+    protected function listToVector($places, $list=NULL)
     {
         $vector = [];
         // initialize all places to 0
@@ -119,10 +119,12 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
             $vector[$place] = TokenCountFactory::getTokenCount(0);
         }
         // rewrite for each place that is defined
-        foreach($list as $place => $tokens)
-        {
-            $count = \Cora\Systems\TokenCountFactory::getTokenCount($tokens);
-            $vector[$place] = $count;
+        if (!is_null($list)) {
+            foreach($list as $place => $tokens)
+            {
+                $count = \Cora\Systems\TokenCountFactory::getTokenCount($tokens);
+                $vector[$place] = $count;
+            }
         }
         return $vector;
     }

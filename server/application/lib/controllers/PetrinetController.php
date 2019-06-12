@@ -148,6 +148,12 @@ class PetrinetController extends Controller
                 $k = new Converters\LolaToPetrinet($lolaFilename);
                 $petrinet = $k->convert();
 
+                if (is_null($petrinet->getInitial())) {
+                    $message = "No initial marking supplied for the Petri net. "
+                             . "Reachability and coverability analysis are "
+                             . "therefore not possible";
+                    throw new CoraException($message, 400);
+                }
                 $translate = true;
 
                 if($translate) {

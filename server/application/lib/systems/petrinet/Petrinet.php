@@ -32,7 +32,9 @@ class Petrinet
         $this->places = $places;
         $this->transitions = $transitions;
         $this->flows = $flows;
-        $this->setInitial($initial);
+        if (!is_null($initial)) {
+            $this->setInitial($initial);
+        }
     }
 
    /**
