@@ -196,6 +196,12 @@ class PetrinetController extends Controller
             throw new CoraException("Could not receive feedback for Petri net as it does not exist", 404);
         }
         $petrinet = $petrinetModel->getPetrinet($pid);
+        if (is_null($petrinet->getInitial())) {
+            $message = "The Petri net has no initial marking. "
+                     . "Reachability and coverability analysis "
+                     . "are therefore not possible";
+            throw new CoraException($message, 400);
+        }
         $jsonGraph = $request->getParsedBody();
 
         $converter = new Converters\JsonToGraph($jsonGraph, $petrinet);

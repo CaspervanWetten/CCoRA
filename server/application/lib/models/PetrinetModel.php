@@ -96,21 +96,28 @@ class PetrinetModel extends DatabaseModel
         $this->executeQuery($statement);
         // assumption that there is only one marking associated with a Petri net
         // therefore we pick the first marking that is returned
-        $initialMarkingId = intval($statement->fetchAll()[0]["id"]);
+        $rows = $statement->fetchAll();
+        $initialMarkingId = NULL;
+        if (count($rows) > 0) {
+            $initialMarkingId = intval($rows[0]["id"]);
+        }
 
         // get the place-token pairs
-        $builder = new QueryBuilder();
-        $builder->select(["place", "tokens"]);
-        $builder->from(PETRINET_MARKING_PAIR_TABLE);
-        $builder->where("marking", ":mid");
-        $statement = $this->db->prepare($builder->toString());
-        $statement->bindValue(":mid", $initialMarkingId);
+        $marking = NULL;
+        if (!is_null($initialMarkingId)) {
+            $builder = new QueryBuilder();
+            $builder->select(["place", "tokens"]);
+            $builder->from(PETRINET_MARKING_PAIR_TABLE);
+            $builder->where("marking", ":mid");
+            $statement = $this->db->prepare($builder->toString());
+            $statement->bindValue(":mid", $initialMarkingId);
 
-        $this->executeQuery($statement);
-        $markingPairs = $statement->fetchAll();
-        $marking = [];
-        foreach($markingPairs as $i => $m) {
-            $marking[$m["place"]] = intval($m["tokens"]);
+            $this->executeQuery($statement);
+            $marking = [];
+            $markingPairs = $statement->fetchAll();
+            foreach($markingPairs as $i => $m) {
+                $marking[$m["place"]] = intval($m["tokens"]);
+            }
         }
 
         $petrinet = new Systems\Petrinet\Petrinet($places, $transitions, $flowMap, $marking);
