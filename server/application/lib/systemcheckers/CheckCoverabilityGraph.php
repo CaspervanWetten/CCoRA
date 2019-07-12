@@ -134,9 +134,9 @@ class CheckCoverabilityGraph extends SystemChecker
                         // determine if the marking is reachable
                         // immediately from the Petri net.
                         $correctPost = $m->equals($discoveredMarking) && !$requireLoop;
-                        // get the set of coverable places from the current loop marking.
-                        $coverable = $this->getCoverable($edge->to, $m);
                         if (!$correctPost) {
+                            // get the set of coverable places from the current loop marking.
+                            $coverable = $this->getCoverable($edge->to, $m);
                             // still not correct. Marking can now only
                             // be correct of \omega substitution takes
                             // place, and is performed correctly.
