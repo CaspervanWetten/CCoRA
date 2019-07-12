@@ -122,19 +122,20 @@ class CheckCoverabilityGraph extends SystemChecker
                 $correctPost = false;
                 $omegaOmitted = false;
                 $omegaPresetOmitted = false;
+                $baseMarking = NULL;
                 // correct edge
                 $correctEdge = false;
-                $evadedLoop = false;
+                $requireLoop = false;
                 foreach($reachable as $t => $m) {
                     // only update correct post when it is not correct (yet).
                     if (!$correctPost) {
+                        // determine whether the edge should have been a self loop.
+                        $requireLoop = $m->equals($currentMarking);
                         // determine if the marking is reachable
                         // immediately from the Petri net.
-                        $correctPost = $m->equals($discoveredMarking);
+                        $correctPost = $m->equals($discoveredMarking) && !$requireLoop;
                         // get the set of coverable places from the current loop marking.
                         $coverable = $this->getCoverable($edge->to, $m);
-                        // determine whether the edge should have been a self loop.
-                        $evadedLoop = $m->equals($currentMarking);
                         if (!$correctPost) {
                             // still not correct. Marking can now only
                             // be correct of \omega substitution takes
@@ -149,22 +150,24 @@ class CheckCoverabilityGraph extends SystemChecker
                             // no places that should not be marked unbounded
                             $isValidReplacement = $replacement->equals($discoveredMarking) &&
                                                 Utils\SetUtils::isSubset($unbounded, $coverable);
-                            $correctPost = $addedOmega && $isValidReplacement && !$evadedLoop;
+                            $correctPost = $addedOmega && $isValidReplacement && !$requireLoop;
                         }
                         if ($correctPost) {
                             // if the post marking is now correct we
                             // determine whether places have been unmarked
                             $omegaOmitted = SetUtils::isStrictSubset($unbounded, $coverable);
+                            $baseMarking = $m;
                         }
-                        if (!$correctEdge) {
-                            // an edge can only be fully correct if
-                            // the post marking is correct. An edge is
-                            // only correct of the label corresponds
-                            // and firing the transition results in
-                            // the loop marking.
-                            $correctEdge = $correctPost && $t == $edge->label &&
-                                         $reachable->get($t)->equals($m) && !$evadedLoop;
-                        }
+
+                    }
+                    if (!$correctEdge && !is_null($baseMarking)) {
+                        // an edge can only be fully correct if the
+                        // post marking is correct. An edge is only
+                        // correct of the label corresponds and firing
+                        // the transition results in the loop marking.
+                        $correctEdge = $correctPost && $t == $edge->label &&
+                                     $reachable->get($t)->equals($baseMarking) &&
+                                     !$requireLoop;
                     }
                     if ($correctPost && $correctEdge) {
                         break;
@@ -187,9 +190,9 @@ class CheckCoverabilityGraph extends SystemChecker
 
                 if ($correctEdge) {
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
-                } else if ($correctPost && $isEnabled && !$evadedLoop) {
+                } else if ($correctPost && $isEnabled && !$requireLoop) {
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $id);
-                } else if ($correctPost && $isEnabled && $evadedLoop) {
+                } else if ($correctPost && $isEnabled && $requireLoop) {
                     $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
                 } else if ($correctPost && !$isEnabled) {
                     $feedback->add(FeedbackCode::DISABLED_CORRECT_POST, $id);
