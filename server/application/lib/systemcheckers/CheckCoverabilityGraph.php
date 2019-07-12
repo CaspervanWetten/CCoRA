@@ -112,7 +112,7 @@ class CheckCoverabilityGraph extends SystemChecker
                     // unbounded. Not needed for self loops
                     if (!$equal && !$black->contains($edge->to)) {
                         $coverable = $this->getCoverable($edge->to, $discoveredMarking);
-                        if (Utils\SetUtils::isStrictSubset($unbounded, $coverable)) {
+                        if (SetUtils::isStrictSubset($unbounded, $coverable)) {
                             $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->to);
                         }
                     }
@@ -140,7 +140,7 @@ class CheckCoverabilityGraph extends SystemChecker
                             // still not correct. Marking can now only
                             // be correct of \omega substitution takes
                             // place, and is performed correctly.
-                            $addedOmega = Utils\SetUtils::isStrictSuperset($unbounded, $m->unbounded());
+                            $addedOmega = SetUtils::isStrictSuperset($unbounded, $m->unbounded());
                             // determine what the marking loop should
                             // look like with places unbounded as
                             // marked by the discovered marking
@@ -149,7 +149,7 @@ class CheckCoverabilityGraph extends SystemChecker
                             // to the discovered marking and there are
                             // no places that should not be marked unbounded
                             $isValidReplacement = $replacement->equals($discoveredMarking) &&
-                                                Utils\SetUtils::isSubset($unbounded, $coverable);
+                                                SetUtils::isSubset($unbounded, $coverable);
                             $correctPost = $addedOmega && $isValidReplacement && !$requireLoop;
                         }
                         if ($correctPost) {
