@@ -138,10 +138,9 @@ class CheckCoverabilityGraph extends SystemChecker
                         $coverable = $this->getCoverable($edge->to, $m);
                         if (!$correctPost) {
                             // still not correct. Marking can now only
-                            // be correct of \omega substitution takes
+                            // be correct if \omega substitution takes
                             // place, and is performed correctly.
-                            $addedOmega = SetUtils::isStrictSuperset($unbounded, $m->unbounded());
-                            // determine what the marking loop should
+                            // Determine what the marking loop should
                             // look like with places unbounded as
                             // marked by the discovered marking
                             $replacement = $m->markUnbounded($petrinet, $unbounded);
@@ -150,7 +149,7 @@ class CheckCoverabilityGraph extends SystemChecker
                             // no places that should not be marked unbounded
                             $isValidReplacement = $replacement->equals($discoveredMarking) &&
                                                 SetUtils::isSubset($unbounded, $coverable);
-                            $correctPost = $addedOmega && $isValidReplacement && !$requireLoop;
+                            $correctPost = $isValidReplacement && !$requireLoop;
                         }
                         if ($correctPost) {
                             // if the post marking is now correct we
