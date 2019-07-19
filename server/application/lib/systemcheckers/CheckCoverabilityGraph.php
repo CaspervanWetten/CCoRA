@@ -30,15 +30,15 @@ class CheckCoverabilityGraph extends SystemChecker
         // check the initial marking
         $initial  = $graph->getKey($graph->getInitial());
         // no initial marking supplied
-        if(is_null($initial)) {
+        if (is_null($initial)) {
             $feedback->add(FeedbackCode::NO_INITIAL_STATE);
             return $feedback;
         }
         // compare initial markings
         $initialMarking = $petrinet->getInitial();
-        if(!$initial->equals($initialMarking)) {
+        if (!$initial->equals($initialMarking)) {
             $feedback->add(FeedbackCode::INCORRECT_INITIAL_STATE);
-            if(!$initial->unbounded()->isEmpty()) {
+            if (!$initial->unbounded()->isEmpty()) {
                 $feedback->add(FeedbackCode::OMEGA_IN_INITIAL);
             }
             return $feedback;
@@ -76,12 +76,12 @@ class CheckCoverabilityGraph extends SystemChecker
             // add feedback for all the nodes in the postset
             foreach($postset as $id => $edge) {
                 // add postset to frontier
-                if(!$black->contains($edge->to) && !$grey->contains($edge->to)) {
+                if (!$black->contains($edge->to) && !$grey->contains($edge->to)) {
                     $queue->push($edge->to);
                     $grey->add($edge->to);
                 }
                 // mark duplicate edges
-                if($fired->contains($edge->label)) {
+                if ($fired->contains($edge->label)) {
                     $feedback->add(FeedbackCode::DUPLICATE_EDGE, $id);
                     foreach($postset as $eid => $ped) {
                         if($edge->label == $ped->label) {
@@ -215,13 +215,10 @@ class CheckCoverabilityGraph extends SystemChecker
         }
         // mark unreachable states
         foreach($graph->getVertexes() as $id => $marking) {
-            if(!$marking->reachable) {
+            if (!$marking->reachable) {
                 $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $id);
             }
-        }
-        // mark duplicates
-        foreach($graph->getVertexes() as $id => $marking) {
-            if($discovered->get($marking)->count() > 1) {
+            if ($discovered->get($marking)->count() > 1) {
                 foreach($discovered->get($marking) as $element) {
                     $feedback->add(FeedbackCode::DUPLICATE_STATE, $element);
                 }
