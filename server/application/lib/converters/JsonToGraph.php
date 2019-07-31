@@ -11,14 +11,12 @@ class JsonToGraph extends Converter
     protected $json;
     protected $petrinet;
 
-    public function __construct($j, $p)
-    {
+    public function __construct($j, $p) {
         $this->json = $j;
         $this->petrinet = $p;
     }
 
-    public function convert()
-    {
+    public function convert() {
         $json = $this->json;
         $petrinet = $this->petrinet;
 
@@ -43,17 +41,10 @@ class JsonToGraph extends Converter
             }
         }
         $graph = new Systems\Graph($vertexes, $newEdges, $initial);
-        if(isset($initial)) {
-            foreach($vertexes as $id => $marking) {
-                $bfs = new Search\BreadthFirstSearch($graph, $initial, $id);
-                $marking->reachable = $bfs->pathExists();
-            }
-        }
         return $graph;
     }
 
-    protected function convertMarkings($petrinet, $markings)
-    {
+    protected function convertMarkings($petrinet, $markings) {
         $vertexes =[];
         foreach($markings as $i => $marking) {
             $s = Systems\Marking::stringToMarking($petrinet, $marking["state"]);
