@@ -7,12 +7,9 @@ use \Ds\Set as Set;
 class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
 {
     public $vector;
-    public $reachable;
 
-    public function __construct($petrinet, $list = [], $reachable=false)
-    {
+    public function __construct($petrinet, $list = []) {
         $this->vector = $this->listToVector($petrinet->getPlaces(), $list);
-        $this->reachable = $reachable;
     }
 
    /**
@@ -21,8 +18,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     * @return \Cora\Systems\TokenCount TokenCount detailing the amount
     *    of tokens for the specified place
     **/
-    public function get($place)
-    {
+    public function get($place) {
         if(!isset($this->vector[$place])) {
             return 0;
         }
@@ -37,8 +33,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     * @param Set $places the set of places to be marked as unbounded
     * @return Marking The new marking
     **/
-    public function markUnbounded($petrinet, $places)
-    {
+    public function markUnbounded($petrinet, $places) {
         $m = new Marking($petrinet, $this->vector);
         foreach($places as $i => $place) {
             $m->vector[$place] = new \Cora\Systems\OmegaTokenCount();
@@ -50,8 +45,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     * Get the set of all unbounded places for this marking
     * @return Set The set of unbounded places for this marking
     **/
-    public function unbounded()
-    {
+    public function unbounded() {
         $res = new Set();
         foreach($this->vector as $place => $tokens) {
             if($tokens instanceof OmegaTokenCount ) {
