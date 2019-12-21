@@ -2,5 +2,7 @@
 \#*\#
 
 server/vendor/
+server/log/*
+server/user/*
 
 *.js
