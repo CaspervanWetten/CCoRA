@@ -1,5 +1,5 @@
 <?php
-defined('APPLICATION_FOLDER') or exit('No direct script access allowed.');
+defined("CONFIG_FOLDER") or exit("No direct script access allowed.");
 
 /** Own classes **/
 use \Cora\Utils as Utils;
@@ -16,10 +16,6 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 /** load the classes via composer **/
 require_once VENDOR_FOLDER . DIRECTORY_SEPARATOR .  'autoload.php';
-
-/**
- * TODO: Make a route file
- */
 
 /**************************************
 *               SLIM SETUP            *
@@ -110,11 +106,11 @@ $app->group('/debug', function(){
 /**
  * Setup api group
  */
-$app->group('/api', function(){
+$app->group('/' . API_GROUP, function(){
     /**
      * All functions regarding the creation and retrieval of users
      */
-    $this->group('/users', function() {
+    $this->group('/' . USER_GROUP, function() {
         // get all users
         $this->get(
             '[/{limit:[0-9]+}/{page:[0-9]+}]', Controllers\UserController::class . ':getUsers'
@@ -132,7 +128,7 @@ $app->group('/api', function(){
     /**
      * All functions regarding the registration and retrieval of petrinets
      */
-    $this->group('/petrinet', function(){
+    $this->group('/' . PETRINET_GROUP, function(){
         $this->get (
             '/{id:[0-9]+}', Controllers\PetrinetController::class . ':getPetrinet'
         )->setName('getPetrinet');
@@ -153,7 +149,7 @@ $app->group('/api', function(){
     /**
      * All functions regarding session management
      */
-    $this->group('/session', function() {
+    $this->group('/' . SESSION_GROUP, function() {
         // get the current session for a user
         $this->get(
             '/{id:[0-9]+}/current_session', Controllers\SessionController::class . ':getCurrentSession'

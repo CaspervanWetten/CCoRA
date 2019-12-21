@@ -1,6 +1,4 @@
-DirectoryIndex config.php
-
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule . config.php [L]
+RewriteRule . index.php [L]

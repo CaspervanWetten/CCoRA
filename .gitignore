@@ -1,6 +1,6 @@
 *~
 \#*\#
 
-server/application/user/
-server/application/log/
+server/vendor/
+
 *.js
