@@ -3,6 +3,7 @@
 namespace Cora\Systems\Petrinet;
 
 use \Cora\Systems as Systems;
+use \Cora\Systems\Tokens;
 
 use \Ds\Set as Set;
 use \Ds\Map as Map;
@@ -50,7 +51,7 @@ class Petrinet
         $result = true;
         foreach($preset as $place => $weight) {
             $m = $marking->get($place);
-            if ($m instanceof Systems\IntegerTokenCount && $m->value < $weight) {
+            if ($m instanceof Tokens\IntegerTokenCount && $m->value < $weight) {
                 $result = false;
                 break;
             }
