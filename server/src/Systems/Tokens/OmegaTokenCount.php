@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Systems;
+namespace Cora\Systems\Tokens;
 
 class OmegaTokenCount extends TokenCount
 {

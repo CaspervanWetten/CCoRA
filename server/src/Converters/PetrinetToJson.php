@@ -2,8 +2,6 @@
 
 namespace Cora\Converters;
 
-use \Cora\Systems\Petrinet as Petrinet;
-
 class PetrinetToJson extends Converter {
     protected $petrinet;
 

@@ -2,7 +2,7 @@
 
 namespace Cora\Converters;
 
-use \Cora\Systems\Petrinet as Petrinet;
+use \Cora\Systems\Petrinet\Petrinet as Petrinet;
 
 class PetrinetToDot extends Converter
 {

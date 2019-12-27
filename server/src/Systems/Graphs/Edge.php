@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Systems;
+namespace Cora\Systems\Graphs;
 
 class Edge
 {

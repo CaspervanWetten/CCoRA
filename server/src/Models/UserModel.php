@@ -2,7 +2,7 @@
 
 namespace Cora\Models;
 
-use \Cora\QueryBuilder as QueryBuilder;
+use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
 
 class UserModel extends DatabaseModel
 {

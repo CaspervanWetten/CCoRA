@@ -2,12 +2,12 @@
 
 namespace Cora\SystemCheckers;
 
-use \Cora\Systems as Systems;
-use \Cora\Feedback\Feedback as Feedback;
-use \Cora\Feedback\FeedbackCode as FeedbackCode;
+use Cora\Systems as Systems;
+use Cora\Feedback\Feedback;
+use Cora\Feedback\FeedbackCode;
 
-use \Cora\Utils as Utils;
-use \Cora\Utils\SetUtils;
+use Cora\Utils as Utils;
+use Cora\Utils\SetUtils;
 
 use \Ds\Queue as Queue;
 use \Ds\Set as Set;

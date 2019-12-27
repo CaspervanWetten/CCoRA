@@ -3,6 +3,7 @@
 namespace Cora\MiddleWare;
 
 use \Cora\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
+
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 

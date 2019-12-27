@@ -2,9 +2,10 @@
 
 namespace Cora\Converters;
 
-use \Ds\Map;
+use Cora\Systems\Petrinet\Flow;
+use Cora\Systems\Petrinet\Petrinet;
 
-use \Cora\Systems\Petrinet as Petrinet;
+use \Ds\Map;
 
 class PetrinetTranslator extends Converter
 {
@@ -92,7 +93,7 @@ class PetrinetTranslator extends Converter
                 $to = $this->transitionTranslationTable[$to];
             }
 
-            $f = new Petrinet\Flow($from, $to);
+            $f = new Flow($from, $to);
             $result->put($f, $weight);
         }
         return $result;

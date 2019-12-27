@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora;
+namespace Cora\QueryBuilder;
 
 use \Cora\Utils as Utils;
 

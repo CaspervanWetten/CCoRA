@@ -3,8 +3,11 @@
 namespace Cora\Models;
 
 use \Ds\Map as Map;
-use \Cora\Systems as Systems;
-use \Cora\QueryBuilder as QueryBuilder;
+
+use \Cora\Systems\Tokens;
+use \Cora\Systems\Petrinet;
+
+use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
 
 class PetrinetModel extends DatabaseModel
 {
@@ -80,7 +83,7 @@ class PetrinetModel extends DatabaseModel
         $flows = array_merge($flows_pt, $flows_tp);
         $flowMap = new Map();
         foreach($flows as $i => $flow) {
-            $pair = new Systems\Petrinet\Flow($flow[$from_col], $flow[$to_col]);
+            $pair = new Petrinet\Flow($flow[$from_col], $flow[$to_col]);
             $weight = intval($flow[$weight_col]);
             $flowMap->put($pair, $weight);
         }
@@ -120,7 +123,7 @@ class PetrinetModel extends DatabaseModel
             }
         }
 
-        $petrinet = new Systems\Petrinet\Petrinet($places, $transitions, $flowMap, $marking);
+        $petrinet = new Petrinet\Petrinet($places, $transitions, $flowMap, $marking);
         return $petrinet;
     }
 
@@ -270,7 +273,7 @@ class PetrinetModel extends DatabaseModel
         $builder->insert(PETRINET_MARKING_PAIR_TABLE, ["marking", "place", "tokens"]);
         $markingValues = [];
         foreach($marking as $place => $tokens) {
-            if($tokens instanceof Systems\IntegerTokenCount &&
+            if($tokens instanceof Tokens\IntegerTokenCount &&
                $places->contains($place) && $tokens->value > 0) {
                 array_push(
                     $markingValues,
@@ -280,7 +283,7 @@ class PetrinetModel extends DatabaseModel
                 $this->rollBack();
                 throw new \Exception(
                     sprintf("Tokens assigned to place that is not part of the Petri net: %s", $place));
-            } elseif(!$tokens instanceof Systems\IntegerTokenCount) {
+            } elseif(!$tokens instanceof Tokens\IntegerTokenCount) {
                 $this->rollBack();
                 throw new \Exception(
                     sprintf("Could not store marking: improper type: %s", get_class($tokens)));

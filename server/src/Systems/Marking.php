@@ -2,6 +2,8 @@
 
 namespace Cora\Systems;
 
+use Cora\Systems\Tokens;
+
 use \Ds\Set as Set;
 
 class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
@@ -36,7 +38,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     public function markUnbounded($petrinet, $places) {
         $m = new Marking($petrinet, $this->vector);
         foreach($places as $i => $place) {
-            $m->vector[$place] = new \Cora\Systems\OmegaTokenCount();
+            $m->vector[$place] = new Tokens\OmegaTokenCount();
         }
         return $m;
     }
@@ -48,7 +50,7 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
     public function unbounded() {
         $res = new Set();
         foreach($this->vector as $place => $tokens) {
-            if($tokens instanceof OmegaTokenCount ) {
+            if($tokens instanceof Tokens\OmegaTokenCount ) {
                 $res->add($place);
             }
         }
@@ -110,13 +112,13 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         // initialize all places to 0
         foreach($places as $i => $place)
         {
-            $vector[$place] = TokenCountFactory::getTokenCount(0);
+            $vector[$place] = Tokens\TokenCountFactory::getTokenCount(0);
         }
         // rewrite for each place that is defined
         if (!is_null($list)) {
             foreach($list as $place => $tokens)
             {
-                $count = \Cora\Systems\TokenCountFactory::getTokenCount($tokens);
+                $count = Tokens\TokenCountFactory::getTokenCount($tokens);
                 $vector[$place] = $count;
             }
         }

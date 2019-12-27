@@ -2,8 +2,9 @@
 
 namespace Cora\Converters;
 
-use \Cora\Systems as Systems;
-use \Cora\Systems\Petrinet as Petrinet;
+use \Cora\Systems\Petrinet\Flow;
+use \Cora\Systems\Petrinet\Petrinet;
+
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
@@ -42,7 +43,7 @@ class LolaToPetrinet extends Converter
                 $flows = $flows->union($res["flows"]);
             }
         }
-        $p = new Petrinet\Petrinet($places, $transitions, $flows, $marking);
+        $p = new Petrinet($places, $transitions, $flows, $marking);
         return $p;
     }
 
@@ -103,7 +104,7 @@ class LolaToPetrinet extends Converter
         $c = preg_split("/,/", $c, -1, PREG_SPLIT_NO_EMPTY);
         foreach ($c as $j => $cons) {
             list($from, $amount) = sscanf($cons, "%[^:]:%d");
-            $flow = new Petrinet\Flow($from, $transition);
+            $flow = new Flow($from, $transition);
             $flows->put($flow, intval($amount));
         }
         // line 3
@@ -112,7 +113,7 @@ class LolaToPetrinet extends Converter
         $p = preg_split("/,/", $p, -1, PREG_SPLIT_NO_EMPTY);
         foreach ($p as $j => $pros) {
             list($to, $amount) = sscanf($pros, "%[^:]:%d");
-            $flow = new Petrinet\Flow($transition, $to);
+            $flow = new Flow($transition, $to);
             $flows->put($flow, intval($amount));
         }
         $res["transition"] = $transition;
