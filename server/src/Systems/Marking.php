@@ -125,6 +125,10 @@ class Marking implements \JsonSerializable, \Iterator, \Ds\Hashable
         return $vector;
     }
 
+    public function toArray() {
+        return $this->vector;
+    }
+
     // implement interfaces
     public function jsonSerialize()
     {
