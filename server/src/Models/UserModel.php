@@ -4,8 +4,7 @@ namespace Cora\Models;
 
 use \Cora\QueryBuilder\QueryBuilder as QueryBuilder;
 
-class UserModel extends DatabaseModel
-{
+class UserModel extends DatabaseModel {
     /**
      * Get all users
      * @param  array    $project an array of columns to be projected
@@ -13,18 +12,13 @@ class UserModel extends DatabaseModel
      * @param  int      $offset  the offset
      * @return array             returns the result as an associative array.
      */
-    public function getUsers(array $project = NULL, int $limit = NULL, int $offset = NULL)
-    {
-        $qb = new QueryBuilder();
-        $qb->select($project);
-        $qb->from(USER_TABLE);
+    public function getUsers(array $project = NULL, int $limit = NULL, int $offset = NULL) {
+        $columns = is_null($project) ? "*" : implode(",", $project);
+        $query = sprintf("SELECT %s FROM %s", $columns, USER_TABLE);
         if (!is_null($limit))
-            $qb->limit($limit);
+            $query .= sprintf(" LIMIT %d", $limit);
         if (!is_null($offset))
-            $qb->offset($offset);
-
-        $query = $qb->toString();
-
+            $query .= sprintf(" OFFSET %d", $offset);
         $statement = $this->db->prepare($query);
         $this->executeQuery($statement);
         return $statement->fetchAll();
@@ -36,14 +30,13 @@ class UserModel extends DatabaseModel
      * @param  array    $project which columns to project
      * @return array             The user as associative array
      */
-    public function getUser($key, $value, $project = NULL)
-    {
-        $qb = new QueryBuilder();
-        $qb->select($project, 'DISTINCT');
-        $qb->from(USER_TABLE);
-        $qb->where($key, ':value');
-
-        $statement = $this->db->prepare($qb->toString());
+    public function getUser($key, $value, $project = NULL) {
+        $columns = is_null($project) ? "*" : implode(",", $project);
+        $query = sprintf("SELECT DISTINCT %s FROM %s WHERE %s = :value",
+                         $columns,
+                         USER_TABLE,
+                         $key);
+        $statement = $this->db->prepare($query);
         $this->executeQuery($statement, [
             'value' => $value
         ]);
@@ -58,11 +51,9 @@ class UserModel extends DatabaseModel
     public function setUser($name)
     {
         $this->beginTransaction();
-        $qb = new QueryBuilder();
-        $qb->insert(USER_TABLE, ['name']);
-        $qb->values([':name']);
-
-        $query = $qb->toString();
+        $query = sprintf(
+            "INSERT INTO %s (`name`) VALUES (:name)",
+            USER_TABLE);
         $statement = $this->db->prepare($query);
         $statement->bindValue(':name', $name, \PDO::PARAM_STR);
         $result = $this->executeQuery($statement);
@@ -78,12 +69,11 @@ class UserModel extends DatabaseModel
     public function delUser($id)
     {
         $this->beginTransaction();
-        $builder = new QueryBuilder();
-        $builder->delete(USER_TABLE, "id", "?");
-        $column = "id";
-        $statement = $this->db->prepare($builder->toString());
-        $statement->bindParam(1, $id, \PDO::PARAM_INT);
-        $this->executeQuery($statement);
+        $query = sprintf("DELETE FROM %s WHERE `id` = :id", USER_TABLE);
+        $statement = $this->db->prepare($query);
+        $this->executeQuery($statement, [
+            "id" => $id
+        ]);
         $this->commit();
     }
 
