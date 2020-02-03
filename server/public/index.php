@@ -10,6 +10,8 @@ use \Cora\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
 use \Cora\ErrorHandlers as ErrorHandlers;
 use \Cora\Converters as Converters;
 
+use Cora\Handlers;
+
 /** Slim classes **/
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
@@ -41,9 +43,9 @@ $container["notFoundHandler"] = function($c) {
     return new ErrorHandlers\NotFoundHandler();
 };
 
-$container['errorHandler'] = function($c) {
-    return new ErrorHandlers\JSONErrorHandler();
-};
+// $container['errorHandler'] = function($c) {
+//     return new ErrorHandlers\JSONErrorHandler();
+// };
 
 // Register the Controllers
 $container[Controllers\UserController::class] = function ($c) {
@@ -60,6 +62,11 @@ $container[Controllers\PetrinetController::class] = function($c) {
 
 $container[Controllers\SessionController::class] = function($c) {
     return Controllers\SessionController::getInstance($c);
+};
+
+// register repositories
+$container[Cora\Repositories\UserRepository::class] = function($c) {
+    return new Cora\Repositories\UserRepository($c->get('db'));
 };
 
 /**************************************
@@ -113,16 +120,14 @@ $app->group('/' . API_GROUP, function(){
     $this->group('/' . USER_GROUP, function() {
         // get all users
         $this->get(
-            '[/{limit:[0-9]+}/{page:[0-9]+}]', Controllers\UserController::class . ':getUsers'
-            )->setName('getUsers');
-        // get a specific user
+            '/{id:[0-9]+}', Handlers\User\GetUser::class
+        )->setName('getUser');
         $this->get(
-            '/{id:[0-9]+}', Controllers\UserController::class . ':getUser'
-            )->setName('getUser');
-        // set a new user
+            '/[{limit:[0-9]+}/{page:[0-9]+}]', Handlers\User\GetUsers::class
+        )->setName('getUsers');
         $this->post(
-            '/new', Controllers\UserController::class . ':setUser'
-            )->setName('setUser');
+            '/new', Handlers\User\RegisterUser::class
+        )->setName("setUser");
     });
 
     /**
@@ -162,4 +167,3 @@ $app->group('/' . API_GROUP, function(){
 });
 
 $app->run();
-?>
