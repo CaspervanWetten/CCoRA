@@ -69,6 +69,10 @@ $container[Cora\Repositories\UserRepository::class] = function($c) {
     return new Cora\Repositories\UserRepository($c->get('db'));
 };
 
+$container[Cora\Repositories\PetrinetRepository::class] = function($c) {
+    return new Cora\Repositories\PetrinetRepository($c->get('db'));
+};
+
 /**************************************
 *               MIDDLEWARE            *
 **************************************/
@@ -134,18 +138,18 @@ $app->group('/' . API_GROUP, function(){
      * All functions regarding the registration and retrieval of petrinets
      */
     $this->group('/' . PETRINET_GROUP, function(){
-        $this->get (
-            '/{id:[0-9]+}', Controllers\PetrinetController::class . ':getPetrinet'
-        )->setName('getPetrinet');
-        $this->get (
-            '[/{limit:[0-9]+}/{page:[0-9]+}]', Controllers\PetrinetController::class . ':getPetrinets'
-        )->setName('getPetrinets');
-        $this->get (
-            '/{id:[0-9]+}/image', Controllers\PetrinetController::class . ':getImage'
+        $this->get(
+            '/{id:[0-9]+}', Handlers\Petrinet\GetPetrinet::class
+        )->setName("getPetrinet");
+        $this->get(
+            '[/{limit:[0-9]+}/{page:[0-9]+}]', Handlers\Petrinet\GetPetrinets::class
+        )->setName("getPetrinets");
+        $this->get(
+            '/{id:[0-9]+}/image', Handlers\Petrinet\GetPetrinetImage::class
         )->setName('getPetrinetImage');
         $this->post(
-            '/{id:[0-9]+}/new', Controllers\PetrinetController::class . ':setPetrinet'
-            )->setName('setPetrinet');
+            '/{id:[0-9]+}/new', Handlers\Petrinet\RegisterPetrinet::class
+        )->setName("setPetrinet");
         $this->post(
             '/{user_id:[0-9]+}/{petrinet_id:[0-9]+}/{session_id:[0-9]+}/feedback', Controllers\PetrinetController::class . ':getFeedback'
             )->setName('getFeedback');
