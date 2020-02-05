@@ -31,8 +31,11 @@ class SessionRepository extends AbstractRepository {
 
     public function appendGraph($userId, $sessionId, $graph) {
         $log = $this->getSessionLog($userId, $sessionId);
-        array_push($log["graphs"], $graph);
-        return file_put_contents(json_encode($log), LOCK_EX);
+        if ($log === FALSE)
+            return FALSE;   
+        array_push($log["graphs"], $graph); 
+        $path = $this->getSessionLogPath($userId, $sessionId);
+        return file_put_contents($path, json_encode($log), LOCK_EX); 
     }
 
     protected function getMetaLog($userId) {
