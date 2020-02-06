@@ -43,9 +43,9 @@ $container["notFoundHandler"] = function($c) {
     return new ErrorHandlers\NotFoundHandler();
 };
 
-// $container['errorHandler'] = function($c) {
-//     return new ErrorHandlers\JSONErrorHandler();
-// };
+$container["errorHandler"] = function($c) {
+    return new Cora\Handlers\ErrorHandler($c);
+};
 
 // Register the Controllers
 $container[Controllers\UserController::class] = function ($c) {
