@@ -47,23 +47,6 @@ $container["notFoundHandler"] = function($c) {
 //     return new ErrorHandlers\JSONErrorHandler();
 // };
 
-// Register the Controllers
-$container[Controllers\UserController::class] = function ($c) {
-    return Controllers\UserController::getInstance($c);
-};
-
-$container[Controllers\StaticController::class] = function($c) {
-    return Controllers\StaticController::getInstance($c);
-};
-
-$container[Controllers\PetrinetController::class] = function($c) {
-    return Controllers\PetrinetController::getInstance($c);
-};
-
-$container[Controllers\SessionController::class] = function($c) {
-    return Controllers\SessionController::getInstance($c);
-};
-
 // register repositories
 $container[Cora\Repositories\UserRepository::class] = function($c) {
     return new Cora\Repositories\UserRepository($c->get('db'));
