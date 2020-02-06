@@ -73,6 +73,10 @@ $container[Cora\Repositories\PetrinetRepository::class] = function($c) {
     return new Cora\Repositories\PetrinetRepository($c->get('db'));
 };
 
+$container[Cora\Repositories\SessionRepository::class] = function($c) {
+    return new Cora\Repositories\SessionRepository($c->get('db'));
+};
+
 /**************************************
 *               MIDDLEWARE            *
 **************************************/
@@ -117,7 +121,7 @@ $app->group('/debug', function(){
 /**
  * Setup api group
  */
-$app->group('/' . API_GROUP, function(){
+$app->group('/' . API_GROUP, function() {
     /**
      * All functions regarding the creation and retrieval of users
      */
@@ -133,11 +137,10 @@ $app->group('/' . API_GROUP, function(){
             '/new', Handlers\User\RegisterUser::class
         )->setName("setUser");
     });
-
     /**
      * All functions regarding the registration and retrieval of petrinets
      */
-    $this->group('/' . PETRINET_GROUP, function(){
+    $this->group('/' . PETRINET_GROUP, function() {
         $this->get(
             '/{id:[0-9]+}', Handlers\Petrinet\GetPetrinet::class
         )->setName("getPetrinet");
@@ -151,22 +154,22 @@ $app->group('/' . API_GROUP, function(){
             '/{id:[0-9]+}/new', Handlers\Petrinet\RegisterPetrinet::class
         )->setName("setPetrinet");
         $this->post(
-            '/{user_id:[0-9]+}/{petrinet_id:[0-9]+}/{session_id:[0-9]+}/feedback', Controllers\PetrinetController::class . ':getFeedback'
-            )->setName('getFeedback');
+            '/{user_id:[0-9]+}/{petrinet_id:[0-9]+}/{session_id:[0-9]+}/feedback',
+            Handlers\Feedback\CoverabilityFeedback::class
+        )->setName("getFeedback");
     });
-
     /**
      * All functions regarding session management
      */
     $this->group('/' . SESSION_GROUP, function() {
         // get the current session for a user
         $this->get(
-            '/{id:[0-9]+}/current_session', Controllers\SessionController::class . ':getCurrentSession'
-            )->setName('getCurrentSession');
+            '/{id:[0-9]+}/current', Handlers\Session\GetCurrentSession::class
+        )->setName("getCurrentSession");
         // start a new session for the user for a Petri net
         $this->post(
-            '/{id:[0-9]+}/{pid:[0-9]+}/new_session', Controllers\SessionController::class . ":startNewSession"
-            )->setName("startNewSession");
+            '/{id:[0-9]+}/{pid:[0-9]+}/new', Handlers\Session\CreateSession::class
+        )->setName("newSession");
     });
 });
 
