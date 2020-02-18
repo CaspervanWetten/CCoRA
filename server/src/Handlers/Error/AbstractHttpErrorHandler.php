@@ -4,8 +4,15 @@ namespace Cora\Handlers\Error;
 
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response; 
+use Psr\Container\ContainerInterface as Container;
 
 abstract class AbstractHttpErrorHandler {
+    protected $container;
+
+    public function __construct(Container $container) {
+        $this->container = $container;
+    }
+    
     public abstract function handle(Request $request, Response $response): Response;
 
     public abstract function getErrorCode(): int;
