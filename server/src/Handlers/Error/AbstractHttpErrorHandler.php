@@ -6,7 +6,7 @@ use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response; 
 use Psr\Container\ContainerInterface as Container;
 
-abstract class AbstractHttpErrorHandler {
+abstract class AbstractHttpErrorHandler implements HttpErrorHandlerInterface {
     protected $container;
 
     public function __construct(Container $container) {
