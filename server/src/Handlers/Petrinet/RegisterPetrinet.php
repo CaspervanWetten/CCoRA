@@ -13,6 +13,8 @@ use Cora\Converters\PetrinetTranslator;
 use Cora\Utils\FileUtils;
 use Cora\Utils\FileUploadUtils;
 
+use Exception;
+
 class RegisterPetrinet extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
         if (!isset($args["id"]))

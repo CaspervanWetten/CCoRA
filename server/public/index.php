@@ -45,27 +45,10 @@ $container["notFoundHandler"] = function($c) {
 };
 
 $container["errorHandler"] = function($c) {
-    return new Cora\Handlers\ErrorHandler($c);
+    return new Handlers\Error\ErrorHandler($c);
 };
 
-// Register the Controllers
-$container[Controllers\UserController::class] = function ($c) {
-    return Controllers\UserController::getInstance($c);
-};
-
-$container[Controllers\StaticController::class] = function($c) {
-    return Controllers\StaticController::getInstance($c);
-};
-
-$container[Controllers\PetrinetController::class] = function($c) {
-    return Controllers\PetrinetController::getInstance($c);
-};
-
-$container[Controllers\SessionController::class] = function($c) {
-    return Controllers\SessionController::getInstance($c);
-};
-
-// register repositories
+// Register the Repositories
 $container[Cora\Repositories\UserRepository::class] = function($c) {
     return new Cora\Repositories\UserRepository($c->get('db'));
 };
