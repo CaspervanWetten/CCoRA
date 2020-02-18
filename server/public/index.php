@@ -1,35 +1,28 @@
 <?php
 defined("CONFIG_FOLDER") or exit("No direct script access allowed.");
 
-/** Own classes **/
-use \Cora\Utils as Utils;
-use \Cora\Models as Models;
-use \Cora\MiddleWare as MiddleWare;
-use \Cora\Controllers as Controllers;
-use \Cora\Enumerators\TrailingSlashOptions as TrailingSlashOptions;
-use \Cora\ErrorHandlers as ErrorHandlers;
-use \Cora\Converters as Converters;
-
-use Cora\Handlers;
-
 /** Slim classes **/
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
+use Cora\MiddleWare;
+use Cora\Enumerators\TrailingSlashOptions;
+use Cora\Handlers;
+use Cora\Utils;
+
 /** load the classes via composer **/
-require_once VENDOR_FOLDER . DIRECTORY_SEPARATOR .  'autoload.php';
+require_once VENDOR_FOLDER . DIRECTORY_SEPARATOR . 'autoload.php';
 
 /**************************************
 *               SLIM SETUP            *
 **************************************/
-// init
 $app = new \Slim\App([
     "settings" => $config,
 ]);
 
 /**
- * Pimple Dependency Inection Container (DIC). Holds all objects which may be
- * used by controllers, models and so forth.
+ * Pimple Dependency Inection Container (DIC). Holds all objects which
+ * may be used by controllers, models and so forth.
  */
 $container = $app->getContainer();
 
@@ -66,9 +59,9 @@ $container[Cora\Repositories\SessionRepository::class] = function($c) {
 **************************************/
 
 /**
- * This MiddleWare removes trailing slashes from the request url. This does
- * have effect on the registered routes, as they should also be defined without
- * trailing slashes.
+ * This MiddleWare removes trailing slashes from the request url. This
+ * does have effect on the registered routes, as they should also be
+ * defined without trailing slashes.
  */
 $app->add(
     new MiddleWare\TrailingSlash( TrailingSlashOptions::REMOVE_TRAILING_SLASH )
@@ -93,10 +86,10 @@ $app->group('/debug', function(){
     $this->group('/graph', function(){
         $this->post("/cover/{pid:[0-9]+}", function(Request $request, Response $response, $args) {
             $pid  = $args["pid"];
-            $model = new Models\PetrinetModel($this->get('db'));
+            $model = new Cora\Models\PetrinetModel($this->get('db'));
             $petrinet = $model->getPetrinet($pid);
             $graph = $request->getParsedBody();
-            $converter = new Converters\JsonToCoverabilityGraph($graph, $petrinet);
+            $converter = new Cora\Converters\JsonToGraph($graph, $petrinet);
             return $response->withJson($converter->convert());
         });
     });
