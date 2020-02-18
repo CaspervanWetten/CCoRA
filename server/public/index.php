@@ -39,13 +39,14 @@ $container['db'] = function($c) {
     return $pdo;
 };
 
+// Register error handlers
 $container["notFoundHandler"] = function($c) {
-    return new ErrorHandlers\NotFoundHandler();
+    return new Handlers\Error\NotFoundHandler($c);
 };
 
-// $container['errorHandler'] = function($c) {
-//     return new ErrorHandlers\JSONErrorHandler();
-// };
+$container["errorHandler"] = function($c) {
+    return new Handlers\Error\ErrorHandler($c);
+};
 
 // register repositories
 $container[Cora\Repositories\UserRepository::class] = function($c) {
