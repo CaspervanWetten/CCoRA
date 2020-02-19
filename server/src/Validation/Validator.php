@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Validator;
+namespace Cora\Validation;
 
 
 class Validator
