@@ -7,7 +7,9 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\UserRepository as UserRepo;
-use Cora\Validator\Validator;
+use Cora\Validation\Validator;
+
+use Cora\Validation;
 
 use Exception;
 
@@ -21,6 +23,7 @@ class RegisterUser extends AbstractHandler {
         if ($repo->userExists("name", $name))
             throw new Exception("A User with this name already exists");
         $validator = new Validator($this->getConfig());
+        $validator = $this->getValidator();
         if (!$validator->validate($name))
             throw new Exception($validator->getError());
         $id = $repo->saveUser($name);
@@ -40,6 +43,19 @@ class RegisterUser extends AbstractHandler {
                 "message" => "Your username is too long. You may use up to twenty characters"
             ]
         ];
+    }
+
+    protected function getValidator() {
+        $minRule = new Validation\MinLengthRule(
+            4,
+            "Your username is too short. A minimum of four characters is required"
+        );
+        $maxRule = new Validation\MaxLengthRule(
+            20,
+            "Your username is too long. You may use up to twenty characters"
+        );
+        $validator = new Validation\RuleValidator([$minRule, $maxRule]);
+        return $validator;
     }
 }
         
