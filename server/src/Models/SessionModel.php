@@ -2,8 +2,6 @@
 
 namespace Cora\Models;
 
-use \Cora\Exceptions\CoraException as CoraException;
-
 class SessionModel
 {
    /**
