@@ -23,7 +23,7 @@ class RuleValidator implements ValidatorInterface {
     public function validate($value): bool {
         foreach ($this->rules as $rule) 
             if (!$rule->validate($value)) {
-                $this->errorMessage = $rule->getError($name);
+                $this->errorMessage = $rule->getError();
                 return false;
             }
         return true;
