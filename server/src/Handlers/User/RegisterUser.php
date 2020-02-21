@@ -6,7 +6,7 @@ use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
-use Cora\Repositories\UserRepository as UserRepo;
+use Cora\User\UserRepository as UserRepo;
 use Cora\Validation;
 
 use Exception;
@@ -18,8 +18,6 @@ class RegisterUser extends AbstractHandler {
             throw new Exception("No name supplied");
         $name = filter_var($body["name"], FILTER_SANITIZE_STRING);
         $repo = $this->container->get(UserRepo::class);
-        if ($repo->userExists("name", $name))
-            throw new Exception("A User with this name already exists");
         $validator = $this->getValidator();
         if (!$validator->validate($name))
             throw new Exception($validator->getError());
@@ -32,14 +30,21 @@ class RegisterUser extends AbstractHandler {
     protected function getValidator() {
         $minRule = new Validation\MinLengthRule(
             4,
-            "Your username is too short. A minimum of four characters is required"
-        );
+            "Your username is too short. A minimum of four characters is required");
         $maxRule = new Validation\MaxLengthRule(
             20,
-            "Your username is too long. You may use up to twenty characters"
-        );
-        $validator = new Validation\RuleValidator([$minRule, $maxRule]);
+            "Your username is too long. You may use up to twenty characters");
+        $regexRule = new Validation\RegexRule(
+            "/^\w+$/",
+            "Your username contains illegal characters.");
+        $uniqueRule = new \Cora\User\UniqueUserRule(
+            $this->container->get(UserRepo::class));
+        $validator = new Validation\RuleValidator([
+            $minRule,
+            $maxRule,
+            $regexRule,
+            $uniqueRule
+        ]);
         return $validator;
     }
 }
-        

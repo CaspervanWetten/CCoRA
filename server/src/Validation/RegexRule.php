@@ -3,7 +3,7 @@
 namespace Cora\Validation;
 
 
-class RegexRule implements RuleInterface {
+class RegexRule extends AbstractRule {
     protected $regex;
 
     public function __construct($regex, $error) {
@@ -12,6 +12,7 @@ class RegexRule implements RuleInterface {
     }
 
     public function validate($value): bool {
-        return preg_match($this->regex, $value) === 1;
+        $result = preg_match($this->regex, $value);
+        return $result === 1;
     }
 }
