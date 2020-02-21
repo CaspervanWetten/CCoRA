@@ -1,6 +1,10 @@
 <?php
+namespace Cora\User;
 
-namespace Cora\Repositories;
+use Cora\Repositories\AbstractRepository;
+use Cora\User\User;
+
+use DateTime;
 
 class UserRepository extends AbstractRepository {
     /**
@@ -20,7 +24,14 @@ class UserRepository extends AbstractRepository {
         $statement->execute([
             ":value" => $value
         ]);
-        return $statement->fetch();
+        $array = $statement->fetch();
+        if (!empty($array)) {
+            $user = new User();
+            return $user->setId(intval($array["id"]))
+                        ->setName($array["name"])
+                        ->setCreated(new DateTime($array["created_on"]));
+        }
+        return NULL;
     }
 
     /**
