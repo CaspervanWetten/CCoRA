@@ -9,8 +9,8 @@ use Cora\Handlers\AbstractHandler;
 use Cora\Services\GetUserService;
 use Cora\Views\JsonUserView;
 use Cora\Views\JsonErrorView;
-use Cora\User\UserNotFoundException;
-use Cora\User\UserRepository as UserRepo;
+use Cora\Domain\User\UserNotFoundException;
+use Cora\Domain\User\UserRepository as UserRepo;
 
 use Exception;
 

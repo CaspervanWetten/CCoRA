@@ -1,8 +1,7 @@
 <?php
-namespace Cora\User;
+namespace Cora\Domain\User;
 
 use Cora\Repositories\AbstractRepository;
-use Cora\User\User;
 
 use DateTime;
 

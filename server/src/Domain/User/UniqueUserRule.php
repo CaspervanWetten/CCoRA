@@ -1,14 +1,13 @@
 <?php
 
-namespace Cora\User;
+namespace Cora\Domain\User;
 
-use Cora\User\UserRepository as UserRepo;
 use Cora\Validation\AbstractRule;
 
 class UniqueUserRule extends AbstractRule {
     protected $repo;
     
-    public function __construct(UserRepo $repo) {
+    public function __construct(UserRepository $repo) {
         parent::__construct("A user with this username already exists");
         $this->repo = $repo;
     }

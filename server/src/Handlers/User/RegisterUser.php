@@ -5,8 +5,9 @@ namespace Cora\Handlers\User;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
+use Cora\Domain\User\UserRepository as UserRepo;
+use Cora\Domain\User\UniqueUserRule;
 use Cora\Handlers\AbstractHandler;
-use Cora\User\UserRepository as UserRepo;
 use Cora\Validation;
 
 use Exception;
@@ -37,7 +38,7 @@ class RegisterUser extends AbstractHandler {
         $regexRule = new Validation\RegexRule(
             "/^\w+$/",
             "Your username contains illegal characters.");
-        $uniqueRule = new \Cora\User\UniqueUserRule(
+        $uniqueRule = new UniqueUserRule(
             $this->container->get(UserRepo::class));
         $validator = new Validation\RuleValidator([
             $minRule,

@@ -5,8 +5,9 @@ namespace Cora\Handlers\User;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
+use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Handlers\AbstractHandler;
-use Cora\Repositories\UserRepository as UserRepo;
+use Cora\Utils\Paginator;
 
 class GetUsers extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
@@ -17,7 +18,7 @@ class GetUsers extends AbstractHandler {
         $page = isset($args["page"]) ?
               filter_var($args["page"], FILTER_SANITIZE_NUMBER_INT) :
               1;
-        $paginator = new \Cora\Utils\Paginator($limit, $page);
+        $paginator = new Paginator($limit, $page);
         $repo = $this->container->get(UserRepo::class);
         $users = $repo->getUsers(NULL, $paginator->limit(), $paginator->offset());
 

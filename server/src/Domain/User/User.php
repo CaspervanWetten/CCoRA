@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\User;
+namespace Cora\Domain\User;
 
 use JsonSerializable;
 use DateTime;
