@@ -2,7 +2,7 @@
 
 namespace Cora\Views;
 
-use Cora\User\User;
+use Cora\Domain\User\User;
 
 abstract class AbstractUserView implements ViewInterface {
     protected $user;

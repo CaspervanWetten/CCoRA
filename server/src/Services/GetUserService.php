@@ -2,9 +2,9 @@
 
 namespace Cora\Services;
 
-use Cora\User\User;
-use Cora\User\UserNotFoundException;
-use Cora\User\UserRepository as UserRepo;
+use Cora\Domain\User\User;
+use Cora\Domain\User\UserNotFoundException;
+use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Views\AbstractUserView as UserView;
 
 use DateTime;
