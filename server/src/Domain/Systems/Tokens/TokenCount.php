@@ -1,8 +1,10 @@
 <?php
 
-namespace Cora\Systems\Tokens;
+namespace Cora\Domain\Systems\Tokens;
 
-abstract class TokenCount implements \JsonSerializable
+use JsonSerializable;
+
+abstract class TokenCount implements JsonSerializable
 {
    /**
     * Add a TokenCount object to this one

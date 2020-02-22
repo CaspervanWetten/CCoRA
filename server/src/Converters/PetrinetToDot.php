@@ -27,7 +27,7 @@ class PetrinetToDot extends Converter
         $places = $this->petrinet->getPlaces();
         $transitions = $this->petrinet->getTransitions();
         $k = count($places) + count($transitions);
-        $layout = "dot";
+        // $layout = "dot";
 
         $globalOptions = [
             sprintf("graph [fontname=\"%s\", fontsize=\"%s\"]", $font, $fontsizeNode),
@@ -36,7 +36,7 @@ class PetrinetToDot extends Converter
             "ranksep=.5",
             "rankdir=TB",
             "nodesep=.5",
-            "layout=".$layout,
+            /*"layout=".$layout,*/
             "outputorder=nodesfirst"
         ];
 

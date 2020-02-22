@@ -1,8 +1,8 @@
 <?php
 
-namespace Cora\Systems;
+namespace Cora\Domain\Systems;
 
-use Cora\Systems\Tokens;
+use Cora\Domain\Systems\Tokens\TokenCountFactory;
 
 use \Ds\Set as Set;
 

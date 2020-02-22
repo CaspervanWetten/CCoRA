@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Systems\Tokens;
+namespace Cora\Domain\Systems\Tokens;
 
 class TokenCountFactory
 {

@@ -6,7 +6,7 @@ use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
-use Cora\Repositories\UserRepository as UserRepo;
+use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Repositories\SessionRepository as SessionRepo;
 use Cora\Converters\JsonToGraph;

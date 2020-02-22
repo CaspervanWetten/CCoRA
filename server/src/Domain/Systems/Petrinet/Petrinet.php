@@ -1,12 +1,13 @@
 <?php
 
-namespace Cora\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet;
 
-use \Cora\Systems as Systems;
-use \Cora\Systems\Tokens;
+use Cora\Domain\Systems\Marking;
 
-use \Ds\Set as Set;
-use \Ds\Map as Map;
+use Ds\Set as Set;
+use Ds\Map as Map;
+
+use Exception;
 
 class Petrinet
 {
@@ -78,7 +79,7 @@ class Petrinet
             $newTokens = $tokens->add($wpost)->subtract($wpre);
             $arr[$place] = $newTokens;
         }
-        $m = new Systems\Marking($this, $arr);
+        $m = new Marking($this, $arr);
         return $m;
     }
 
@@ -191,7 +192,7 @@ class Petrinet
 
     public function setInitial($marking)
     {
-        $marking = new Systems\Marking($this, $marking);
+        $marking = new Marking($this, $marking);
         $this->initialMarking = $marking;
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Cora\Converters;
 
-use \Cora\Systems\Graphs\Edge;
-use \Cora\Systems\Graphs\Graph;
-use \Cora\Systems\Marking;
+use \Cora\Domain\Systems\Graphs\Edge;
+use \Cora\Domain\Systems\Graphs\Graph;
+use \Cora\Domain\Systems\Marking;
 
 use \Ds\Set as Set;
 

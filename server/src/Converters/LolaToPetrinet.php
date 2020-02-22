@@ -2,8 +2,8 @@
 
 namespace Cora\Converters;
 
-use \Cora\Systems\Petrinet\Flow;
-use \Cora\Systems\Petrinet\Petrinet;
+use \Cora\Domain\Systems\Petrinet\Flow;
+use \Cora\Domain\Systems\Petrinet\Petrinet;
 
 use \Ds\Set as Set;
 use \Ds\Map as Map;

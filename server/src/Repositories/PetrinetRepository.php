@@ -2,9 +2,9 @@
 
 namespace Cora\Repositories;
 
-use Cora\Systems\Petrinet\Petrinet;
-use Cora\Systems\Petrinet\Flow;
-use Cora\Systems\Tokens\IntegerTokenCount;
+use Cora\Domain\Systems\Petrinet\Petrinet;
+use Cora\Domain\Systems\Petrinet\Flow;
+use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Ds\Map;
 use Exception;
