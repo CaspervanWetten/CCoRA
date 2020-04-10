@@ -2,11 +2,15 @@
 
 namespace Cora\Repositories;
 
-use Cora\Domain\Systems\Petrinet\Petrinet;
+use Cora\Domain\Systems\MarkingBuilder;
 use Cora\Domain\Systems\Petrinet\Flow;
+use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
-use Ds\Map;
+use Cora\Domain\Systems\Petrinet\PetrinetBuilder as Builder;
+use Cora\Domain\Systems\Petrinet\PetrinetElement as Element;
+use Cora\Domain\Systems\Petrinet\PetrinetElementType as ElementType;
+
 use Exception;
 use PDO;
 
@@ -14,22 +18,27 @@ class PetrinetRepository extends AbstractRepository {
     public function getPetrinet($id) {
         if (!$this->petrinetExists($id))
             return NULL;
+        $builder = new Builder();
         // collect places
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          PETRINET_PLACE_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
-        $places = array_map(
-            function($k) { return $k["name"]; },
-            $statement->fetchAll());
+        foreach($statement->fetchAll() as $row) {
+            $element = new Element($row["name"], ElementType::PLACE);
+            $builder->addElement($element);
+        }
         // collect transitions
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          PETRINET_TRANSITION_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
-        $transitions = array_map(
-            function($k) { return $k["name"]; },
-            $statement->fetchAll());
+        foreach($statement->fetchAll() as $row) {
+            $element = new Element(
+                $row["name"],
+                ElementType::TRANSITION);
+            $builder->addElement($element);
+        }
         // collect flows
         $fromCol   = "from_element";
         $toCol     = "to_element";
@@ -47,12 +56,25 @@ class PetrinetRepository extends AbstractRepository {
         $statement->execute([":pid" => $id]);
         $flowsTp = $statement->fetchAll();
         $flows = array_merge($flowsPt, $flowsTp);
-        $flowMap = new Map();
         foreach($flows as $i => $flow) {
-            $f = new Flow($flow[$fromCol], $flow[$toCol]);
-            $weight = intval($flow[$weightCol]);
-            $flowMap->put($f, $weight);
+            $w = intval($flow[$weightCol]);
+            if ($builder->hasPlace($flow[$fromCol]) &&
+                $builder->hasTransition($flow[$toCol])) {
+                $f = new Flow(
+                    new Element($flow[$fromCol], ElementType::PLACE),
+                    new Element($flow[$toCol], ElementType::TRANSITION));
+                $builder->addFlow($f, $w);
+            } else if ($builder->hasPlace($flow[$toCol]) &&
+                       $builder->hasTransition($flow[$fromCol])) {
+                $f = new Flow(
+                    new Element($flow[$fromCol], ElementType::TRANSITION),
+                    new Element($flow[$toCol], ElementType::PLACE));
+                $builder->addFlow($f, $w);
+            } else
+                throw new Exception("Invalid Flow");
         }
+        $petrinet = $builder->getPetrinet();
+        $builder = new MarkingBuilder();
         // get initial marking
         $query = sprintf(
             "SELECT `id` FROM %s WHERE `petrinet` = :pid",
@@ -63,19 +85,21 @@ class PetrinetRepository extends AbstractRepository {
         $markingId = NULL;
         if (count($rows) > 0)
             $markingId = intval($rows[0]["id"]);
-        $marking = NULL;
         if (!is_null($markingId)) {
             $query = sprintf(
                 "SELECT `place`, `tokens` FROM %s WHERE marking = :mid",
                 PETRINET_MARKING_PAIR_TABLE);
             $statement = $this->db->prepare($query);
             $statement->execute([":mid" => $markingId]);
-            $marking = [];
-            foreach($statement->fetchAll() as $i => $pair) 
-                $marking[$pair["place"]] = intval($pair["tokens"]);
+            foreach($statement->fetchAll() as $row) {
+                $element = new Element($row["place"], ElementType::PLACE);
+                $tokens = new IntegerTokenCount(intval($row["tokens"]));
+                $builder->assign($element, $tokens);
+            }
         }
-        $petrinet = new Petrinet($places, $transitions, $flowMap, $marking);
-        return $petrinet;
+        $marking = $builder->getMarking($petrinet);
+        $marked = new MarkedPetrinet($petrinet, $marking);
+        return $marked;
     }
 
     public function getPetrinets(int $limit = 0, int $offset = 0) {
@@ -244,4 +268,3 @@ class PetrinetRepository extends AbstractRepository {
         return !empty($statement->fetchAll());
     }
 }
-
