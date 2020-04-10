@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 class CORS extends MiddleWare {
     protected $allow;
 
-    public function __construct(string $allow) {
+    public function __construct(string $allow="*") {
         $this->allow = $allow;
     }
 
