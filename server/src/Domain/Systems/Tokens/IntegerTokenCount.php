@@ -11,8 +11,7 @@ class IntegerTokenCount extends AbstractTokenCount
         $this->value = intval($val);
     }
 
-    public function add($b)
-    {
+    public function add($b): TokenCountInterface {
         $val = $this->value;
         if($b instanceof IntegerTokenCount){
             return new IntegerTokenCount($val + $b->value);
@@ -26,8 +25,7 @@ class IntegerTokenCount extends AbstractTokenCount
         return $val;
     }
 
-    public function subtract($b)
-    {
+    public function subtract($b): TokenCountInterface {
         $val = $this->value;
         if($b instanceof IntegerTokenCount){
             return new IntegerTokenCount($val - $b->value);
@@ -41,8 +39,7 @@ class IntegerTokenCount extends AbstractTokenCount
         return $val;
     }
 
-    public function greater($b)
-    {
+    public function greater($b): bool {
         $val = $this->value;
         if($b instanceof IntegerTokenCount) {
             return $val > $b->value;
@@ -52,8 +49,7 @@ class IntegerTokenCount extends AbstractTokenCount
         }
     }
 
-    public function geq($b)
-    {
+    public function geq($b): bool {
         $val = $this->value;
         if($b instanceof IntegerTokenCount) {
             return $val >= $b->value;

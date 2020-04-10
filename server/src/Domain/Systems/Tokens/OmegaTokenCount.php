@@ -4,16 +4,14 @@ namespace Cora\Domain\Systems\Tokens;
 
 class OmegaTokenCount extends AbstractTokenCount
 {
-    public function add($b){return $this;}
-    public function subtract($b){return $this;}
+    public function add($b): TokenCountInterface {return $this;}
+    public function subtract($b): TokenCountInterface {return $this;}
 
-    public function greater($b)
-    {
+    public function greater($b): bool {
         return true;
     }
 
-    public function geq($b)
-    {
+    public function geq($b): bool {
         return true;
     }
 
