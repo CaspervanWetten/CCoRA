@@ -2,15 +2,22 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-class Flow
-{
-    public $from;
-    public $to;
+use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as Element;
 
-    public function __construct($from, $to)
-    {
+class Flow implements FlowInterface {
+    protected $from;
+    protected $to;
+
+    public function __construct(Element $from, Element $to) {
         $this->from = $from;
         $this->to   = $to;
     }
+
+    public function getFrom(): Element {
+        return $this->from;
+    }
+
+    public function getTo(): Element {
+        return $this->to;
+    }
 }
- ?>

@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Systems\Tokens;
 
-class OmegaTokenCount extends TokenCount
+class OmegaTokenCount extends AbstractTokenCount
 {
     public function add($b){return $this;}
     public function subtract($b){return $this;}

@@ -4,8 +4,7 @@ namespace Cora\Domain\Systems\Tokens;
 
 use JsonSerializable;
 
-abstract class TokenCount implements JsonSerializable
-{
+abstract class AbstractTokenCount implements TokenCountInterface, JsonSerializable {
    /**
     * Add a TokenCount object to this one
     * @param TokenCount $b The TokenCount to add
@@ -36,5 +35,3 @@ abstract class TokenCount implements JsonSerializable
     **/
     public abstract function geq($b);
 }
-
-?>

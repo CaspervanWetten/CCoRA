@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Systems\Tokens;
 
-class IntegerTokenCount extends TokenCount
+class IntegerTokenCount extends AbstractTokenCount
 {
     public $value;
 
