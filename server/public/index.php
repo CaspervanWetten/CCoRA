@@ -2,6 +2,8 @@
 defined("CONFIG_FOLDER") or exit("No direct script access allowed.");
 
 /** Slim classes **/
+use Slim\App;
+
 use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
@@ -16,7 +18,7 @@ require_once VENDOR_FOLDER . DIRECTORY_SEPARATOR . 'autoload.php';
 /**************************************
 *               SLIM SETUP            *
 **************************************/
-$app = new \Slim\App([
+$app = new App([
     "settings" => $config,
 ]);
 
@@ -42,8 +44,8 @@ $container["errorHandler"] = function($c) {
 };
 
 // Register the Repositories
-$container[Cora\Repositories\UserRepository::class] = function($c) {
-    return new Cora\Repositories\UserRepository($c->get('db'));
+$container[Cora\Domain\User\UserRepository::class] = function($c) {
+    return new Cora\Domain\User\UserRepository($c->get('db'));
 };
 
 $container[Cora\Repositories\PetrinetRepository::class] = function($c) {
@@ -52,6 +54,11 @@ $container[Cora\Repositories\PetrinetRepository::class] = function($c) {
 
 $container[Cora\Repositories\SessionRepository::class] = function($c) {
     return new Cora\Repositories\SessionRepository($c->get('db'));
+};
+
+// register the Services
+$container[Cora\Services\GetUserService::class] = function($c) {
+    return new Cora\Services\GetUserService();
 };
 
 /**************************************
@@ -66,6 +73,12 @@ $container[Cora\Repositories\SessionRepository::class] = function($c) {
 $app->add(
     new MiddleWare\TrailingSlash( TrailingSlashOptions::REMOVE_TRAILING_SLASH )
 );
+
+if (CORS_ENABLED) {
+    $app->add(
+        new MiddleWare\CORS(CORS_ALLOW)
+    );
+}
 
 /**************************************
 *                ROUTES               *
