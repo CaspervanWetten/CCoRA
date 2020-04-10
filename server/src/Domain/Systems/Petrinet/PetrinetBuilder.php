@@ -25,16 +25,18 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
     }
 
     public function addElement(Element $e): void {
-        if ($e->getType() == ElementType::TRANSITION) {
+        if ($e->getType() == ElementType::TRANSITION &&
+            !$this->hasPlace($e->getName())) {
             $this->transitions->add($e);
-        } else if ($e->getType() == ElementType::PLACE) {
+        } else if ($e->getType() == ElementType::PLACE &&
+                   !$this->hasTransition($e->getName())) {
             $this->places->add($e);
         } else {
-            throw new Exception("Invalid element type added");
+            throw new Exception("Attempted to add invalid element");
         }
     }
 
-    public function addFlow(Flow $f, $w): void {
+    public function addFlow(Flow $f, int $w): void {
         $this->flows->add($f, $w);
     }
 
@@ -58,5 +60,15 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
         }
         $petrinet = new Petrinet2($places, $transitions, $flows);
         return $petrinet;
+    }
+
+    public function hasPlace(string $place): bool {
+        $element = new PetrinetElement($place, PetrinetElementType::PLACE);
+        return $this->places->has($element);
+    }
+
+    public function hasTransition(string $transition): bool {
+        $element = new PetrinetElement($transition, PetrinetElementType::TRANSITION);
+        return $this->transitions->has($element);
     }
 }

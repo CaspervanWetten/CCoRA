@@ -13,8 +13,8 @@ interface PetrinetInterface {
     public function fire(Marking $marking, Element $e): Marking;
     public function reachable(Marking $marking): MarkingMap;
     public function enabledTransitions(Marking $marking): ElementC;
-    public function preset(Element $e): ElementC;
-    public function postset(Element $e): ElementC;
+    public function preset(Element $e): PrePostSetMapInterface;
+    public function postset(Element $e): PrePostSetMapInterface;
 
     public function getPlaces(): ElementC;
     public function getTransitions(): ElementC;

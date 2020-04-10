@@ -11,7 +11,7 @@ use Cora\Domain\Systems\Petrinet\PetrinetElementType as ElementType;
 use Ds\Map;
 use Exception;
 
-class MarkingBuilder implements MarkingInterface {
+class MarkingBuilder implements MarkingBuilderInterface {
     protected $map;
     
     public function __construct() {

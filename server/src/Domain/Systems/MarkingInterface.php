@@ -5,6 +5,7 @@ namespace Cora\Domain\Systems;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
 use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as Element;
 use Cora\Domain\Systems\Petrinet\PetrinetElementContainerInterface as Container;
+use Cora\Domain\Systems\MarkingInterface as Marking;
 use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
 
 use Ds\Set;

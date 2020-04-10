@@ -67,4 +67,8 @@ class Marking2 implements MarkingInterface {
         }
         return new Marking2($newMap);
     }
+
+    public function getIterator() {
+        return $this->map->getIterator();
+    }
 }

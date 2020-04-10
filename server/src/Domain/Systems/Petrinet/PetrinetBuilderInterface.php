@@ -11,4 +11,7 @@ interface PetrinetBuilderInterface {
     public function addFlow(Flow $f, int $weight): void;
     public function setInitial(Marking $m): void;
     public function getPetrinet(): Petrinet;
+
+    public function hasPlace(string $place): bool;
+    public function hasTransition(string $trans): bool;
 }
