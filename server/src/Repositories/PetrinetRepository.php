@@ -3,11 +3,13 @@
 namespace Cora\Repositories;
 
 use Cora\Domain\Systems\MarkingBuilder;
+use Cora\Domain\Systems\MarkingInterface;
 use Cora\Domain\Systems\Petrinet\Flow;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Cora\Domain\Systems\Petrinet\PetrinetBuilder as Builder;
+use Cora\Domain\Systems\Petrinet\PetrinetInterface;
 use Cora\Domain\Systems\Petrinet\Place;
 use Cora\Domain\Systems\Petrinet\Transition;
 
@@ -72,32 +74,31 @@ class PetrinetRepository extends AbstractRepository {
                 throw new Exception("Invalid Flow");
         }
         $petrinet = $builder->getPetrinet();
+        return $petrinet;
+    }
+
+    public function getMarking(int $mid, PetrinetInterface $p): MarkingInterface {
+        $query = sprintf(
+            "SELECT `place`, `tokens` FROM %s WHERE marking = :mid",
+            PETRINET_MARKING_PAIR_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":mid" => $mid]);
         $builder = new MarkingBuilder();
-        // get initial marking
+        foreach($statement->fetchAll() as $row) {
+            $place = new Place($row["place"]);
+            $tokens = new IntegerTokenCount(intval($row["tokens"]));
+            $builder->assign($place, $tokens);
+        }
+        return $builder->getMarking($p);
+    }
+
+    public function getMarkings(int $pid) {
         $query = sprintf(
             "SELECT `id` FROM %s WHERE `petrinet` = :pid",
             PETRINET_MARKING_TABLE);
         $statement = $this->db->prepare($query);
-        $statement->execute([":pid" => $id]);
-        $rows = $statement->fetchAll();
-        $markingId = NULL;
-        if (count($rows) > 0)
-            $markingId = intval($rows[0]["id"]);
-        if (!is_null($markingId)) {
-            $query = sprintf(
-                "SELECT `place`, `tokens` FROM %s WHERE marking = :mid",
-                PETRINET_MARKING_PAIR_TABLE);
-            $statement = $this->db->prepare($query);
-            $statement->execute([":mid" => $markingId]);
-            foreach($statement->fetchAll() as $row) {
-                $element = new Place($row["place"]);
-                $tokens = new IntegerTokenCount(intval($row["tokens"]));
-                $builder->assign($element, $tokens);
-            }
-        }
-        $marking = $builder->getMarking($petrinet);
-        $marked = new MarkedPetrinet($petrinet, $marking);
-        return $marked;
+        $statement->execute([":pid" => $pid]);
+        return $statement->fetchAll();
     }
 
     public function getPetrinets(int $limit = 0, int $offset = 0) {
