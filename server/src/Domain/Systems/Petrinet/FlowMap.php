@@ -35,4 +35,15 @@ class FlowMap implements FlowMapInterface {
     public function getIterator() {
         return $this->map->getIterator();
     }
+
+    public function jsonSerialize() {
+        $res = [];
+        foreach($this->map as $flow => $weight)
+            array_push($res, [
+                "from"   => $flow->getFrom(),
+                "to"     => $flow->getTo(),
+                "weight" => $weight
+            ]);
+        return $res;
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-interface PlaceContainerInterface {
+use JsonSerializable;
+
+interface PlaceContainerInterface extends JsonSerializable {
     public function contains(Place $place): bool;
     public function add(Place $place): void;
 }

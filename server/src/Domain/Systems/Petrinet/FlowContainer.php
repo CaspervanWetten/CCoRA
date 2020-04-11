@@ -22,4 +22,8 @@ class FlowContainer implements FlowContainerInterface {
     public function getIterator() {
         return $this->set->getIterator();
     }
+
+    public function jsonSerialize() {
+        return $this->set;
+    }
 }

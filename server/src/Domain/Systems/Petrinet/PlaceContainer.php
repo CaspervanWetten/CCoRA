@@ -18,4 +18,8 @@ class PlaceContainer implements PlaceContainerInterface {
     public function add(Place $p): void {
         $this->set->add($p);
     }
+
+    public function jsonSerialize() {
+        return $this->set;
+    }
 }

@@ -18,4 +18,8 @@ class TransitionContainer implements TransitionContainerInterface {
     public function add(Transition $t): void {
         $this->set->add($t);
     }
+
+    public function jsonSerialize() {
+        return $this->set;
+    }
 }

@@ -5,7 +5,6 @@ namespace Cora\Repositories;
 use Cora\Domain\Systems\MarkingBuilder;
 use Cora\Domain\Systems\MarkingInterface;
 use Cora\Domain\Systems\Petrinet\Flow;
-use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Cora\Domain\Systems\Petrinet\PetrinetBuilder as Builder;

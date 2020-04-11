@@ -31,4 +31,11 @@ class Flow implements FlowInterface, Hashable {
         return $this->getFrom() === $other->getFrom() &&
                $this->getTo() === $other->getTo();
     }
+
+    public function jsonSerialize() {
+        return [
+            "from" => $this->getFrom(),
+            "to" => $this->getTo()
+        ];
+    }
 }

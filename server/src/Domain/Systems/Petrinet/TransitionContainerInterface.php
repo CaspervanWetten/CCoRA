@@ -2,7 +2,9 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-interface TransitionContainerInterface {
+use JsonSerializable;
+
+interface TransitionContainerInterface extends JsonSerializable {
     public function contains(Transition $t): bool;
     public function add(Transition $t): void;
 }

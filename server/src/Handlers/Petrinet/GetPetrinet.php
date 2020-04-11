@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
-use Cora\Converters\PetrinetToJson;
+use Cora\Converters\Petrinet2ToJson;
 
 use Exception;
 
@@ -20,8 +20,8 @@ class GetPetrinet extends AbstractHandler {
         $petrinet = $repo->getPetrinet($id);
         if (is_null($petrinet)) 
             throw new Exception("The Petri net could not be found");
-        $converter = new PetrinetToJson($petrinet);
+        $converter = new Petrinet2ToJson($petrinet);
         $p = $converter->convert();
-        return $response->withJson($p);
+        return $response->getBody()->write($p);
     }
 }

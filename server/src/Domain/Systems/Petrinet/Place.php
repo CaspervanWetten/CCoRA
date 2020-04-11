@@ -2,7 +2,9 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-class Place implements PetrinetElementInterface {
+use JsonSerializable;
+
+class Place implements PetrinetElementInterface, JsonSerializable {
     protected $name;
 
     public function __construct(string $name) {
@@ -19,5 +21,9 @@ class Place implements PetrinetElementInterface {
 
     public function equals($obj): bool {
         return $this->getName() === $obj->getName();
+    }
+
+    public function jsonSerialize() {
+        return $this->getName();
     }
 }
