@@ -3,6 +3,8 @@
 namespace Cora\Domain\Systems\Petrinet;
 
 use Cora\Domain\Systems\Petrinet\FlowInterface as Flow;
+use Cora\Domain\Systems\Petrinet\FlowContainerInterface as Flows;
+
 use Ds\Map;
 
 class FlowMap implements FlowMapInterface {
@@ -24,6 +26,10 @@ class FlowMap implements FlowMapInterface {
         if ($this->has($flow))
             return $this->map->get($flow);
         return 0;
+    }
+
+    public function flows(): Flows {
+        return new FlowContainer($this->map->keys());
     }
 
     public function getIterator() {

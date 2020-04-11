@@ -2,19 +2,14 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as Element;
-use Cora\Domain\Systems\Petrinet\PetrinetElementType as ElementType;
-use Cora\Domain\Systems\Petrinet\PetrinetElementContainerInterface as IContainer;
-use Cora\Domain\Systems\Petrinet\PetrinetElementContainer as Container;
-use Cora\Domain\Systems\Petrinet\FlowMapInterface as FlowMap;
-use Cora\Domain\Systems\Petrinet\PrePostSetMapInterface as PrePostSetMap;
-use Cora\Domain\Systems\MarkingInterface as Marking;
+use Cora\Domain\Systems\MarkingInterface as IMarking;
 use Cora\Domain\Systems\MarkingMapInterface as IMarkingMap;
 use Cora\Domain\Systems\MarkingMap;
 use Cora\Domain\Systems\MarkingBuilder;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
-
-use Exception;
+use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as IElement;
+use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as IPlaceContainer;
+use Cora\Domain\Systems\Petrinet\TransitionContainerInterface as ITransitionContainer;
 
 class Petrinet2 implements PetrinetInterface {
     protected $places;
@@ -22,8 +17,8 @@ class Petrinet2 implements PetrinetInterface {
     protected $flows;
 
     public function __construct (
-        IContainer $p,
-        IContainer $t,
+        PlaceContainer $p,
+        TransitionContainer $t,
         FlowMap $f)
     {
         $this->places = $p;
@@ -31,21 +26,18 @@ class Petrinet2 implements PetrinetInterface {
         $this->flows = $f;
     }
 
-    public function enabled(Marking $marking, Element $e): bool {
-        if ($e->getType() == ElementType::PLACE)
-            throw new Exception("A place cannot be enabled or not");
-        $preset = $this->preset($e);
+    public function enabled(IMarking $marking, Transition $t): bool {
+        $preset = $this->preset($t);
         foreach($preset as $place => $weight) {
-            $t = $marking->get($place);
-            if ($t instanceof IntegerTokenCount && $t->value < $weight)
+            $tokens = $marking->get($place);
+            if ($tokens instanceof IntegerTokenCount &&
+                $tokens->value < $weight)
                 return false;
         }
         return true;
     }
 
-    public function fire(Marking $marking, Element $t): Marking {
-        if ($t->getType() == ElementType::PLACE)
-            throw new Exception("A place cannot be fired");
+    public function fire(IMarking $marking, Transition $t): IMarking {
         $pre = $this->preset($t);
         $post = $this->postset($t);
         
@@ -58,7 +50,7 @@ class Petrinet2 implements PetrinetInterface {
         return $builder->getMarking($this);
     }
 
-    public function reachable(Marking $marking): IMarkingMap {
+    public function reachable(IMarking $marking): IMarkingMap {
         $map = new MarkingMap();
         foreach($this->enabledTransitions($marking) as $transition) {
             $newMarking = $this->fire($marking, $transition);
@@ -67,15 +59,15 @@ class Petrinet2 implements PetrinetInterface {
         return $map;
     }
 
-    public function enabledTransitions(Marking $marking): IContainer {
-        $container = new Container();
+    public function enabledTransitions(IMarking $marking): TransitionContainer {
+        $container = new TransitionContainer();
         foreach($this->transitions as $transition)
             if ($this->enabled($marking, $transition))
                 $container->add($transition);
         return $container;
     }
 
-    public function preset(Element $e): PrePostSetMap {
+    public function preset(IElement $e): PrePostSetMap {
         $flows = $this->flows;
         $map = new PrePostSetMap();
         foreach($flows as $flow => $weight) 
@@ -84,7 +76,7 @@ class Petrinet2 implements PetrinetInterface {
         return $map;
     }
 
-    public function postset(Element $e): PrePostSetMap {
+    public function postset(IElement $e): PrePostSetMap {
         $flows = $this->flows;
         $map = new PrePostSetMap();
         foreach($flows as $flow => $weight) 
@@ -93,11 +85,11 @@ class Petrinet2 implements PetrinetInterface {
         return $map;
     }
 
-    public function getPlaces(): IContainer {
+    public function getPlaces(): IPlaceContainer {
         return $this->places;
     }
 
-    public function getTransitions(): IContainer {
+    public function getTransitions(): ITransitionContainer {
         return $this->transitions;
     }
 

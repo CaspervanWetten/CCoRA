@@ -8,8 +8,8 @@ use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Cora\Domain\Systems\Petrinet\PetrinetBuilder as Builder;
-use Cora\Domain\Systems\Petrinet\PetrinetElement as Element;
-use Cora\Domain\Systems\Petrinet\PetrinetElementType as ElementType;
+use Cora\Domain\Systems\Petrinet\Place;
+use Cora\Domain\Systems\Petrinet\Transition;
 
 use Exception;
 use PDO;
@@ -25,8 +25,8 @@ class PetrinetRepository extends AbstractRepository {
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
-            $element = new Element($row["name"], ElementType::PLACE);
-            $builder->addElement($element);
+            $place = new Place($row["name"]);
+            $builder->addPlace($place);
         }
         // collect transitions
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
@@ -34,10 +34,8 @@ class PetrinetRepository extends AbstractRepository {
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
-            $element = new Element(
-                $row["name"],
-                ElementType::TRANSITION);
-            $builder->addElement($element);
+            $transition = new Transition($row["name"]);
+            $builder->addTransition($transition);
         }
         // collect flows
         $fromCol   = "from_element";
@@ -56,19 +54,19 @@ class PetrinetRepository extends AbstractRepository {
         $statement->execute([":pid" => $id]);
         $flowsTp = $statement->fetchAll();
         $flows = array_merge($flowsPt, $flowsTp);
-        foreach($flows as $i => $flow) {
+        foreach($flows as $flow) {
             $w = intval($flow[$weightCol]);
             if ($builder->hasPlace($flow[$fromCol]) &&
                 $builder->hasTransition($flow[$toCol])) {
                 $f = new Flow(
-                    new Element($flow[$fromCol], ElementType::PLACE),
-                    new Element($flow[$toCol], ElementType::TRANSITION));
+                    new Place($flow[$fromCol]),
+                    new Transition($flow[$toCol]));
                 $builder->addFlow($f, $w);
             } else if ($builder->hasPlace($flow[$toCol]) &&
                        $builder->hasTransition($flow[$fromCol])) {
                 $f = new Flow(
-                    new Element($flow[$fromCol], ElementType::TRANSITION),
-                    new Element($flow[$toCol], ElementType::PLACE));
+                    new Transition($flow[$fromCol]),
+                    new Place($flow[$toCol]));
                 $builder->addFlow($f, $w);
             } else
                 throw new Exception("Invalid Flow");
@@ -92,7 +90,7 @@ class PetrinetRepository extends AbstractRepository {
             $statement = $this->db->prepare($query);
             $statement->execute([":mid" => $markingId]);
             foreach($statement->fetchAll() as $row) {
-                $element = new Element($row["place"], ElementType::PLACE);
+                $element = new Place($row["place"]);
                 $tokens = new IntegerTokenCount(intval($row["tokens"]));
                 $builder->assign($element, $tokens);
             }

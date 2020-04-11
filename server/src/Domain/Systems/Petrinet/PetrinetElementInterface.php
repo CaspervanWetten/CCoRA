@@ -2,7 +2,8 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-interface PetrinetElementInterface {
+use Ds\Hashable;
+
+interface PetrinetElementInterface extends Hashable {
     public function getName(): string;
-    public function getType(): int;
 }

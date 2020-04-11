@@ -3,10 +3,10 @@
 namespace Cora\Domain\Systems;
 
 use Cora\Domain\Systems\MarkingInterface as Marking;
-use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as Element;
+use Cora\Domain\Systems\Petrinet\Transition;
 
 interface MarkingMapInterface {
-    public function get(Element $e): Marking;
-    public function put(Element $e, Marking $m): void;
-    public function has(Element $e): bool;
+    public function get(Transition $t): Marking;
+    public function put(Transition $t, Marking $m): void;
+    public function has(Transition $t): bool;
 }

@@ -4,7 +4,9 @@ namespace Cora\Domain\Systems\Petrinet;
 
 use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as Element;
 
-class Flow implements FlowInterface {
+use Ds\Hashable;
+
+class Flow implements FlowInterface, Hashable {
     protected $from;
     protected $to;
 
@@ -19,5 +21,14 @@ class Flow implements FlowInterface {
 
     public function getTo(): Element {
         return $this->to;
+    }
+
+    public function hash() {
+        return $this->from->hash() . $this->to->hash();
+    }
+
+    public function equals($other): bool {
+        return $this->getFrom() === $other->getFrom() &&
+               $this->getTo() === $other->getTo();
     }
 }
