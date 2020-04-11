@@ -22,4 +22,8 @@ class PlaceContainer implements PlaceContainerInterface {
     public function jsonSerialize() {
         return $this->set;
     }
+
+    public function getIterator() {
+        return $this->set->getIterator();
+    }
 }

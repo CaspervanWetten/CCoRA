@@ -26,4 +26,8 @@ class Place implements PetrinetElementInterface, JsonSerializable {
     public function jsonSerialize() {
         return $this->getName();
     }
+
+    public function __toString() {
+        return $this->getName();
+    }
 }

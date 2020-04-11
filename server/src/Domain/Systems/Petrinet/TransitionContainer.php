@@ -22,4 +22,8 @@ class TransitionContainer implements TransitionContainerInterface {
     public function jsonSerialize() {
         return $this->set;
     }
+
+    public function getIterator() {
+        return $this->set->getIterator();
+    }
 }
