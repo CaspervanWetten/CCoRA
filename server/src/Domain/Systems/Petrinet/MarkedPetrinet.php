@@ -18,4 +18,11 @@ class MarkedPetrinet implements MarkedPetrinetInterface {
     public function getMarking(): Marking {
         return $this->marking;
     }
+
+    public function jsonSerialize() {
+        return [
+            "petrinet" => $this->getPetrinet(),
+            "marking" => $this->getMarking()
+        ];
+    }
 }

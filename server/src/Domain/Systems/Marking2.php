@@ -69,4 +69,11 @@ class Marking2 implements MarkingInterface {
     public function getIterator() {
         return $this->map->getIterator();
     }
+
+    public function jsonSerialize() {
+        $result = [];
+        foreach($this->map as $place => $tokens) 
+            $result[$place->getName()] = $tokens;
+        return $result;
+    }
 }

@@ -9,8 +9,9 @@ use Cora\Domain\Systems\MarkingInterface as Marking;
 use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
 
 use IteratorAggregate;
+use JsonSerializable;
 
-interface MarkingInterface extends IteratorAggregate {
+interface MarkingInterface extends IteratorAggregate, JsonSerializable {
     public function get(Place $place): Tokens;
     public function unbounded(): Places;
     public function covers(Marking $other, Petrinet $net): bool;

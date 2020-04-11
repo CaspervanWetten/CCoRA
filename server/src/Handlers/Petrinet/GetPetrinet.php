@@ -2,12 +2,12 @@
 
 namespace Cora\Handlers\Petrinet;
 
+use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
-use Cora\Converters\Petrinet2ToJson;
 
 use Exception;
 
@@ -20,8 +20,12 @@ class GetPetrinet extends AbstractHandler {
         $petrinet = $repo->getPetrinet($id);
         if (is_null($petrinet)) 
             throw new Exception("The Petri net could not be found");
-        $converter = new Petrinet2ToJson($petrinet);
-        $p = $converter->convert();
-        return $response->getBody()->write($p);
+        $markings = $repo->getMarkings($id);
+        if (!empty($markings)) {
+            $marking = $repo->getMarking($markings[0]["id"], $petrinet);
+            $marked = new MarkedPetrinet($petrinet, $marking);
+            return $response->getBody()->write(json_encode($marked));
+        }
+        return $response->getBody()->write(json_encode($petrinet));
     }
 }

@@ -25,4 +25,8 @@ class MarkingMap implements MarkingMapInterface {
     public function has(Transition $t): bool {
         return $this->map->hasKey($t);
     }
+
+    public function jsonSerialize() {
+        return $this->map;
+    }
 }

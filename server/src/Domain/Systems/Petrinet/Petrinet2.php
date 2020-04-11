@@ -96,4 +96,12 @@ class Petrinet2 implements PetrinetInterface {
     public function getFlows(): FlowMapInterface {
         return $this->flows;
     }
+
+    public function jsonSerialize() {
+        return [
+            "places"      => $this->getPlaces(),
+            "transitions" => $this->getTransitions(),
+            "flows"       => $this->getFlows()
+        ];
+    }
 }

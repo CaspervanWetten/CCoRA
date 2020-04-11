@@ -9,7 +9,9 @@ use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as PlaceContainer;
 use Cora\Domain\Systems\Petrinet\TransitionContainerInterface as TransitionContainer;
 use Cora\Domain\Systems\Petrinet\Transition;
 
-interface PetrinetInterface {
+use JsonSerializable;
+
+interface PetrinetInterface extends JsonSerializable {
     public function enabled(Marking $marking, Transition $e): bool;
     public function fire(Marking $marking, Transition $e): Marking;
     public function reachable(Marking $marking): MarkingMap;
