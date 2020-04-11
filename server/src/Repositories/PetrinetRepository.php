@@ -48,30 +48,22 @@ class PetrinetRepository extends AbstractRepository {
                          $fromCol, $toCol, $weightCol, PETRINET_FLOW_PT_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
-        $flowsPt = $statement->fetchAll();
+        $flows = $statement->fetchAll();
+        foreach($flows as $flow) {
+            $w = intval($flow[$weightCol]);
+            $f = new Flow(new Place($flow[$fromCol]),new Transition($flow[$toCol]));
+            $builder->addFlow($f, $w);
+        }
         // transition -> place
         $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
                          $fromCol, $toCol, $weightCol, PETRINET_FLOW_TP_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
-        $flowsTp = $statement->fetchAll();
-        $flows = array_merge($flowsPt, $flowsTp);
+        $flows = $statement->fetchAll();
         foreach($flows as $flow) {
             $w = intval($flow[$weightCol]);
-            if ($builder->hasPlace($flow[$fromCol]) &&
-                $builder->hasTransition($flow[$toCol])) {
-                $f = new Flow(
-                    new Place($flow[$fromCol]),
-                    new Transition($flow[$toCol]));
-                $builder->addFlow($f, $w);
-            } else if ($builder->hasPlace($flow[$toCol]) &&
-                       $builder->hasTransition($flow[$fromCol])) {
-                $f = new Flow(
-                    new Transition($flow[$fromCol]),
-                    new Place($flow[$toCol]));
-                $builder->addFlow($f, $w);
-            } else
-                throw new Exception("Invalid Flow");
+            $f = new Flow(new Transition($flow[$fromCol]), new Place($flow[$toCol]));
+            $builder->addFlow($f, $w);
         }
         $petrinet = $builder->getPetrinet();
         return $petrinet;
