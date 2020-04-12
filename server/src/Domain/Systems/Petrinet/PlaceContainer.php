@@ -26,4 +26,8 @@ class PlaceContainer implements PlaceContainerInterface {
     public function getIterator() {
         return $this->set->getIterator();
     }
+
+    public function toArray(): array {
+        return $this->set->toArray();
+    }
 }

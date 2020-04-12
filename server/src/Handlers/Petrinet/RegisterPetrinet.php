@@ -42,7 +42,7 @@ class RegisterPetrinet extends AbstractHandler {
             $petrinet = $translator->convert();
         }
         $petrinetRepo = $this->container->get(PetrinetRepo::class);
-        $petrinetId = $petrinetRepo->savePetrinet($petrinet, $userId);
+        $petrinetId = $petrinetRepo->savePetrinet2($petrinet, $userId);
 
         $router = $this->container->get("router");
         $response = $response->withJson([

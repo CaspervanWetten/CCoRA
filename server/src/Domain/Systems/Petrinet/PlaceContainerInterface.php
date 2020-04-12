@@ -8,4 +8,5 @@ use JsonSerializable;
 interface PlaceContainerInterface extends JsonSerializable, IteratorAggregate {
     public function contains(Place $place): bool;
     public function add(Place $place): void;
+    public function toArray(): array;
 }
