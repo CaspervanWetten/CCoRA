@@ -28,6 +28,14 @@ class Marking2 implements MarkingInterface {
         return new IntegerTokenCount(0);
     }
 
+    public function places(): Places {
+        $container = new PlaceContainer();
+        $p = $this->map->keys();
+        foreach($p as $place)
+            $container->add($place);
+        return $container;
+    }
+
     public function unbounded(): Places {
         $result = new PlaceContainer();
         foreach($this->map as $place => $tokens)
@@ -64,6 +72,20 @@ class Marking2 implements MarkingInterface {
             $newMap->put($place, new OmegaTokenCount());
         }
         return new Marking2($newMap);
+    }
+
+    public function hash() {
+        $a = $this->map->toArray();
+        $result = [];
+        foreach($a as $place => $tokens)
+            if (!($tokens instanceof IntegerTokenCount &&
+                  $tokens->value == 0))
+                $result[$place] = $tokens;
+        return $result;
+    }
+
+    public function equals($other): bool {
+        return $this->hash() === $other->hash();
     }
 
     public function getIterator() {

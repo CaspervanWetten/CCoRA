@@ -8,11 +8,13 @@ use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as Places;
 use Cora\Domain\Systems\MarkingInterface as Marking;
 use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
 
+use Ds\Hashable;
 use IteratorAggregate;
 use JsonSerializable;
 
-interface MarkingInterface extends IteratorAggregate, JsonSerializable {
+interface MarkingInterface extends IteratorAggregate, JsonSerializable, Hashable {
     public function get(Place $place): Tokens;
+    public function places(): Places;
     public function unbounded(): Places;
     public function covers(Marking $other, Petrinet $net): bool;
     public function covered(Marking $other, Petrinet $net): Places;
