@@ -12,4 +12,5 @@ interface EdgeMapInterface extends IteratorAggregate {
     public function getEdge(int $id): Edge;
     public function hasEdge(int $id): bool;
     public function getIds(): Set;
+    public function isEmpty(): bool;
 }

@@ -42,9 +42,12 @@ class Petrinet2 implements PetrinetInterface {
         $post = $this->postset($t);
         
         $builder = new MarkingBuilder();
-        foreach($marking as $place => $tokens) {
-            $newTokens = $tokens->add($post->get($place))
-                                ->subtract($pre->get($place));
+        foreach($this->places as $place) {
+            $preWeight = new IntegerTokenCount($pre->get($place));
+            $postWeight = new IntegerTokenCount($post->get($place));
+            $tokens = $marking->get($place);
+            $newTokens = $tokens->add($postWeight)
+                                ->subtract($preWeight);
             $builder->assign($place, $newTokens);
         }
         return $builder->getMarking($this);

@@ -19,12 +19,20 @@ class PlaceContainer implements PlaceContainerInterface {
         $this->set->add($p);
     }
 
+    public function isEmpty(): bool {
+        return $this->set->isEmpty();
+    }
+
     public function jsonSerialize() {
         return $this->set;
     }
 
     public function getIterator() {
         return $this->set->getIterator();
+    }
+
+    public function toSet(): Set {
+        return $this->set;
     }
 
     public function toArray(): array {

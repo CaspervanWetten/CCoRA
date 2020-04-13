@@ -27,4 +27,8 @@ class VertexMap implements VertexMapInterface {
     public function getIds(): Set {
         return $this->map->keys();
     }
+
+    public function getIterator() {
+        return $this->map->getIterator();
+    }
 }

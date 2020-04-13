@@ -167,8 +167,8 @@ class PetrinetRepository extends AbstractRepository {
         $tpQuery = sprintf($queryFormat, PETRINET_FLOW_TP_TABLE, $tpValues);
         $ptStatement = $this->db->prepare($ptQuery);
         $tpStatement = $this->db->prepare($tpQuery);
-        $ptStatement->bindValue(":pid", $petrinetId, PDO::PARAM_INT);
-        $tpStatement->bindValue(":pid", $petrinetId, PDO::PARAM_INT);
+        $ptStatement->bindParam(":pid", $petrinetId, PDO::PARAM_INT);
+        $tpStatement->bindParam(":pid", $petrinetId, PDO::PARAM_INT);
         $i = 0;
         foreach($flows as $flow => $weight) {
             if ($flow->getFrom() instanceof Place &&
@@ -206,7 +206,7 @@ class PetrinetRepository extends AbstractRepository {
         $markingId = $this->db->lastInsertId();
         // insert place-token pairs
         $values = [];
-        foreach($marking as $place => $tokens)
+        foreach($marking->places() as $place)
             array_push($values, sprintf("(:mid, :%sp, :%st)", $place, $place));
         $query = sprintf("INSERT INTO %s (`marking`, `place`, `tokens`) VALUES %s",
                          PETRINET_MARKING_PAIR_TABLE, implode(", ", $values));

@@ -2,9 +2,12 @@
 
 namespace Cora\SystemCheckers;
 
-use Cora\Systems as Systems;
 use Cora\Feedback\Feedback;
 use Cora\Feedback\FeedbackCode;
+use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
+use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarked;
+use Cora\Domain\Systems\Petrinet\Transition;
+use Cora\Domain\Systems\MarkingInterface as IMarking;
 
 use Cora\Utils as Utils;
 use Cora\Utils\SetUtils;
@@ -13,34 +16,35 @@ use \Ds\Queue as Queue;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
-class CheckCoverabilityGraph extends SystemChecker
-{
-    public $petrinet;
+class CheckCoverabilityGraph extends SystemChecker {
+    protected $graph;
+    protected $marked;
 
-    public function __construct($graph, $petrinet) {
-        parent::__construct($graph);
-        $this->petrinet = $petrinet;
+    public function __construct(IGraph $graph, IMarked $marked) {
+        parent::__construct(NULL);
+        $this->graph = $graph;
+        $this->marked = $marked;
     }
 
     public function check() {
-        $petrinet = $this->petrinet;
-        $graph    = $this->system;
+        $petrinet = $this->marked->getPetrinet();
+        $initialP = $this->marked->getMarking();
+        $graph = $this->graph;
 
         $feedback = new Feedback();
         // check the initial marking
-        $initial  = $graph->getKey($graph->getInitial());
+        $initialId = $graph->getInitial();
         // no initial marking supplied
-        if (is_null($initial)) {
+        if (is_null($initialId)) {
             $feedback->add(FeedbackCode::NO_INITIAL_STATE);
             return $feedback;
         }
+        $initialG = $graph->getVertex($initialId);
         // compare initial markings
-        $initialMarking = $petrinet->getInitial();
-        if (!$initial->equals($initialMarking)) {
+        if (!$initialG->equals($initialP)) {
             $feedback->add(FeedbackCode::INCORRECT_INITIAL_STATE);
-            if (!$initial->unbounded()->isEmpty()) {
+            if (!$initialG->unbounded()->isEmpty())
                 $feedback->add(FeedbackCode::OMEGA_IN_INITIAL);
-            }
             return $feedback;
         }
         $feedback->add(FeedbackCode::CORRECT_INITIAL_STATE);
@@ -48,9 +52,8 @@ class CheckCoverabilityGraph extends SystemChecker
         // maintain a map marking -> Set<id> to find all the vertexes belonging
         // to a marking, to detect duplicates
         $discovered = new Map();
-        foreach($graph->getVertexes() as $id => $marking) {
+        foreach($graph->getVertexes() as $marking) 
             $discovered->put($marking, new Set());
-        }
         // init variables for bfs
         $grey  = new Set();
         $black = new Set();
@@ -61,7 +64,7 @@ class CheckCoverabilityGraph extends SystemChecker
         while(!$queue->isEmpty()) {
             // retrieve the current node of the graph
             $currentId      = $queue->pop();
-            $currentMarking = $graph->getKey($currentId);
+            $currentMarking = $graph->getVertex($currentId);
             // map of reachable markings according to the Petri net
             $reachable      = $petrinet->reachable($currentMarking);
             // map of reachable markings according to the graph
@@ -70,50 +73,54 @@ class CheckCoverabilityGraph extends SystemChecker
             // corresponding marking
             $discovered->get($currentMarking)->add($currentId);
             // get the set of all enabled transtions from the current marking
-            $enabled = $reachable->keys();
+            $enabled = $reachable->transitions();
             // maintain a set of all fired transitions from the current node
             $fired = new Set();
             // add feedback for all the nodes in the postset
             foreach($postset as $id => $edge) {
                 // add postset to frontier
-                if (!$black->contains($edge->to) && !$grey->contains($edge->to)) {
-                    $queue->push($edge->to);
-                    $grey->add($edge->to);
+                if (!$black->contains($edge->getTo()) &&
+                    !$grey->contains($edge->getTo())) {
+                    $queue->push($edge->getTo());
+                    $grey->add($edge->getTo());
                 }
+                $firedTransition = new Transition($edge->getLabel());
                 // mark duplicate edges
-                if ($fired->contains($edge->label)) {
+                if ($fired->contains($firedTransition)) {
                     $feedback->add(FeedbackCode::DUPLICATE_EDGE, $id);
                     foreach($postset as $eid => $ped) {
-                        if($edge->label == $ped->label) {
+                        if($edge->getLabel() == $ped->getLabel()) {
                             $feedback->add(FeedbackCode::DUPLICATE_EDGE, $eid);
                         }
                     }
                 }
-                // add the current label the the fired set
-                $fired->add($edge->label);
+                // add the current transition the the fired set
+                $fired->add($firedTransition);
                 // what marking has been discovered from the current one
-                $discoveredMarking = $graph->getKey($edge->to);
+                $discoveredMarking = $graph->getVertex($edge->getTo());
                 // the set of unbounded places in the discovered marking
                 $unbounded = $discoveredMarking->unbounded();
                 // can the transtion (label) fire?
-                $isEnabled = $enabled->contains($edge->label);
+                $isEnabled = $enabled->contains($firedTransition);
                 // discovered marking is reachable with correct label
                 // according to the Petri net. Does include self
                 // loops. (Path without omega substitution)
-                if ($isEnabled && $reachable->get($edge->label)->equals($discoveredMarking)) {
+                $directPath = $isEnabled && $reachable->get($firedTransition)
+                                                      ->equals($discoveredMarking);
+                if ($directPath) {
                     $equal = $currentMarking->equals($discoveredMarking);
-                    if (($equal && $edge->to == $edge->from) || !$equal) {
+                    if (($equal && $edge->getTo() == $edge->getFrom()) || !$equal) {
                         $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
-                        $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
+                        $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
                     } else {
                         $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
                     }
                     // determine whether some places could be marked
                     // unbounded. Not needed for self loops
-                    if (!$equal && !$black->contains($edge->to)) {
-                        $coverable = $this->getCoverable($edge->to, $discoveredMarking);
-                        if (SetUtils::isStrictSubset($unbounded, $coverable)) {
-                            $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->to);
+                    if (!$equal && !$black->contains($edge->getTo())) {
+                        $coverable = $this->getCoverable($edge->getTo(), $discoveredMarking);
+                        if (SetUtils::isStrictSubset($unbounded->toSet(), $coverable)) {
+                            $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
                         }
                     }
                     continue;
@@ -121,7 +128,7 @@ class CheckCoverabilityGraph extends SystemChecker
                 // correct post marking
                 $correctPost = false;
                 $omegaOmitted = false;
-                $omegaPresetOmitted = false;
+                // $omegaPresetOmitted = false;
                 $baseMarking = NULL;
                 // correct edge
                 $correctEdge = false;
@@ -135,7 +142,7 @@ class CheckCoverabilityGraph extends SystemChecker
                         // immediately from the Petri net.
                         $correctPost = $m->equals($discoveredMarking) && !$requireLoop;
                         // get the set of coverable places from the current loop marking.
-                        $coverable = $this->getCoverable($edge->to, $m);
+                        $coverable = $this->getCoverable($edge->getTo(), $m);
                         if (!$correctPost && !$requireLoop) {
                             // still not correct. Marking can now only
                             // be correct if \omega substitution takes
@@ -143,13 +150,12 @@ class CheckCoverabilityGraph extends SystemChecker
                             // Determine what the marking loop should
                             // look like with places unbounded as
                             // marked by the discovered marking
-                            $replacement = $m->markUnbounded($petrinet, $unbounded);
+                            $replacement = $m->withUnbounded($petrinet, $unbounded);
                             // the replacement is valid if it's equal
                             // to the discovered marking and there are
                             // no places that should not be marked unbounded
-                            $isValidReplacement = $replacement->equals($discoveredMarking) &&
-                                                SetUtils::isSubset($unbounded, $coverable);
-                            $correctPost = $isValidReplacement;
+                            $correctPost = $replacement->equals($discoveredMarking) &&
+                                         SetUtils::isSubset($unbounded, $coverable);
                         }
                         if ($correctPost) {
                             // if the post marking is now correct we
@@ -164,7 +170,8 @@ class CheckCoverabilityGraph extends SystemChecker
                         // post marking is correct. An edge is only
                         // correct of the label corresponds and firing
                         // the transition results in the loop marking.
-                        $correctEdge = $correctPost && $t == $edge->label &&
+                        $correctEdge = $correctPost &&
+                                     $t->getName() == $edge->getLabel() &&
                                      $reachable->get($t)->equals($baseMarking) &&
                                      !$requireLoop;
                     }
@@ -174,16 +181,18 @@ class CheckCoverabilityGraph extends SystemChecker
                 }
 
                 if ($correctPost) {
-                    $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->to);
+                    $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
                     if ($omegaOmitted) {
-                        $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->to);
+                        $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
                     }
                 } else {
-                    $pre = $this->unboundedFromPreset($edge->to);
-                    if (SetUtils::isStrictSubset($unbounded, $pre)) {
-                        $feedback->add(FeedbackCode::OMEGA_FROM_PRESET_OMITTED, $edge->to);
+                    $pre = $this->unboundedFromPreset($edge->getTo());
+                    if (SetUtils::isStrictSubset($unbounded->toSet(), $pre)) {
+                        $feedback->add(FeedbackCode::OMEGA_FROM_PRESET_OMITTED,
+                                       $edge->getTo());
                     } else {
-                        $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_PRESET, $edge->to);
+                        $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_PRESET,
+                                       $edge->getTo());
                     }
                 }
 
@@ -202,7 +211,7 @@ class CheckCoverabilityGraph extends SystemChecker
                 }
             }
             // get the difference between the enabled and fired set
-            $transDiff = $enabled->diff($fired);
+            $transDiff = $enabled->toSet()->diff($fired);
             // if the difference is not empty, one or more transitions
             // have not been fired from the current marking while they
             // should have been
@@ -214,7 +223,7 @@ class CheckCoverabilityGraph extends SystemChecker
             $black->add($currentId);
         }
         // mark unreachable states
-        $unreachable = $graph->getVertexes()->keys()->diff($black);
+        $unreachable = $graph->getVertexes()->getIds()->diff($black);
         foreach($unreachable as $id) {
             $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $id);
         }
@@ -229,33 +238,32 @@ class CheckCoverabilityGraph extends SystemChecker
         return $feedback;
     }
 
-    protected function getCoverable($current, $marking=NULL, $covered=[], $visited=[]) {
-        if (is_null($marking)) {
-            $marking = $this->system->getKey($current);
-        }
-        if (is_array($covered)) {
+    protected function getCoverable(
+        int $current,
+        ?IMarking $marking=NULL,
+        ?Set $covered=NULL,
+        ?Set $visited=NULL)
+    {
+        $graph = $this->graph;
+        if (is_null($marking))
+            $marking = $graph->getVertex($current);
+        if (is_null($covered)) 
             $covered = new Set();
-        }
-        if (is_array($visited)) {
+        if (is_null($visited))
             $visited = new Set();
-        }
-        $graph = $this->system;
         $visited->add($current);
         $preset = $graph->preset($current);
-        if($preset->isEmpty()) { 
+        if($preset->isEmpty())
             return $covered;
-        }
-        foreach($preset as $id => $edge) {
-            if(!$visited->contains($edge->from)) {
-                $presetMarking = $graph->getKey($edge->from);
-                if($marking->covers($presetMarking, $this->petrinet)) {
-                    foreach($this->petrinet->getPlaces() as $i => $place) {
-                        if($marking->get($place)->greater($presetMarking->get($place))) {
+        $petrinet = $this->marked->getPetrinet();
+        foreach($preset as $edge) {
+            if(!$visited->contains($edge->getFrom())) {
+                $presetMarking = $graph->getVertex($edge->getFrom());
+                if($marking->covers($presetMarking, $petrinet))
+                    foreach($petrinet->getPlaces() as $place)
+                        if($marking->get($place)->greater($presetMarking->get($place)))
                             $covered->add($place);
-                        }
-                    }
-                }
-                $c = $this->getCoverable($edge->from, $marking, $covered, $visited);
+                $c = $this->getCoverable($edge->getFrom(), $marking, $covered, $visited);
                 $covered = $covered->union($c);
             }
         }
@@ -263,13 +271,13 @@ class CheckCoverabilityGraph extends SystemChecker
     }
 
     protected function unboundedFromPreset($id) {
-        $graph     = $this->system;
+        $graph     = $this->graph;
         $preset    = $graph->preset($id);
         $unbounded = new Set();
         foreach($preset as $eid => $edge) {
-            if ($edge->from !== $edge->to) {
-                $marking   = $graph->getKey($edge->from);
-                $unbounded = $unbounded->union($marking->unbounded());
+            if ($edge->getFrom() !== $edge->getTo()) {
+                $marking   = $graph->getVertex($edge->getFrom());
+                $unbounded = $unbounded->union($marking->unbounded()->toSet());
             }
         }
         return $unbounded;

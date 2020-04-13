@@ -40,6 +40,10 @@ class Graph2 implements GraphInterface {
         return $this->edges->hasEdge($id);
     }
 
+    public function getInitial(): ?int {
+        return $this->initial;
+    }
+
     public function preset(int $id): IEdgeMap {
         if (!$this->hasVertex($id))
             throw new Exception("Could not retrieve preset: " .
@@ -60,5 +64,9 @@ class Graph2 implements GraphInterface {
             if ($edge->getFrom() === $id)
                 $res->addEdge($edgeId, $edge);
         return $res;
+    }
+
+    public function getVertexes(): IVertexMap {
+        return $this->vertexes;
     }
 }

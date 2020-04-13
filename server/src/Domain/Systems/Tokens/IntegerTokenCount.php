@@ -59,6 +59,14 @@ class IntegerTokenCount extends AbstractTokenCount
         }
     }
 
+    public function hash() {
+        return strval($this);
+    }
+
+    public function equals($other): bool {
+        return $this->value === $other->value;
+    }
+
     public function jsonSerialize() {
         return $this->value;
     }
@@ -67,5 +75,3 @@ class IntegerTokenCount extends AbstractTokenCount
         return sprintf("%d", $this->value);
     }
 }
-
-?>

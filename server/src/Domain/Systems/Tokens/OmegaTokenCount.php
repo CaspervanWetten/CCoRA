@@ -15,6 +15,14 @@ class OmegaTokenCount extends AbstractTokenCount
         return true;
     }
 
+    public function hash() {
+        return strval($this);
+    }
+
+    public function equals($other): bool {
+        return true;
+    }
+
     public function jsonSerialize()
     {
         return $this->__toString();
@@ -24,4 +32,3 @@ class OmegaTokenCount extends AbstractTokenCount
         return sprintf("%s", "OMEGA");
     }
 }
-?>

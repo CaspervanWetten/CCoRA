@@ -19,7 +19,12 @@ class Marking2 implements MarkingInterface {
     protected $map;
 
     public function __construct(Map $map) {
-        $this->map = $map;
+        $filtered = new Map();
+        foreach($map as $place => $tokens)
+            if (!($tokens instanceof IntegerTokenCount &&
+                  $tokens->value === 0))
+                $filtered->put($place, $tokens);
+        $this->map = $filtered;
     }
 
     public function get(Place $place): Tokens {
@@ -75,12 +80,12 @@ class Marking2 implements MarkingInterface {
     }
 
     public function hash() {
-        $a = $this->map->toArray();
         $result = [];
-        foreach($a as $place => $tokens)
+        foreach($this->map as $place => $tokens) {
             if (!($tokens instanceof IntegerTokenCount &&
                   $tokens->value == 0))
-                $result[$place] = $tokens;
+                $result[$place->hash()] = $tokens->hash();
+        }
         return $result;
     }
 

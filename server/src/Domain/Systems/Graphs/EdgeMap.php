@@ -30,6 +30,10 @@ class EdgeMap implements EdgeMapInterface {
         return $this->map->keys();
     }
 
+    public function isEmpty(): bool {
+        return $this->map->isEmpty();
+    }
+
     public function getIterator() {
         return $this->map->getIterator();
     }

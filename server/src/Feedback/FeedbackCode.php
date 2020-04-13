@@ -30,5 +30,3 @@ class FeedbackCode extends Enumerators\Enumerator
     const DISABLED_CORRECT_POST            = 443;
     const MISSED_SELF_LOOP                 = 444;
 }
-
-?>

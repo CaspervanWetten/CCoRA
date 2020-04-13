@@ -2,9 +2,10 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
+use Ds\Hashable;
 use JsonSerializable;
 
-class Place implements PetrinetElementInterface, JsonSerializable {
+class Place implements PetrinetElementInterface, JsonSerializable, Hashable {
     protected $name;
 
     public function __construct(string $name) {

@@ -17,8 +17,8 @@ class PrePostSetMap implements PrePostSetMapInterface {
         return $this->map->hasKey($e);
     }
 
-    public function get(Element $e): int {
-        return $this->map->get($e);
+    public function get(Element $e, int $default=0): int {
+        return $this->map->get($e, $default);
     }
 
     public function put(Element $e, $w): void {
