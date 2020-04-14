@@ -30,6 +30,21 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
         $this->flows->add($f, $w);
     }
 
+    public function addPlaces(PlaceContainerInterface $places): void {
+        foreach($places as $place)
+            $this->addPlace($place);
+    }
+
+    public function addTransitions(TransitionContainerInterface $transitions): void {
+        foreach($transitions as $transition)
+            $this->addTransition($transition);
+    }
+
+    public function addFlows(FlowMapInterface $flows): void {
+        foreach($flows as $flow => $weight)
+            $this->addFlow($flow, $weight);
+    }
+
     public function getPetrinet(): Petrinet {
         $flowMap = $this->flows;
         $places = $this->places;

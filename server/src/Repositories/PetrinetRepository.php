@@ -2,17 +2,21 @@
 
 namespace Cora\Repositories;
 
-use Cora\Domain\Systems\MarkingBuilder;
-use Cora\Domain\Systems\MarkingInterface as IMarking;
-use Cora\Domain\Systems\Petrinet\Flow;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarkedPetrinet;
-use Cora\Domain\Systems\Tokens\IntegerTokenCount;
-
-use Cora\Domain\Systems\Petrinet\PetrinetBuilder as PetrinetBuilder;
-use Cora\Domain\Systems\Petrinet\PetrinetBuilderInterface as IPetrinetBuilder;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
+use Cora\Domain\Systems\Petrinet\PetrinetBuilder as PetrinetBuilder;
 use Cora\Domain\Systems\Petrinet\Place;
+use Cora\Domain\Systems\Petrinet\PlaceContainer;
+use Cora\Domain\Systems\Petrinet\PlaceContainerInterface;
 use Cora\Domain\Systems\Petrinet\Transition;
+use Cora\Domain\Systems\Petrinet\TransitionContainer;
+use Cora\Domain\Systems\Petrinet\TransitionContainerInterface;
+use Cora\Domain\Systems\Petrinet\Flow;
+use Cora\Domain\Systems\Petrinet\FlowMap;
+use Cora\Domain\Systems\Petrinet\FlowMapInterface;
+use Cora\Domain\Systems\MarkingInterface as IMarking;
+use Cora\Domain\Systems\MarkingBuilder;
+use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Exception;
 use PDO;
@@ -22,9 +26,9 @@ class PetrinetRepository extends AbstractRepository {
         if (!$this->petrinetExists($id))
             return NULL;
         $builder = new PetrinetBuilder();
-        $this->getPlaces($id, $builder);
-        $this->getTransitions($id, $builder);
-        $this->getFlows($id, $builder);
+        $builder->addPlaces($this->getPlaces($id));
+        $builder->addTransitions($this->getTransitions($id));
+        $builder->addFlows($this->getFlows($id));
         $petrinet = $builder->getPetrinet();
         return $petrinet;
     }
@@ -122,29 +126,34 @@ class PetrinetRepository extends AbstractRepository {
         return !empty($statement->fetchAll());
     }
 
-    protected function getPlaces(int $id, IPetrinetBuilder &$builder) {
+    protected function getPlaces(int $id): PlaceContainerInterface {
+        $places = new PlaceContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          PETRINET_PLACE_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
             $place = new Place($row["name"]);
-            $builder->addPlace($place);
+            $places->add($place);
         }
+        return $places;
     }
 
-    protected function getTransitions(int $id, IPetrinetBuilder &$builder) {
+    protected function getTransitions(int $id): TransitionContainerInterface {
+        $transitions = new TransitionContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          PETRINET_TRANSITION_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
             $transition = new Transition($row["name"]);
-            $builder->addTransition($transition);
+            $transitions->add($transition);
         }
+        return $transitions;
     }
 
-    protected function getFlows(int $id, IPetrinetBuilder &$builder) {
+    protected function getFlows(int $id): FlowMapInterface {
+        $flowMap = new FlowMap();
         $fromCol   = "from_element";
         $toCol     = "to_element";
         $weightCol = "weight";
@@ -157,7 +166,7 @@ class PetrinetRepository extends AbstractRepository {
         foreach($flows as $flow) {
             $w = intval($flow[$weightCol]);
             $f = new Flow(new Place($flow[$fromCol]),new Transition($flow[$toCol]));
-            $builder->addFlow($f, $w);
+            $flowMap->add($f, $w);
         }
         // transition -> place
         $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
@@ -168,8 +177,9 @@ class PetrinetRepository extends AbstractRepository {
         foreach($flows as $flow) {
             $w = intval($flow[$weightCol]);
             $f = new Flow(new Transition($flow[$fromCol]), new Place($flow[$toCol]));
-            $builder->addFlow($f, $w);
+            $flowMap->add($f, $w);
         }
+        return $flowMap;
     }
 
     protected function savePlaces(IPetrinet $petrinet, int $id) {
