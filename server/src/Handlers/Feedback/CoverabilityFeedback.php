@@ -35,25 +35,16 @@ class CoverabilityFeedback extends AbstractHandler {
         if (!$petriRepo->petrinetExists($pid))
             throw new Exception("Petri net does not exist");
         $petrinet = $petriRepo->getPetrinet($pid);
-        // if (is_null($petrinet->getInitial())) {
-        //     $message = "The Petri net has no initial marking. "
-        //              . "Therefore, reachability and coverability "
-        //              . "analysis are not possible.";
-        //     throw new Exception($message);
-        // }
         $jsonGraph = $request->getParsedBody();
         $converter = new JsonToGraph2($jsonGraph, $petrinet);
         $graph = $converter->convert();
-        // var_dump($graph);
-        // exit;
         $markings = $petriRepo->getMarkings($pid);
+        if (empty($markings))
+            throw new Exception("Could not provide feedback: no marking");
         $marking = $petriRepo->getMarking($markings[0]["id"], $petrinet);
         $marked = new MarkedPetrinet($petrinet, $marking);
         $checker = new CheckCoverabilityGraph($graph, $marked);
         $feedback = $checker->check();
-        var_dump($feedback);
-        exit;
-
         $sessionRepo = $this->container->get(SessionRepo::class);
         if ($sessionRepo->appendGraph($user, $sid, $graph) === FALSE)
             throw new Exception("Could not append graph to log");
