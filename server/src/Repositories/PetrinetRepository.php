@@ -8,7 +8,8 @@ use Cora\Domain\Systems\Petrinet\Flow;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarkedPetrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
-use Cora\Domain\Systems\Petrinet\PetrinetBuilder as Builder;
+use Cora\Domain\Systems\Petrinet\PetrinetBuilder as PetrinetBuilder;
+use Cora\Domain\Systems\Petrinet\PetrinetBuilderInterface as IPetrinetBuilder;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Systems\Petrinet\Place;
 use Cora\Domain\Systems\Petrinet\Transition;
@@ -20,51 +21,10 @@ class PetrinetRepository extends AbstractRepository {
     public function getPetrinet($id): IPetrinet {
         if (!$this->petrinetExists($id))
             return NULL;
-        $builder = new Builder();
-        // collect places
-        $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
-                         PETRINET_PLACE_TABLE);
-        $statement = $this->db->prepare($query);
-        $statement->execute([":pid" => $id]);
-        foreach($statement->fetchAll() as $row) {
-            $place = new Place($row["name"]);
-            $builder->addPlace($place);
-        }
-        // collect transitions
-        $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
-                         PETRINET_TRANSITION_TABLE);
-        $statement = $this->db->prepare($query);
-        $statement->execute([":pid" => $id]);
-        foreach($statement->fetchAll() as $row) {
-            $transition = new Transition($row["name"]);
-            $builder->addTransition($transition);
-        }
-        // collect flows
-        $fromCol   = "from_element";
-        $toCol     = "to_element";
-        $weightCol = "weight";
-        // place -> transition
-        $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
-                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_PT_TABLE);
-        $statement = $this->db->prepare($query);
-        $statement->execute([":pid" => $id]);
-        $flows = $statement->fetchAll();
-        foreach($flows as $flow) {
-            $w = intval($flow[$weightCol]);
-            $f = new Flow(new Place($flow[$fromCol]),new Transition($flow[$toCol]));
-            $builder->addFlow($f, $w);
-        }
-        // transition -> place
-        $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
-                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_TP_TABLE);
-        $statement = $this->db->prepare($query);
-        $statement->execute([":pid" => $id]);
-        $flows = $statement->fetchAll();
-        foreach($flows as $flow) {
-            $w = intval($flow[$weightCol]);
-            $f = new Flow(new Transition($flow[$fromCol]), new Place($flow[$toCol]));
-            $builder->addFlow($f, $w);
-        }
+        $builder = new PetrinetBuilder();
+        $this->getPlaces($id, $builder);
+        $this->getTransitions($id, $builder);
+        $this->getFlows($id, $builder);
         $petrinet = $builder->getPetrinet();
         return $petrinet;
     }
@@ -160,6 +120,56 @@ class PetrinetRepository extends AbstractRepository {
         $statement = $this->db->prepare($query);
         $statement->execute([":id" => $id]);
         return !empty($statement->fetchAll());
+    }
+
+    protected function getPlaces(int $id, IPetrinetBuilder &$builder) {
+        $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
+                         PETRINET_PLACE_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":pid" => $id]);
+        foreach($statement->fetchAll() as $row) {
+            $place = new Place($row["name"]);
+            $builder->addPlace($place);
+        }
+    }
+
+    protected function getTransitions(int $id, IPetrinetBuilder &$builder) {
+        $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
+                         PETRINET_TRANSITION_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":pid" => $id]);
+        foreach($statement->fetchAll() as $row) {
+            $transition = new Transition($row["name"]);
+            $builder->addTransition($transition);
+        }
+    }
+
+    protected function getFlows(int $id, IPetrinetBuilder &$builder) {
+        $fromCol   = "from_element";
+        $toCol     = "to_element";
+        $weightCol = "weight";
+        // place -> transition
+        $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
+                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_PT_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":pid" => $id]);
+        $flows = $statement->fetchAll();
+        foreach($flows as $flow) {
+            $w = intval($flow[$weightCol]);
+            $f = new Flow(new Place($flow[$fromCol]),new Transition($flow[$toCol]));
+            $builder->addFlow($f, $w);
+        }
+        // transition -> place
+        $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
+                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_TP_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":pid" => $id]);
+        $flows = $statement->fetchAll();
+        foreach($flows as $flow) {
+            $w = intval($flow[$weightCol]);
+            $f = new Flow(new Transition($flow[$fromCol]), new Place($flow[$toCol]));
+            $builder->addFlow($f, $w);
+        }
     }
 
     protected function savePlaces(IPetrinet $petrinet, int $id) {
