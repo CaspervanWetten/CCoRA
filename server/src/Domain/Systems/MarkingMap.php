@@ -31,6 +31,10 @@ class MarkingMap implements MarkingMapInterface {
         return new Transitions($this->map->keys());
     }
 
+    public function getIterator() {
+        return $this->map->getIterator();
+    }
+
     public function jsonSerialize() {
         return $this->map;
     }

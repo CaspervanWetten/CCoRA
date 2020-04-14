@@ -9,7 +9,6 @@ use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarked;
 use Cora\Domain\Systems\Petrinet\Transition;
 use Cora\Domain\Systems\MarkingInterface as IMarking;
 
-use Cora\Utils as Utils;
 use Cora\Utils\SetUtils;
 
 use \Ds\Queue as Queue;
@@ -100,6 +99,8 @@ class CheckCoverabilityGraph extends SystemChecker {
                 $discoveredMarking = $graph->getVertex($edge->getTo());
                 // the set of unbounded places in the discovered marking
                 $unbounded = $discoveredMarking->unbounded();
+                // as a Ds\Set
+                $unboundedSet = $unbounded->toSet();
                 // can the transtion (label) fire?
                 $isEnabled = $enabled->contains($firedTransition);
                 // discovered marking is reachable with correct label
@@ -112,23 +113,20 @@ class CheckCoverabilityGraph extends SystemChecker {
                     if (($equal && $edge->getTo() == $edge->getFrom()) || !$equal) {
                         $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
                         $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
-                    } else {
+                    } else
                         $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
-                    }
                     // determine whether some places could be marked
                     // unbounded. Not needed for self loops
                     if (!$equal && !$black->contains($edge->getTo())) {
                         $coverable = $this->getCoverable($edge->getTo(), $discoveredMarking);
-                        if (SetUtils::isStrictSubset($unbounded->toSet(), $coverable)) {
+                        if (SetUtils::isStrictSubset($unboundedSet, $coverable))
                             $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
-                        }
                     }
                     continue;
                 }
                 // correct post marking
                 $correctPost = false;
                 $omegaOmitted = false;
-                // $omegaPresetOmitted = false;
                 $baseMarking = NULL;
                 // correct edge
                 $correctEdge = false;
@@ -151,16 +149,17 @@ class CheckCoverabilityGraph extends SystemChecker {
                             // look like with places unbounded as
                             // marked by the discovered marking
                             $replacement = $m->withUnbounded($petrinet, $unbounded);
-                            // the replacement is valid if it's equal
+                            // // the replacement is valid if it's equal
                             // to the discovered marking and there are
                             // no places that should not be marked unbounded
                             $correctPost = $replacement->equals($discoveredMarking) &&
-                                         SetUtils::isSubset($unbounded, $coverable);
+                                         SetUtils::isSubset($unboundedSet, $coverable);
                         }
                         if ($correctPost) {
                             // if the post marking is now correct we
                             // determine whether places have been unmarked
-                            $omegaOmitted = SetUtils::isStrictSubset($unbounded, $coverable);
+                            $omegaOmitted = SetUtils::isStrictSubset(
+                                $unboundedSet, $coverable);
                             $baseMarking = $m;
                         }
 
@@ -175,49 +174,40 @@ class CheckCoverabilityGraph extends SystemChecker {
                                      $reachable->get($t)->equals($baseMarking) &&
                                      !$requireLoop;
                     }
-                    if ($correctPost && $correctEdge) {
+                    if ($correctPost && $correctEdge)
                         break;
-                    }
                 }
-
                 if ($correctPost) {
                     $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
-                    if ($omegaOmitted) {
+                    if ($omegaOmitted)
                         $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
-                    }
                 } else {
                     $pre = $this->unboundedFromPreset($edge->getTo());
-                    if (SetUtils::isStrictSubset($unbounded->toSet(), $pre)) {
+                    if (SetUtils::isStrictSubset($unbounded->toSet(), $pre))
                         $feedback->add(FeedbackCode::OMEGA_FROM_PRESET_OMITTED,
                                        $edge->getTo());
-                    } else {
-                        $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_PRESET,
-                                       $edge->getTo());
-                    }
                 }
 
-                if ($correctEdge) {
+                if ($correctEdge)
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
-                } else if ($correctPost && $isEnabled && !$requireLoop) {
+                else if ($correctPost && $isEnabled && !$requireLoop)
                     $feedback->add(FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $id);
-                } else if ($correctPost && $isEnabled && $requireLoop) {
+                else if ($correctPost && $isEnabled && $requireLoop)
                     $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
-                } else if ($correctPost && !$isEnabled) {
+                else if ($correctPost && !$isEnabled)
                     $feedback->add(FeedbackCode::DISABLED_CORRECT_POST, $id);
-                } else if (!$correctPost && $isEnabled) {
+                else if (!$correctPost && $isEnabled)
                     $feedback->add(FeedbackCode::ENABLED_INCORRECT_POST, $id);
-                } else {
+                else 
                     $feedback->add(FeedbackCode::DISABLED, $id);
-                }
             }
             // get the difference between the enabled and fired set
             $transDiff = $enabled->toSet()->diff($fired);
             // if the difference is not empty, one or more transitions
             // have not been fired from the current marking while they
             // should have been
-            if(!$transDiff->isEmpty()) {
+            if(!$transDiff->isEmpty())
                 $feedback->add(FeedbackCode::EDGE_MISSING, $currentId);
-            }
             // update bfs variables
             $grey->remove($currentId);
             $black->add($currentId);
@@ -228,13 +218,10 @@ class CheckCoverabilityGraph extends SystemChecker {
             $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $id);
         }
         // mark duplicate states
-        foreach($graph->getVertexes() as $id => $marking) {
-            if ($discovered->get($marking)->count() > 1) {
-                foreach($discovered->get($marking) as $element) {
+        foreach($graph->getVertexes() as $id => $marking)
+            if ($discovered->get($marking)->count() > 1)
+                foreach($discovered->get($marking) as $element)
                     $feedback->add(FeedbackCode::DUPLICATE_STATE, $element);
-                }
-            }
-        }
         return $feedback;
     }
 
@@ -283,5 +270,3 @@ class CheckCoverabilityGraph extends SystemChecker {
         return $unbounded;
     }
 }
-
-?>
