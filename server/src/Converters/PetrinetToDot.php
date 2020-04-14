@@ -4,7 +4,7 @@ namespace Cora\Converters;
 
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
 
-class Petrinet2ToDot extends Converter {
+class PetrinetToDot extends Converter {
     protected $petrinet;
 
     public function __construct(Petrinet $net) {

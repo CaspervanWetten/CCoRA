@@ -5,11 +5,11 @@ namespace Cora\Domain\Systems\Graphs;
 use Cora\Domain\Systems\Graphs\VertexMapInterface as IVertexMap;
 use Cora\Domain\Systems\Graphs\EdgeMapInterface as IEdgeMap;
 use Cora\Domain\Systems\Graphs\EdgeInterface as Edge;
-use Cora\Domain\SYstems\Graphs\EdgeMap;
+use Cora\Domain\Systems\Graphs\EdgeMap;
 
 use Exception;
 
-class Graph2 implements GraphInterface {
+class Graph implements GraphInterface {
     protected $vertexes;
     protected $edges;
     protected $initial;

@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Systems;
 
-use Cora\Domain\Systems\MarkingInterface as Marking;
+use Cora\Domain\Systems\MarkingInterface as IMarking;
 use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
 use Cora\Domain\Systems\Petrinet\Place;
@@ -21,14 +21,14 @@ class MarkingBuilder implements MarkingBuilderInterface {
         $this->map->put($p, $t);
     }
 
-    public function getMarking(Petrinet $net): Marking {
+    public function getMarking(Petrinet $net): IMarking {
         $places = $net->getPlaces();
         $assignedPlaces = $this->map->keys();
         foreach($assignedPlaces as $place) {
             if (!$places->contains($place))
                 throw new Exception("Tokens assigned to invalid place");
         }
-        $marking = new Marking2($this->map);
+        $marking = new Marking($this->map);
         return $marking;
     }
 }

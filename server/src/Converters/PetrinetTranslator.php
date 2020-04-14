@@ -13,7 +13,7 @@ use Cora\Domain\Systems\Petrinet\PetrinetBuilder;
 use Ds\Map;
 use Exception;
 
-class Petrinet2Translator extends Converter {
+class PetrinetTranslator extends Converter {
     protected $markedPetrinet;
     protected $petrinetBuilder;
     protected $markingBuilder;

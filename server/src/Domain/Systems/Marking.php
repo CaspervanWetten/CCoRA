@@ -2,12 +2,12 @@
 
 namespace Cora\Domain\Systems;
 
-use Cora\Domain\Systems\MarkingInterface as Marking;
+use Cora\Domain\Systems\MarkingInterface as IMarking;
+use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Systems\Petrinet\Place;
 use Cora\Domain\Systems\Petrinet\PlaceContainer;
 use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as Places;
 
-use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 use Cora\Domain\Systems\Tokens\OmegaTokenCount;
 use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
@@ -15,7 +15,7 @@ use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
 use Ds\Map;
 use Exception;
 
-class Marking2 implements MarkingInterface {
+class Marking implements IMarking {
     protected $map;
 
     public function __construct(Map $map) {
@@ -49,7 +49,7 @@ class Marking2 implements MarkingInterface {
         return $result;
     }
 
-    public function covers(Marking $other, Petrinet $net): bool {
+    public function covers(IMarking $other, IPetrinet $net): bool {
         foreach($net->getPlaces() as $place) {
             $tokens = $this->get($place);
             if (!$tokens->geq($other->get($place)))
@@ -58,7 +58,7 @@ class Marking2 implements MarkingInterface {
         return true;
     }
 
-    public function covered(Marking $other, Petrinet $net): Places {
+    public function covered(IMarking $other, IPetrinet $net): Places {
         $res = new PlaceContainer();
         if ($this->covers($other, $net)) 
             foreach($net->getPlaces() as $place)
@@ -67,7 +67,7 @@ class Marking2 implements MarkingInterface {
         return $res;
     }
 
-    public function withUnbounded(Petrinet $net, Places $unbounded): Marking {
+    public function withUnbounded(IPetrinet $net, Places $unbounded): IMarking {
         $places = $net->getPlaces();
         $newMap = clone $this->map;
         foreach($unbounded as $place) {
@@ -76,7 +76,7 @@ class Marking2 implements MarkingInterface {
                                     "part of the Petri net");
             $newMap->put($place, new OmegaTokenCount());
         }
-        return new Marking2($newMap);
+        return new Marking($newMap);
     }
 
     public function hash() {

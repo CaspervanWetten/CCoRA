@@ -5,14 +5,14 @@ namespace Cora\Converters;
 use Cora\Domain\Systems\MarkingBuilder;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Petrinet\PetrinetBuilder;
-use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 use Cora\Domain\Systems\Petrinet\Place;
 use Cora\Domain\Systems\Petrinet\Transition;
 use Cora\Domain\Systems\Petrinet\Flow;
+use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 
 use Exception;
 
-class LolaToPetrinet2 extends Converter {
+class LolaToPetrinet extends Converter {
     protected $lola;
 
     public function __construct(string $lola) {

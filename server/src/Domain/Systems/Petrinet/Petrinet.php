@@ -11,7 +11,7 @@ use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as IElement;
 use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as IPlaceContainer;
 use Cora\Domain\Systems\Petrinet\TransitionContainerInterface as ITransitionContainer;
 
-class Petrinet2 implements PetrinetInterface {
+class Petrinet implements PetrinetInterface {
     protected $places;
     protected $transitions;
     protected $flows;

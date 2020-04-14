@@ -2,8 +2,8 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
-use Cora\Domain\Systems\Petrinet\FlowInterface as Flow;
+use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
+use Cora\Domain\Systems\Petrinet\FlowInterface as IFlow;
 
 use Exception;
 
@@ -26,7 +26,7 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
         $this->transitions->add($t);
     }
 
-    public function addFlow(Flow $f, int $w): void {
+    public function addFlow(IFlow $f, int $w): void {
         $this->flows->add($f, $w);
     }
 
@@ -45,7 +45,7 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
             $this->addFlow($flow, $weight);
     }
 
-    public function getPetrinet(): Petrinet {
+    public function getPetrinet(): IPetrinet {
         $flowMap = $this->flows;
         $places = $this->places;
         $transitions = $this->transitions;
@@ -61,7 +61,7 @@ class PetrinetBuilder implements PetrinetBuilderInterface {
                     "to the transitions or places"
                 );
         }
-        $petrinet = new Petrinet2($places, $transitions, $flowMap);
+        $petrinet = new Petrinet($places, $transitions, $flowMap);
         return $petrinet;
     }
 

@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
-use Cora\Converters\Petrinet2ToDot;
+use Cora\Converters\PetrinetToDot;
 
 use Exception;
 
@@ -26,7 +26,7 @@ class GetPetrinetImage extends AbstractHandler {
     }
 
     protected function generateImage($petrinet) {
-        $converter = new Petrinet2ToDot($petrinet);
+        $converter = new PetrinetToDot($petrinet);
         $command = sprintf('echo %s | %s -Tsvg',
                            escapeshellarg($converter->convert()),
                            escapeshellcmd(DOT_PATH));

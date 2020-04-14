@@ -3,7 +3,7 @@
 namespace Cora\Domain\Systems\Graphs;
 
 use Cora\Domain\Systems\Graphs\EdgeInterface as Edge;
-use Cora\Domain\Systems\Graphs\GraphInterface as Graph;
+use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Systems\Petrinet\Transition;
 
@@ -34,7 +34,7 @@ class GraphBuilder implements GraphBuilderInterface {
         $this->initial = $id;
     }
 
-    public function getGraph(): Graph {
+    public function getGraph(): IGraph {
         if (!is_null($this->initial) &&
             !$this->vertexes->hasVertex($this->initial))
             throw new Exception("Could not create graph: initial id assigned " .
@@ -51,6 +51,6 @@ class GraphBuilder implements GraphBuilderInterface {
                 throw new Exception("Could not create graph: graph labels do " .
                                     "not correspond with Petrinet transitions");
         }
-        return new Graph2($this->vertexes, $this->edges, $this->initial);
+        return new Graph($this->vertexes, $this->edges, $this->initial);
     }
 }

@@ -10,7 +10,7 @@ use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Repositories\SessionRepository as SessionRepo;
-use Cora\Converters\JsonToGraph2;
+use Cora\Converters\JsonToGraph;
 use Cora\SystemCheckers\CheckCoverabilityGraph;
 
 use Exception;
@@ -36,7 +36,7 @@ class CoverabilityFeedback extends AbstractHandler {
             throw new Exception("Petri net does not exist");
         $petrinet = $petriRepo->getPetrinet($pid);
         $jsonGraph = $request->getParsedBody();
-        $converter = new JsonToGraph2($jsonGraph, $petrinet);
+        $converter = new JsonToGraph($jsonGraph, $petrinet);
         $graph = $converter->convert();
         $markings = $petriRepo->getMarkings($pid);
         if (empty($markings))

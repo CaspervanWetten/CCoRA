@@ -8,8 +8,8 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
-use Cora\Converters\LolaToPetrinet2;
-use Cora\Converters\Petrinet2Translator;
+use Cora\Converters\LolaToPetrinet;
+use Cora\Converters\PetrinetTranslator;
 use Cora\Utils\FileUploadUtils;
 
 use Exception;
@@ -34,11 +34,11 @@ class RegisterPetrinet extends AbstractHandler {
             throw new Exception("Only files with a lola extension are accepted");
 
         $lola = $file->getStream()->getContents();
-        $converter = new LolaToPetrinet2($lola);
+        $converter = new LolaToPetrinet($lola);
         $marked = $converter->convert();
         $translate = true;
         if ($translate) {
-            $translator = new Petrinet2Translator($marked);
+            $translator = new PetrinetTranslator($marked);
             $petrinet = $translator->convert();
         }
         $petrinetRepo = $this->container->get(PetrinetRepo::class);

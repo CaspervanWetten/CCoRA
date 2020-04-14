@@ -2,18 +2,18 @@
 
 namespace Cora\Converters;
 
-use Cora\Domain\Systems\Graphs\Edge2;
+use Cora\Domain\Systems\Graphs\Edge;
 use Cora\Domain\Systems\Graphs\GraphBuilder;
 use Cora\Domain\Systems\Graphs\GraphBuilderInterface as IGraphBuilder;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
 use Cora\Domain\Systems\Petrinet\Place;
 use Cora\Domain\Systems\MarkingBuilder;
-
 use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 use Cora\Domain\Systems\Tokens\OmegaTokenCount;
+
 use Exception;
 
-class JsonToGraph2 extends Converter {
+class JsonToGraph extends Converter {
     protected $json;
     protected $petrinet;
 
@@ -60,7 +60,7 @@ class JsonToGraph2 extends Converter {
             $to = intval($edgeA["toId"]);
             $transition = trim($edgeA["transition"]);
             $id = intval($edgeA["id"]);
-            $edge = new Edge2($from, $to, $transition);
+            $edge = new Edge($from, $to, $transition);
             $builder->addEdge($id, $edge);
         }
     }

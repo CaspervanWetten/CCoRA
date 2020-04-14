@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Systems\Graphs;
 
-class Edge2 implements EdgeInterface {
+class Edge implements EdgeInterface {
     protected $from;
     protected $to;
     protected $label;
