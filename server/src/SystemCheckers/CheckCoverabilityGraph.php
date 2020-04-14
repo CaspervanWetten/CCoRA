@@ -15,12 +15,11 @@ use \Ds\Queue as Queue;
 use \Ds\Set as Set;
 use \Ds\Map as Map;
 
-class CheckCoverabilityGraph extends SystemChecker {
+class CheckCoverabilityGraph {
     protected $graph;
     protected $marked;
 
     public function __construct(IGraph $graph, IMarked $marked) {
-        parent::__construct(NULL);
         $this->graph = $graph;
         $this->marked = $marked;
     }
