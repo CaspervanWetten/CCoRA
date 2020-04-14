@@ -2,15 +2,17 @@
 
 namespace Cora\Repositories;
 
+use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
+
 class SessionRepository extends AbstractRepository {
-    public function getCurrentSession($userId) {
+    public function getCurrentSession(int $userId) {
         $sessionData = $this->getMetaLog($userId);
         if (!$sessionData || $sessionData["session_counter"] === 0)
             return FALSE;
         return $sessionData["session_counter"] - 1;
     }
 
-    public function createNewSession($userId, $petrinetId) {
+    public function createNewSession(int $userId, int $petrinetId) {
         $metaLog = $this->getMetaLog($userId);
         if ($metaLog === FALSE) {
             if (file_exists($this->getMetaLogPath($userId))) 
@@ -29,7 +31,7 @@ class SessionRepository extends AbstractRepository {
         return $metaLog["session_counter"] - 1;
     }
 
-    public function appendGraph($userId, $sessionId, $graph) {
+    public function appendGraph(int $userId, int $sessionId, IGraph $graph) {
         $log = $this->getSessionLog($userId, $sessionId);
         if ($log === FALSE)
             return FALSE;
@@ -38,33 +40,37 @@ class SessionRepository extends AbstractRepository {
         return file_put_contents($path, json_encode($log), LOCK_EX); 
     }
 
-    protected function getMetaLog($userId) {
+    protected function getMetaLog(int $userId) {
         $logPath = $this->getMetaLogPath($userId);
         if (!file_exists($logPath))
             return FALSE;
         return json_decode(file_get_contents($logPath), TRUE);
     }
 
-    protected function getSessionLog($userId, $sessionId) {
+    protected function getSessionLog(int $userId, int $sessionId) {
         $logPath = $this->getSessionLogPath($userId, $sessionId);
         if (!file_exists($logPath))
             return FALSE;
         return json_decode(file_get_contents($logPath), TRUE);
     }
 
-    protected function createMetaLog($userId) {
+    protected function createMetaLog(int $userId) {
         $data = $this->createMetaLogData($userId);
         $path = $this->getMetaLogPath($userId);
         return file_put_contents($path, json_encode($data), LOCK_EX);
     }
 
-    protected function createSessionLog($userId, $petrinetId, $sessionId) {
+    protected function createSessionLog(
+        int $userId,
+        int $petrinetId,
+        int $sessionId)
+    {
         $data = $this->createSessionLogData($userId, $petrinetId, $sessionId);
         $path = $this->getSessionLogPath($userId, $sessionId);
         return file_put_contents($path, json_encode($data), LOCK_EX);
     }
     
-    protected function createMetaLogData($userId) {
+    protected function createMetaLogData(int $userId) {
         $data = [
             "user_id" => $userId,
             "created_on" => $this->timestamp(),
@@ -73,7 +79,11 @@ class SessionRepository extends AbstractRepository {
         return $data;
     }
     
-    protected function createSessionLogData($userId, $petrinetId, $sessionId) {
+    protected function createSessionLogData(
+        int $userId,
+        int $petrinetId,
+        int $sessionId)
+    {
         $data = [
             "user_id" => $userId,
             "session_id" => $sessionId,
@@ -84,11 +94,11 @@ class SessionRepository extends AbstractRepository {
         return $data;
     }
 
-    protected function getMetaLogPath($userId) {
+    protected function getMetaLogPath(int $userId) {
         return LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . ".json";
     }
 
-    protected function getSessionLogPath($userId, $sessionId) {
+    protected function getSessionLogPath(int $userId, int $sessionId) {
         return LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . "-" . $sessionId . ".json";
     }
 
