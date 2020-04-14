@@ -24,4 +24,12 @@ class Edge2 implements EdgeInterface {
     public function getLabel(): string {
         return $this->label;
     }
+
+    public function jsonSerialize() {
+        return [
+            "fromId" => $this->getFrom(),
+            "toId"   => $this->getTo(),
+            "label"  => $this->getLabel()
+        ];
+    }
 }

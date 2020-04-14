@@ -34,6 +34,10 @@ class EdgeMap implements EdgeMapInterface {
         return $this->map->isEmpty();
     }
 
+    public function jsonSerialize() {
+        return $this->map;
+    }
+
     public function getIterator() {
         return $this->map->getIterator();
     }

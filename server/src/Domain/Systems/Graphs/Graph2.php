@@ -69,4 +69,16 @@ class Graph2 implements GraphInterface {
     public function getVertexes(): IVertexMap {
         return $this->vertexes;
     }
+
+    public function getEdges(): IEdgeMap {
+        return $this->edges;
+    }
+
+    public function jsonSerialize() {
+        return [
+            "states" => $this->getVertexes(),
+            "edges" => $this->getEdges(),
+            "initial" => $this->getInitial()
+        ];
+    }
 }

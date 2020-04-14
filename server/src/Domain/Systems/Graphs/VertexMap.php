@@ -28,6 +28,10 @@ class VertexMap implements VertexMapInterface {
         return $this->map->keys();
     }
 
+    public function jsonSerialize() {
+        return $this->map;
+    }
+
     public function getIterator() {
         return $this->map->getIterator();
     }
