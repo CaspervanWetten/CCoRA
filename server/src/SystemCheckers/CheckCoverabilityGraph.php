@@ -3,7 +3,6 @@
 namespace Cora\SystemCheckers;
 
 use Cora\Feedback\Feedback;
-use Cora\Feedback\FeedbackCode;
 use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarked;
 use Cora\Domain\Systems\Petrinet\Transition;
@@ -34,19 +33,19 @@ class CheckCoverabilityGraph {
         $initialId = $graph->getInitial();
         // no initial marking supplied
         if (is_null($initialId)) {
-            $feedback->add(FeedbackCode::NO_INITIAL_STATE);
+            $feedback->add(Feedback::NO_INITIAL_STATE);
             return $feedback;
         }
         $initialG = $graph->getVertex($initialId);
         // compare initial markings
         if (!$initialG->equals($initialP)) {
-            $feedback->add(FeedbackCode::INCORRECT_INITIAL_STATE);
+            $feedback->add(Feedback::INCORRECT_INITIAL_STATE);
             if (!$initialG->unbounded()->isEmpty())
-                $feedback->add(FeedbackCode::OMEGA_IN_INITIAL);
+                $feedback->add(Feedback::OMEGA_IN_INITIAL);
             return $feedback;
         }
-        $feedback->add(FeedbackCode::CORRECT_INITIAL_STATE);
-        $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $graph->getInitial());
+        $feedback->add(Feedback::CORRECT_INITIAL_STATE);
+        $feedback->add(Feedback::REACHABLE_FROM_PRESET, $graph->getInitial());
         // maintain a map marking -> Set<id> to find all the vertexes belonging
         // to a marking, to detect duplicates
         $discovered = new Map();
@@ -85,10 +84,10 @@ class CheckCoverabilityGraph {
                 $firedTransition = new Transition($edge->getLabel());
                 // mark duplicate edges
                 if ($fired->contains($firedTransition)) {
-                    $feedback->add(FeedbackCode::DUPLICATE_EDGE, $id);
+                    $feedback->add(Feedback::DUPLICATE_EDGE, $id);
                     foreach($postset as $eid => $ped) {
                         if($edge->getLabel() == $ped->getLabel()) {
-                            $feedback->add(FeedbackCode::DUPLICATE_EDGE, $eid);
+                            $feedback->add(Feedback::DUPLICATE_EDGE, $eid);
                         }
                     }
                 }
@@ -110,16 +109,16 @@ class CheckCoverabilityGraph {
                 if ($directPath) {
                     $equal = $currentMarking->equals($discoveredMarking);
                     if (($equal && $edge->getTo() == $edge->getFrom()) || !$equal) {
-                        $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
-                        $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
+                        $feedback->add(Feedback::ENABLED_CORRECT_POST, $id);
+                        $feedback->add(Feedback::REACHABLE_FROM_PRESET, $edge->getTo());
                     } else
-                        $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
+                        $feedback->add(Feedback::MISSED_SELF_LOOP, $id);
                     // determine whether some places could be marked
                     // unbounded. Not needed for self loops
                     if (!$equal && !$black->contains($edge->getTo())) {
                         $coverable = $this->getCoverable($edge->getTo(), $discoveredMarking);
                         if (SetUtils::isStrictSubset($unboundedSet, $coverable))
-                            $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
+                            $feedback->add(Feedback::OMEGA_OMITTED, $edge->getTo());
                     }
                     continue;
                 }
@@ -177,28 +176,28 @@ class CheckCoverabilityGraph {
                         break;
                 }
                 if ($correctPost) {
-                    $feedback->add(FeedbackCode::REACHABLE_FROM_PRESET, $edge->getTo());
+                    $feedback->add(Feedback::REACHABLE_FROM_PRESET, $edge->getTo());
                     if ($omegaOmitted)
-                        $feedback->add(FeedbackCode::OMEGA_OMITTED, $edge->getTo());
+                        $feedback->add(Feedback::OMEGA_OMITTED, $edge->getTo());
                 } else {
                     $pre = $this->unboundedFromPreset($edge->getTo());
                     if (SetUtils::isStrictSubset($unbounded->toSet(), $pre))
-                        $feedback->add(FeedbackCode::OMEGA_FROM_PRESET_OMITTED,
+                        $feedback->add(Feedback::OMEGA_FROM_PRESET_OMITTED,
                                        $edge->getTo());
                 }
 
                 if ($correctEdge)
-                    $feedback->add(FeedbackCode::ENABLED_CORRECT_POST, $id);
+                    $feedback->add(Feedback::ENABLED_CORRECT_POST, $id);
                 else if ($correctPost && $isEnabled && !$requireLoop)
-                    $feedback->add(FeedbackCode::ENABLED_CORRECT_POST_WRONG_LABEL, $id);
+                    $feedback->add(Feedback::ENABLED_CORRECT_POST_WRONG_LABEL, $id);
                 else if ($correctPost && $isEnabled && $requireLoop)
-                    $feedback->add(FeedbackCode::MISSED_SELF_LOOP, $id);
+                    $feedback->add(Feedback::MISSED_SELF_LOOP, $id);
                 else if ($correctPost && !$isEnabled)
-                    $feedback->add(FeedbackCode::DISABLED_CORRECT_POST, $id);
+                    $feedback->add(Feedback::DISABLED_CORRECT_POST, $id);
                 else if (!$correctPost && $isEnabled)
-                    $feedback->add(FeedbackCode::ENABLED_INCORRECT_POST, $id);
+                    $feedback->add(Feedback::ENABLED_INCORRECT_POST, $id);
                 else 
-                    $feedback->add(FeedbackCode::DISABLED, $id);
+                    $feedback->add(Feedback::DISABLED, $id);
             }
             // get the difference between the enabled and fired set
             $transDiff = $enabled->toSet()->diff($fired);
@@ -206,7 +205,7 @@ class CheckCoverabilityGraph {
             // have not been fired from the current marking while they
             // should have been
             if(!$transDiff->isEmpty())
-                $feedback->add(FeedbackCode::EDGE_MISSING, $currentId);
+                $feedback->add(Feedback::EDGE_MISSING, $currentId);
             // update bfs variables
             $grey->remove($currentId);
             $black->add($currentId);
@@ -214,13 +213,13 @@ class CheckCoverabilityGraph {
         // mark unreachable states
         $unreachable = $graph->getVertexes()->getIds()->diff($black);
         foreach($unreachable as $id) {
-            $feedback->add(FeedbackCode::NOT_REACHABLE_FROM_INITIAL, $id);
+            $feedback->add(Feedback::NOT_REACHABLE_FROM_INITIAL, $id);
         }
         // mark duplicate states
         foreach($graph->getVertexes() as $id => $marking)
             if ($discovered->get($marking)->count() > 1)
                 foreach($discovered->get($marking) as $element)
-                    $feedback->add(FeedbackCode::DUPLICATE_STATE, $element);
+                    $feedback->add(Feedback::DUPLICATE_STATE, $element);
         return $feedback;
     }
 
