@@ -8,7 +8,6 @@ use \Psr\Http\Message\RequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 
 use Cora\MiddleWare;
-use Cora\Enumerators\TrailingSlashOptions;
 use Cora\Handlers;
 use Cora\Utils;
 
@@ -61,6 +60,42 @@ $container[Cora\Services\GetUserService::class] = function($c) {
     return new Cora\Services\GetUserService();
 };
 
+$container[Cora\Services\GetUsersService::class] = function($c) {
+    return new Cora\Services\GetUsersService();
+};
+
+$container[Cora\Services\RegisterUserService::class] = function($c) {
+    return new Cora\Services\RegisterUserService();
+};
+
+$container[Cora\Services\GetPetrinetService::class] = function($c) {
+    return new Cora\Services\GetPetrinetService();
+};
+
+$container[Cora\Services\GetPetrinetImageService::class] = function($c) {
+    return new Cora\Services\GetPetrinetImageService();
+};
+
+$container[Cora\Services\GetPetrinetsService::class] = function($c) {
+    return new Cora\Services\GetPetrinetsService();
+};
+
+$container[Cora\Services\RegisterPetrinetService::class] = function($c) {
+    return new Cora\Services\RegisterPetrinetService();
+};
+
+$container[Cora\Services\GetSessionService::class] = function($c) {
+    return new Cora\Services\GetSessionService();
+};
+
+$container[Cora\Services\StartSessionService::class] = function($c) {
+    return new Cora\Services\StartSessionService();
+};
+
+$container[Cora\Services\GetFeedbackService::class] = function($c) {
+    return new Cora\Services\GetFeedbackService();
+};
+
 /**************************************
 *               MIDDLEWARE            *
 **************************************/
@@ -71,9 +106,12 @@ $container[Cora\Services\GetUserService::class] = function($c) {
  * defined without trailing slashes.
  */
 $app->add(
-    new MiddleWare\TrailingSlash( TrailingSlashOptions::REMOVE_TRAILING_SLASH )
+    new MiddleWare\TrailingSlash(MiddleWare\TrailingSlash::REMOVE_TRAILING_SLASH)
 );
 
+/**
+ * This MiddleWare enables Cross Origin Resource Sharing (CORS)
+ */
 if (CORS_ENABLED) {
     $app->add(
         new MiddleWare\CORS(CORS_ALLOW)
