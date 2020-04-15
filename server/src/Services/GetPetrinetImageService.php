@@ -5,17 +5,18 @@ namespace Cora\Services;
 use Cora\Converters\PetrinetToDot;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Views\ImageViewInterface as View;
 
 use Exception;
 
 class GetPetrinetImageService {
-    public function get($id, PetriRepo $petriRepo) {
+    public function get(View &$view, $id, PetriRepo $petriRepo) {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         if (!$petriRepo->petrinetExists($id))
             throw new Exception("A Petri net with this id does not exist");
         $petrinet = $petriRepo->getPetrinet($id);
         $image = $this->generateImage($petrinet);
-        return $image;
+        $view->setData($image);
     }
 
     protected function generateImage(IPetrinet $petrinet) {

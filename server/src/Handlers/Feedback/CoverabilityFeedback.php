@@ -10,6 +10,7 @@ use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Repositories\SessionRepository as SessionRepo;
 use Cora\Services\GetFeedbackService;
+use Cora\Views\JsonFeedbackView;
 
 class CoverabilityFeedback extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
@@ -18,7 +19,9 @@ class CoverabilityFeedback extends AbstractHandler {
         $petriRepo = $this->container->get(PetrinetRepo::class);
         $sessionRepo = $this->container->get(SessionRepo::class);
         $service = $this->container->get(GetFeedbackService::class);
-        $feedback = $service->get(
+        $view = new JsonFeedbackView();
+        $service->get(
+            $view,
             $graph,
             $args["user_id"],
             $args["petrinet_id"],
@@ -26,6 +29,8 @@ class CoverabilityFeedback extends AbstractHandler {
             $userRepo,
             $petriRepo,
             $sessionRepo);
-        return $response->withJson($feedback);
+        return $response->withHeader("Content-type", $view->getContentType())
+                        ->withStatus(200)
+                        ->write($view->render());
     }
 }

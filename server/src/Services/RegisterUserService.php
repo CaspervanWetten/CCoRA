@@ -8,17 +8,18 @@ use Cora\Validation\MaxLengthRule;
 use Cora\Validation\MinLengthRule;
 use Cora\Validation\RegexRule;
 use Cora\Validation\RuleValidator;
+use Cora\Views\UserCreatedViewInterface as View;
 
 use Exception;
 
 class RegisterUserService {
-    public function register(UserRepo $repo, $name) {
+    public function register(View &$view, UserRepo $repo, $name) {
         $name = filter_var($name, FILTER_SANITIZE_STRING);
         $validator = $this->getValidator($repo);
         if (!$validator->validate($name))
             throw new Exception($validator->getError());
         $id = $repo->saveUser($name);
-        return $id;
+        $view->setUserId($id);
     }
 
     protected function getValidator(UserRepo $repo) {

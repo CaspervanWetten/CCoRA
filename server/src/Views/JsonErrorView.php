@@ -13,7 +13,7 @@ class JsonErrorView implements ViewInterface {
         $this->exception = $e;
     }
 
-    public function toString(): string {
+    public function render(): string {
         return json_encode($this->getException()->getMessage());
     }
 

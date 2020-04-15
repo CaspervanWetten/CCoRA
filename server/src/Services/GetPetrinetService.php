@@ -4,11 +4,12 @@ namespace Cora\Services;
 
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Views\PetrinetViewInterface as PetrinetView;
 
 use Exception;
 
 class GetPetrinetService {
-    public function get($id, PetriRepo $petriRepo) {
+    public function get(PetrinetView &$view, $id, PetriRepo $petriRepo) {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $petrinet = $petriRepo->getPetrinet($id);
         if (is_null($petrinet))
@@ -17,8 +18,8 @@ class GetPetrinetService {
         if (!empty($markings)) {
             $marking = $petriRepo->getMarking($markings[0]["id"], $petrinet);
             $marked = new MarkedPetrinet($petrinet, $marking);
-            return $marked;
+            $view->setPetrinet($marked->getPetrinet());
         }
-        return $petrinet;
+        $view->setPetrinet($petrinet);
     }
 }

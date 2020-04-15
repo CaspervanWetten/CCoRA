@@ -5,10 +5,13 @@ namespace Cora\Services;
 use Cora\Repositories\SessionRepository as SessionRepo;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
 use Cora\Domain\User\UserRepository as UserRepo;
+use Cora\Views\SessionCreatedViewInterface as View;
+
 use Exception;
 
 class StartSessionService {
     public function start(
+        View &$view,
         $uid,
         $pid,
         SessionRepo $sessionRepo,
@@ -24,6 +27,6 @@ class StartSessionService {
         $session = $sessionRepo->createNewSession($uid, $pid);
         if ($session === FALSE)
             throw new Exception("Could not start session: logging error");
-        return $session;
+        $view->setSessionId($session);
     }
 }

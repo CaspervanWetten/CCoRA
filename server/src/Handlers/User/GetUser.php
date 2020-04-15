@@ -25,12 +25,12 @@ class GetUser extends AbstractHandler {
             $view = new JsonUserView();
             $service->getUser($view, $repo, $id);
             return $response->withHeader("Content-type", $view->getContentType())
-                            ->write($view->toString());
+                            ->write($view->render());
         } catch (UserNotFoundException $e) {
             $view = new JsonErrorView($e);
             return $response->withHeader("Content-type", $view->getContentType())
                             ->withStatus(404)
-                            ->write($view->toString());
+                            ->write($view->render());
         }
     }
 }

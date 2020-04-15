@@ -9,6 +9,7 @@ use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\SessionRepository as SessionRepo;
 use Cora\Services\GetSessionService;
+use Cora\Views\JsonCurrentSessionView;
 use Exception;
 
 class GetCurrentSession extends AbstractHandler {
@@ -18,8 +19,10 @@ class GetCurrentSession extends AbstractHandler {
         $userRepo = $this->container->get(UserRepo::class);
         $sessionRepo = $this->container->get(SessionRepo::class);
         $service = $this->container->get(GetSessionService::class);
-        $session = $service->get($args["id"], $sessionRepo, $userRepo);
-        return $response->withJson([
-            "session_id" => $session]);
+        $view = new JsonCurrentSessionView();
+        $service->get($view, $args["id"], $sessionRepo, $userRepo);
+        return $response->withHeader("Content-type", $view->getContentType())
+                        ->withStatus(200)
+                        ->write($view->render());
     }
 }

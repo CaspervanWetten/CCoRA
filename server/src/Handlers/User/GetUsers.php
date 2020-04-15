@@ -8,13 +8,17 @@ use Slim\Http\Response;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\GetUsersService;
+use Cora\Views\JsonUsersView;
 
 class GetUsers extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
         $repo    = $this->container->get(UserRepo::class);
+        $view    = new JsonUsersView();
         $service = $this->container->get(GetUsersService::class);
-        $users   = $service->getUsers($repo, $args["page"], $args["limit"]);
+        $service->getUsers($view, $repo, $args["page"], $args["limit"]);
 
-        return $response->withJson($users);
+        return $response->withHeader("Content-type", $view->getContentType())
+                        ->withStatus(200)
+                        ->write($view->render());
     }
 }

@@ -8,14 +8,17 @@ use Slim\Http\Response;
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetImageService;
+use Cora\Views\SvgImageView;
 
 class GetPetrinetImage extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
         $id = $args["id"];
         $repo = $this->container->get(PetrinetRepo::class);
         $service = $this->container->get(GetPetrinetImageService::class);
-        $image = $service->get($id, $repo);
-        $response->getBody()->write($image);
-        return $response->withHeader("Content-type", "image/svg+xml");
+        $view = new SvgImageView();
+        $service->get($view, $id, $repo);
+        return $response->withHeader("Content-type", $view->getContentType())
+                        ->withStatus(200)
+                        ->write($view->render());
     }
 }

@@ -53,7 +53,13 @@ class UserRepository extends AbstractRepository {
             $query .= sprintf(" OFFSET %d", $offset);
         $statement = $this->db->prepare($query);
         $statement->execute();
-        return $statement->fetchAll();
+        $result = [];
+        foreach($statement->fetchAll() as $row)
+            array_push($result, new UserRecord(
+                intval($row["id"]),
+                $row["name"],
+                new DateTime($row["created_on"])));
+        return $result;
     }
 
     /** 

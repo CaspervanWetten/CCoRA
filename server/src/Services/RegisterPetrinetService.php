@@ -2,17 +2,20 @@
 
 namespace Cora\Services;
 
+use Psr\Http\Message\UploadedFileInterface as File;
+
 use Cora\Converters\LolaToPetrinet;
 use Cora\Converters\PetrinetTranslator;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Views\PetrinetCreatedViewInterface as View;
 use Cora\Utils\FileUploadUtils;
-use Psr\Http\Message\UploadedFileInterface as File;
 
 use Exception;
 
 class RegisterPetrinetService {
     public function register(
+        View &$view,
         $uid,
         File $file,
         UserRepo $userRepo,
@@ -36,6 +39,6 @@ class RegisterPetrinetService {
             $marked = $translator->convert();
         }
         $petrinetId = $petriRepo->savePetrinet($marked, $uid);
-        return $petrinetId;
+        $view->setId($petrinetId);
     }
 }
