@@ -2,12 +2,9 @@
 
 namespace Cora\Services;
 
-use Cora\Domain\User\User;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Views\AbstractUserView as UserView;
-
-use DateTime;
 
 class GetUserService {
     public function getUser(UserView $view, UserRepo $repo, $id) {
