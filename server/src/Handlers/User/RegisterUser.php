@@ -2,8 +2,8 @@
 
 namespace Cora\Handlers\User;
 
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UniqueUserRule;

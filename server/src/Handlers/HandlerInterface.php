@@ -2,8 +2,8 @@
 
 namespace Cora\Handlers;
 
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 interface HandlerInterface {
     public function handle(Request $request, Response $response, $args);

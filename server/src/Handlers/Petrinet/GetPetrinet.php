@@ -2,10 +2,10 @@
 
 namespace Cora\Handlers\Petrinet;
 
-use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
+use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 

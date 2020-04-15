@@ -2,8 +2,8 @@
 
 namespace Cora\Handlers\Error;
 
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
 use Exception;
 
