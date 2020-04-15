@@ -5,13 +5,13 @@ namespace Cora\Feedback;
 use \Ds\Map as Map;
 use \Ds\Set as Set;
 
-class Feedback
-{
-    public $general;
-    public $specific;
+use JsonSerializable;
 
-    public function __construct()
-    {
+class Feedback implements JsonSerializable {
+    protected $general;
+    protected $specific;
+
+    public function __construct() {
         $this->general = new Set();
         $this->specific = new Map();
     }
@@ -24,15 +24,12 @@ class Feedback
     * @param int $element The optional element to provide feedback for
     * @return void
     **/
-    public function add($code, $element = NULL)
-    {
-        if(is_null($element)) {
+    public function add(int $code, ?int $element=NULL): void {
+        if (is_null($element)) 
             $this->general->add($code);
-        }
         else {
-            if(!$this->specific->hasKey($element)) {
+            if (!$this->specific->hasKey($element)) 
                 $this->specific->put($element, new Set());
-            }
             $this->specific->get($element)->add($code);
         }
     }
@@ -46,18 +43,12 @@ class Feedback
     *    which we want to retrieve the feedback codes
     * @return Set Set of feedback codes
     **/
-    public function get($element = NULL)
-    {
-        if(is_null($element)) {
+    public function get($element = NULL): Set {
+        if (is_null($element)) 
             return $this->general;
-        }
-        else if($this->specific->hasKey($element)) {
+        else if ($this->specific->hasKey($element))
             return $this->specific->get($element);
-        }
-        else {
-            $this->specific->put($element, new Set());
-            return $this->getFeedback($element);
-        }
+        return new Set();
     }
 
    /**
@@ -66,15 +57,18 @@ class Feedback
     * @param int $element The element to remove it from
     * @return void
     **/
-    public function remove($code, $element)
-    {
+    public function remove($code, $element): void {
         if($this->specific->hasKey($element)) {
             $f = $this->specific->get($element);
-            if($f->contains($code)) {
+            if($f->contains($code)) 
                 $f->remove($code);
-            }
         }
     }
-}
 
-?>
+    public function jsonSerialize() {
+        return [
+            "general" => $this->general,
+            "specific" => $this->specific
+        ];
+    }
+}
