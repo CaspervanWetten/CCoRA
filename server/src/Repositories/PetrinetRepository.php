@@ -68,7 +68,7 @@ class PetrinetRepository extends AbstractRepository {
         return $statement->fetchAll();
     }
 
-    public function savePetrinet2(IMarkedPetrinet $marked, $user, ?string $name=NULL) {
+    public function savePetrinet(IMarkedPetrinet $marked, $user, ?string $name=NULL) {
         $this->db->beginTransaction();
         if (is_null($name))
             $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
