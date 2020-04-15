@@ -2,10 +2,10 @@
 
 namespace Cora\MiddleWare;
 
-use Psr\Http\Message\RequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Http\Request;
+use Slim\Http\Response;
 
-class CORS extends MiddleWare {
+class CORS implements MiddleWareInterface {
     protected $allow;
 
     public function __construct(string $allow="*") {
@@ -15,7 +15,8 @@ class CORS extends MiddleWare {
     public function __invoke(
         Request $request,
         Response $response,
-        callable $next) {
+        callable $next): Response
+    {
         $response = $next($request, $response);
         $newResponse = $response->withHeader(
             "Access-Control-Allow-Origin",
