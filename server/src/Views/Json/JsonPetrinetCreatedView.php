@@ -1,10 +1,10 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Views\Json;
 
-class JsonPetrinetCreatedView implements PetrinetCreatedViewInterface {
-    use JsonViewTrait;
+use Cora\Views;
 
+class JsonPetrinetCreatedView implements Views\PetrinetCreatedViewInterface {
     protected $id;
 
     public function getId(): int {

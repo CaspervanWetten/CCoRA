@@ -10,15 +10,16 @@ use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
 use Cora\Repositories\SessionRepository as SessionRepo;
 use Cora\Services\StartSessionService;
-use Cora\Views\JsonSessionCreatedView;
+use Cora\Views\SessionCreatedViewFactory;
 
 class CreateSession extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
-        $service = $this->container->get(StartSessionService::class);
-        $userRepo = $this->container->get(UserRepo::class);
-        $petriRepo = $this->container->get(PetriRepo::class);
+        $mediaType   = $this->getMediaType($request);
+        $service     = $this->container->get(StartSessionService::class);
+        $userRepo    = $this->container->get(UserRepo::class);
+        $petriRepo   = $this->container->get(PetriRepo::class);
         $sessionRepo = $this->container->get(SessionRepo::class);
-        $view = new JsonSessionCreatedView();
+        $view        = $this->getView($mediaType);
         $service->start(
             $view,
             $args["id"],
@@ -26,8 +27,12 @@ class CreateSession extends AbstractHandler {
             $sessionRepo,
             $userRepo,
             $petriRepo);
-        $response->withHeader("Content-type", $view->getContentType())
+        $response->withHeader("Content-type", $mediaType)
                  ->withStatus(201)
                  ->write($view->render());
+    }
+
+    protected function getViewFactory(): \Cora\Views\AbstractViewFactory {
+        return new SessionCreatedViewFactory();
     }
 }

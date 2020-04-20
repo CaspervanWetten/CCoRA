@@ -1,12 +1,11 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Views\Json;
 
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
+use Cora\Views;
 
-class JsonPetrinetView implements PetrinetViewInterface {
-    use JsonViewTrait;
-
+class JsonPetrinetView implements Views\PetrinetViewInterface {
     protected $petrinet;
 
     public function setPetrinet(IPetrinet $petrinet): void {

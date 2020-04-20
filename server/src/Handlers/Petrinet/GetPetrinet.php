@@ -9,24 +9,29 @@ use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetService;
 use Cora\Views\JsonErrorView;
-use Cora\Views\JsonPetrinetView;
+use Cora\Views\PetrinetViewFactory;
 use Exception;
 
 class GetPetrinet extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
         try {
             $petriRepo = $this->container->get(PetrinetRepo::class);
-            $service = $this->container->get(GetPetrinetService::class);
-            $view = new JsonPetrinetView();
+            $mediaType = $this->getMediaType($request);
+            $view      = $this->getView($mediaType);
+            $service   = $this->container->get(GetPetrinetService::class);
             $service->get($view, $args["id"], $petriRepo);
-            return $response->withHeader("Content-type", $view->getContentType())
+            return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(200)
                             ->write($view->render());
         } catch (Exception $e) {
             $view = new JsonErrorView($e);
-            return $response->withHeader("Content-type", $view->getContentType())
+            return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(404)
                             ->write($view->render());
         }
+    }
+
+    protected function getViewFactory(): \Cora\Views\AbstractViewFactory {
+        return new PetrinetViewFactory();
     }
 }

@@ -9,7 +9,7 @@ use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Services\RegisterPetrinetService;
-use Cora\Views\JsonPetrinetCreatedView;
+use Cora\Views\PetrinetCreatedViewFactory;
 use Exception;
 
 class RegisterPetrinet extends AbstractHandler {
@@ -19,18 +19,23 @@ class RegisterPetrinet extends AbstractHandler {
         $files = $request->getUploadedFiles();
         if (!isset($files["petrinet"]))
             throw new Exception("No Petri net uploaded");
-        $file = $files["petrinet"];
+        $file         = $files["petrinet"];
         $petrinetRepo = $this->container->get(PetrinetRepo::class);
-        $view = new JsonPetrinetCreatedView();
-        $service = $this->container->get(RegisterPetrinetService::class);
+        $mediaType    = $this->getMediaType($request);
+        $view         = $this->getView($mediaType);
+        $service      = $this->container->get(RegisterPetrinetService::class);
         $service->register(
             $view,
             $userId,
             $file,
             $userRepo,
             $petrinetRepo);
-        return $response->withHeader("Content-type", $view->getContentType())
+        return $response->withHeader("Content-type", $mediaType)
                         ->withStatus(201)
                         ->write($view->render());
+    }
+
+    protected function getViewFactory(): \Cora\Views\AbstractViewFactory {
+        return new PetrinetCreatedViewFactory();
     }
 }

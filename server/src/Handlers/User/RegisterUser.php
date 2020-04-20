@@ -8,7 +8,8 @@ use Slim\Http\Response;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\RegisterUserService;
-use Cora\Views\JsonUserCreatedView;
+use Cora\Views\AbstractViewFactory;
+use Cora\Views\UserCreatedViewFactory;
 use Exception;
 
 class RegisterUser extends AbstractHandler {
@@ -16,12 +17,17 @@ class RegisterUser extends AbstractHandler {
         $body = $request->getParsedBody();
         if (!isset($body["name"]))
             throw new Exception("No name supplied");
-        $repo = $this->container->get(UserRepo::class);
-        $view = new JsonUserCreatedView();
-        $service = $this->container->get(RegisterUserService::class);
+        $mediaType = $this->getMediaType($request);
+        $repo      = $this->container->get(UserRepo::class);
+        $view      = $this->getView($mediaType);
+        $service   = $this->container->get(RegisterUserService::class);
         $service->register($view, $repo, $body["name"]);
-        return $response->withHeader("Content-type", $view->getContentType())
+        return $response->withHeader("Content-type", $mediaType)
                         ->withStatus(201)
                         ->write($view->render());
+    }
+
+    protected function getViewFactory(): AbstractViewFactory {
+        return new UserCreatedViewFactory();
     }
 }

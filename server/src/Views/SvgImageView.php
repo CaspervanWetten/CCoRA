@@ -14,8 +14,4 @@ class SvgImageView implements ImageViewInterface {
     public function render(): string {
         return $this->getData();
     }
-
-    public function getContentType(): string {
-        return "image/svg+xml";
-    }
 }

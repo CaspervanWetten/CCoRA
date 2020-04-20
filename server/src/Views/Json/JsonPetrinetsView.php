@@ -1,10 +1,10 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Views\Json;
 
-class JsonPetrinetsView implements PetrinetsViewInterface {
-    use JsonViewTrait;
+use Cora\Views;
 
+class JsonPetrinetsView implements Views\PetrinetsViewInterface {
     protected $petrinets;
 
     public function getPetrinets(): array {

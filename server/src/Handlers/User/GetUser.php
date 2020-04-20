@@ -7,11 +7,8 @@ use Slim\Http\Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\GetUserService;
-use Cora\Views\JsonUserView;
-use Cora\Views\JsonErrorView;
-use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
-
+use Cora\Views\UserViewFactory;
 use Exception;
 
 class GetUser extends AbstractHandler {
@@ -19,18 +16,16 @@ class GetUser extends AbstractHandler {
         $id = $args["id"];
         if (!isset($id))
             throw new Exception("No id given");
-        try {
-            $service = $this->container->get(GetUserService::class);
-            $repo = $this->container->get(UserRepo::class);
-            $view = new JsonUserView();
-            $service->getUser($view, $repo, $id);
-            return $response->withHeader("Content-type", $view->getContentType())
-                            ->write($view->render());
-        } catch (UserNotFoundException $e) {
-            $view = new JsonErrorView($e);
-            return $response->withHeader("Content-type", $view->getContentType())
-                            ->withStatus(404)
-                            ->write($view->render());
-        }
+        $mediaType = $this->getMediaType($request);
+        $view      = $this->getView($mediaType);
+        $repo      = $this->container->get(UserRepo::class);
+        $service   = $this->container->get(GetUserService::class);
+        $service->getUser($view, $repo, $id);
+        return $response->withHeader("Content-type", $mediaType)
+                        ->write($view->render());
+    }
+
+    protected function getViewFactory(): \Cora\Views\AbstractViewFactory {
+        return new UserViewFactory();
     }
 }
