@@ -2,6 +2,7 @@
 
 namespace Cora\Handlers\User;
 
+use Cora\Domain\User\UserNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -16,13 +17,22 @@ class GetUser extends AbstractHandler {
         $id = $args["id"];
         if (!isset($id))
             throw new Exception("No id given");
-        $mediaType = $this->getMediaType($request);
-        $view      = $this->getView($mediaType);
-        $repo      = $this->container->get(UserRepo::class);
-        $service   = $this->container->get(GetUserService::class);
-        $service->getUser($view, $repo, $id);
-        return $response->withHeader("Content-type", $mediaType)
-                        ->write($view->render());
+        try {
+            $mediaType = $this->getMediaType($request);
+            $view      = $this->getView($mediaType);
+            $repo      = $this->container->get(UserRepo::class);
+            $service   = $this->container->get(GetUserService::class);
+            $service->getUser($view, $repo, $id);
+            return $response->withHeader("Content-type", $mediaType)
+                            ->write($view->render());
+        } catch (UserNotFoundException $e) {
+            $mediaType = $this->getErrorMediaType($request);
+            $view = $this->getErrorView($mediaType);
+            $view->setException($e);
+            return $response->withHeader("Content-type", $mediaType)
+                            ->withStatus(404)
+                            ->write($view->render());
+        }
     }
 
     protected function getViewFactory(): \Cora\Views\AbstractViewFactory {

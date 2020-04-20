@@ -22,7 +22,7 @@ use Exception;
 use PDO;
 
 class PetrinetRepository extends AbstractRepository {
-    public function getPetrinet($id): IPetrinet {
+    public function getPetrinet($id): ?IPetrinet {
         if (!$this->petrinetExists($id))
             return NULL;
         $builder = new PetrinetBuilder();

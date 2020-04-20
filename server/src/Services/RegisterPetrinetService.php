@@ -6,6 +6,7 @@ use Psr\Http\Message\UploadedFileInterface as File;
 
 use Cora\Converters\LolaToPetrinet;
 use Cora\Converters\PetrinetTranslator;
+use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
 use Cora\Views\PetrinetCreatedViewInterface as View;
@@ -23,7 +24,7 @@ class RegisterPetrinetService {
     {
         $uid = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
         if (!$userRepo->userExists("id", $uid))
-            throw new Exception("No user with this id exists");
+            throw new UserNotFoundException("No user with this id exists");
         $error = $file->getError();
         if ($error != UPLOAD_ERR_OK)
             throw new Exception(FileUploadUtils::getErrorMessage($error));

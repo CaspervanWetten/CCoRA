@@ -4,6 +4,7 @@ namespace Cora\Services;
 
 use Cora\Converters\PetrinetToDot;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
+use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
 use Cora\Views\ImageViewInterface as View;
 
@@ -13,7 +14,8 @@ class GetPetrinetImageService {
     public function get(View &$view, $id, PetriRepo $petriRepo) {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         if (!$petriRepo->petrinetExists($id))
-            throw new Exception("A Petri net with this id does not exist");
+            throw new PetrinetNotFoundException(
+                "A Petri net with this id does not exist");
         $petrinet = $petriRepo->getPetrinet($id);
         $image = $this->generateImage($petrinet);
         $view->setData($image);

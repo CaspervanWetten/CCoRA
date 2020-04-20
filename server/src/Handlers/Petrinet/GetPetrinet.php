@@ -8,9 +8,8 @@ use Slim\Http\Response;
 use Cora\Handlers\AbstractHandler;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetService;
-use Cora\Views\JsonErrorView;
 use Cora\Views\PetrinetViewFactory;
-use Exception;
+use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 
 class GetPetrinet extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {
@@ -23,8 +22,10 @@ class GetPetrinet extends AbstractHandler {
             return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(200)
                             ->write($view->render());
-        } catch (Exception $e) {
-            $view = new JsonErrorView($e);
+        } catch (PetrinetNotFoundException $e) {
+            $mediaType = $this->getErrorMediaType($request);
+            $view = $this->getErrorView($mediaType);
+            $view->setException($e);
             return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(404)
                             ->write($view->render());

@@ -3,6 +3,7 @@
 namespace Cora\Handlers;
 
 use Cora\Views\AbstractViewFactory;
+use Cora\Views\ErrorViewFactory;
 use Slim\Http\Request;
 use Slim\Http\Response;
 use Psr\Container\ContainerInterface as Container;
@@ -26,8 +27,18 @@ abstract class AbstractHandler implements HandlerInterface {
         return $this->negotiateType($request, $supported);
     }
 
+    public function getErrorMediaType(Request $request): string {
+        $supported = $this->getSupportedErrorMediaTypes();
+        return $this->negotiateType($request, $supported);
+    }
+
     protected function getView(string $mediaType) {
         $factory = $this->getViewFactory();
+        return $factory->create($mediaType);
+    }
+
+    protected function getErrorView(string $mediaType) {
+        $factory = $this->getErrorViewFactory();
         return $factory->create($mediaType);
     }
 
@@ -39,7 +50,7 @@ abstract class AbstractHandler implements HandlerInterface {
         $type = $negatotiator->getBest($clientAccept, $supported);
         if (is_null($type))
             throw new Exception("Could not provide acceptable media format");
-        return $type->getValue();
+        return $type->getType();
     }
 
     protected function getSupportedMediaTypes(): array {
@@ -47,5 +58,14 @@ abstract class AbstractHandler implements HandlerInterface {
         return $factory->getMediaTypes();
     }
 
+    protected function getSupportedErrorMediaTypes(): array {
+        $factory = $this->getErrorViewFactory();
+        return $factory->getMediaTypes();
+    }
+
     protected abstract function getViewFactory(): AbstractViewFactory;
+
+    protected function getErrorViewFactory(): ErrorViewFactory {
+        return new ErrorViewFactory();
+    }
 }
