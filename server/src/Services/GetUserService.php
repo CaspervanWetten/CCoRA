@@ -2,9 +2,9 @@
 
 namespace Cora\Services;
 
-use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Views\UserViewInterface as UserView;
+use Cora\Domain\User\View\UserViewInterface as UserView;
+use Cora\Domain\User\Exception\UserNotFoundException;
 
 class GetUserService {
     public function getUser(UserView $view, UserRepo $repo, $id) {

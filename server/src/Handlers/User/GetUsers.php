@@ -6,9 +6,9 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Domain\User\UserRepository as UserRepo;
+use Cora\Domain\User\View\UsersViewFactory;
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\GetUsersService;
-use Cora\Views\UsersViewFactory;
 
 class GetUsers extends AbstractHandler {
     public function handle(Request $request, Response $response, $args) {

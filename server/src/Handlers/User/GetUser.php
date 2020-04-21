@@ -2,14 +2,14 @@
 
 namespace Cora\Handlers\User;
 
-use Cora\Domain\User\UserNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\GetUserService;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Views\UserViewFactory;
+use Cora\Domain\User\Exception\UserNotFoundException;
+use Cora\Domain\User\View\UserViewFactory;
 use Exception;
 
 class GetUser extends AbstractHandler {

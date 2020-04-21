@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\User\View;
+
+use Cora\Views\AbstractViewFactory;
 
 class UserCreatedViewFactory extends AbstractViewFactory {
     protected function getMediaAssociations(): array {

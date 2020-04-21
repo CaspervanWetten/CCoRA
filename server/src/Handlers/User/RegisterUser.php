@@ -6,11 +6,12 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Domain\User\UserRegistrationException;
+use Cora\Domain\User\Exception\UserRegistrationException;
+use Cora\Domain\User\View\UserCreatedViewFactory;
 use Cora\Handlers\AbstractHandler;
 use Cora\Services\RegisterUserService;
 use Cora\Views\AbstractViewFactory;
-use Cora\Views\UserCreatedViewFactory;
+
 use Exception;
 
 class RegisterUser extends AbstractHandler {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Cora\Views\Json;
+namespace Cora\Domain\User\View\Json;
 
-use Cora\Views;
+use Cora\Domain\User\View\UserCreatedViewInterface;
 
-class JsonUserCreatedView implements Views\UserCreatedViewInterface {
+class JsonUserCreatedView implements UserCreatedViewInterface {
     protected $userId;
 
     public function getUserId(): int {

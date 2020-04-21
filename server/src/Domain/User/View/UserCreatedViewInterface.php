@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\User\View;
+
+use Cora\Views\ViewInterface;
 
 interface UserCreatedViewInterface extends ViewInterface {
     public function getUserId(): int;

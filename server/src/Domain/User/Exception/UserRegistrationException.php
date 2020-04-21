@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\User;
+namespace Cora\Domain\User\Exception;
 
 use Exception;
 

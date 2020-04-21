@@ -2,15 +2,14 @@
 
 namespace Cora\Services;
 
-use Cora\Domain\User\UniqueUserRule;
+use Cora\Domain\User\Validation\UniqueUserRule;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Domain\User\UserRegistrationException;
+use Cora\Domain\User\Exception\UserRegistrationException;
 use Cora\Validation\MaxLengthRule;
 use Cora\Validation\MinLengthRule;
 use Cora\Validation\RegexRule;
 use Cora\Validation\RuleValidator;
-use Cora\Views\UserCreatedViewInterface as View;
-
+use Cora\Domain\User\View\UserCreatedViewInterface as View;
 
 class RegisterUserService {
     public function register(View &$view, UserRepo $repo, $name) {

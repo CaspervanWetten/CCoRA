@@ -3,7 +3,7 @@
 namespace Cora\Services;
 
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Views\UsersViewInterface as View;
+use Cora\Domain\User\View\UsersViewInterface as View;
 
 use Cora\Utils\Paginator;
 

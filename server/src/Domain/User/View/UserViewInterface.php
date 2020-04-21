@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\User\View;
 
 use Cora\Domain\User\User;
 

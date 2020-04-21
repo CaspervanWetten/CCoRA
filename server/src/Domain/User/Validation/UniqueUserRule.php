@@ -1,8 +1,9 @@
 <?php
 
-namespace Cora\Domain\User;
+namespace Cora\Domain\User\Validation;
 
 use Cora\Validation\AbstractRule;
+use Cora\Domain\User\UserRepository;
 
 class UniqueUserRule extends AbstractRule {
     protected $repo;
