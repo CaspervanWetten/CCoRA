@@ -5,7 +5,7 @@ namespace Cora\Services;
 use Cora\Converters\JsonToGraph;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\SystemCheckers\CheckCoverabilityGraph;
 use Cora\Views\FeedbackViewInterface as View;
@@ -41,8 +41,7 @@ class GetFeedbackService {
         $graph = $converter->convert();
         $checker = new CheckCoverabilityGraph($graph, $marked);
         $feedback = $checker->check();
-        if ($sessionRepo->appendGraph($userId, $sessionId, $graph) === FALSE)
-            throw new Exception("Could not append graph to log");
+        $sessionRepo->appendGraph($userId, $sessionId, $petrinetId, $graph);
         $view->setFeedback($feedback);
     }
 }

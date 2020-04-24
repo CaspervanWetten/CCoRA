@@ -8,7 +8,7 @@ use Slim\Http\Response;
 use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Repositories\PetrinetRepository as PetrinetRepo;
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\GetFeedbackService;
 use Cora\Views\FeedbackViewFactory;
 

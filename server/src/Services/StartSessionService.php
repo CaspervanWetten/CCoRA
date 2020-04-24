@@ -2,14 +2,12 @@
 
 namespace Cora\Services;
 
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
 use Cora\Repositories\PetrinetNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Views\SessionCreatedViewInterface as View;
-
-use Exception;
 
 class StartSessionService {
     public function start(
@@ -29,8 +27,6 @@ class StartSessionService {
             throw new PetrinetNotFoundException(
                 "Could not start session: Petri net does not exist");
         $session = $sessionRepo->createNewSession($uid, $pid);
-        if ($session === FALSE)
-            throw new Exception("Could not start session: logging error");
-        $view->setSessionId($session);
+        $view->setSessionId($session->getId());
     }
 }

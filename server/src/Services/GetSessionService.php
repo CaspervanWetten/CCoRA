@@ -2,10 +2,9 @@
 
 namespace Cora\Services;
 
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
-use Cora\Domain\Session\NoSessionException;
 use Cora\Views\CurrentSessionViewInterface as View;
 
 class GetSessionService {
@@ -19,8 +18,6 @@ class GetSessionService {
         if (!$userRepo->userExists("id", $uid))
             throw new UserNotFoundException("This user does not exist");
         $session = $sessionRepo->getCurrentSession($id);
-        if ($session === FALSE)
-            throw new NoSessionException("A session for this user has not yet been created");
-        $view->setSessionId($session);
+        $view->setSessionId($session->getId());
     }
 }

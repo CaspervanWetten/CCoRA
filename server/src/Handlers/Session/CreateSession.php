@@ -10,7 +10,7 @@ use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Repositories\PetrinetNotFoundException;
 use Cora\Repositories\PetrinetRepository as PetriRepo;
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\StartSessionService;
 use Cora\Views\SessionCreatedViewFactory;
 

@@ -9,7 +9,7 @@ use Slim\Http\Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Repositories\SessionRepository as SessionRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\GetSessionService;
 use Cora\Views\CurrentSessionViewFactory;
 use Exception;
@@ -19,15 +19,15 @@ class GetCurrentSession extends AbstractHandler {
         if (!isset($args["id"]))
             throw new Exception("No id supplied");
         try {
-        $userRepo    = $this->container->get(UserRepo::class);
-        $sessionRepo = $this->container->get(SessionRepo::class);
-        $mediaType   = $this->getMediaType($request);
-        $view        = $this->getView($mediaType);
-        $service     = $this->container->get(GetSessionService::class);
-        $service->get($view, $args["id"], $sessionRepo, $userRepo);
-        return $response->withHeader("Content-type", $mediaType)
-                        ->withStatus(200)
-                        ->write($view->render());
+            $userRepo    = $this->container->get(UserRepo::class);
+            $sessionRepo = $this->container->get(SessionRepo::class);
+            $mediaType   = $this->getMediaType($request);
+            $view        = $this->getView($mediaType);
+            $service     = $this->container->get(GetSessionService::class);
+            $service->get($view, $args["id"], $sessionRepo, $userRepo);
+            return $response->withHeader("Content-type", $mediaType)
+                            ->withStatus(200)
+                            ->write($view->render());
         } catch (UserNotFoundException $e) {
             $mediaType = $this->getErrorMediaType($request);
             $view = $this->getErrorView($mediaType);
