@@ -2,6 +2,7 @@
 
 namespace Cora\Handlers\Feedback;
 
+use Cora\Domain\Feedback\Views\FeedbackViewFactory;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -10,7 +11,6 @@ use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\GetFeedbackService;
-use Cora\Views\FeedbackViewFactory;
 
 class CoverabilityFeedback extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {

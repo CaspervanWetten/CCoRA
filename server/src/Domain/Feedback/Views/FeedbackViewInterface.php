@@ -1,8 +1,9 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\Feedback\Views;
 
 use Cora\Domain\Feedback\Feedback;
+use Cora\Views\ViewInterface;
 
 interface FeedbackViewInterface extends ViewInterface {
     public function getFeedback(): Feedback;

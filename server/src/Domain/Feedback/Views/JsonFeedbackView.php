@@ -1,11 +1,10 @@
 <?php
 
-namespace Cora\Views\Json;
+namespace Cora\Domain\Feedback\Views;
 
 use Cora\Domain\Feedback\Feedback;
-use Cora\Views;
 
-class JsonFeedbackView implements Views\FeedbackViewInterface {
+class JsonFeedbackView implements FeedbackViewInterface {
     protected $feedback;
 
     public function getFeedback(): Feedback {

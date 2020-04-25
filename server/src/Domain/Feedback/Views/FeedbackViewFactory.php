@@ -1,11 +1,13 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\Feedback\Views;
+
+use Cora\Views\AbstractViewFactory;
 
 class FeedbackViewFactory extends AbstractViewFactory {
     protected function getMediaAssociations(): array {
         return [
-            "application/json" => Json\JsonFeedbackView::class
+            "application/json" => JsonFeedbackView::class
         ];
     }
 }
