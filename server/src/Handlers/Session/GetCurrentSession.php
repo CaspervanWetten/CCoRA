@@ -29,19 +29,9 @@ class GetCurrentSession extends AbstractHandler {
                             ->withStatus(200)
                             ->write($view->render());
         } catch (UserNotFoundException $e) {
-            $mediaType = $this->getErrorMediaType($request);
-            $view = $this->getErrorView($mediaType);
-            $view->setException($e);
-            return $response->withHeader("Content-type", $mediaType)
-                            ->withStatus(404)
-                            ->write($view->render());
+            return $this->fail($request, $response, $e, 404);
         } catch (NoSessionException $e) {
-            $mediaType = $this->getErrorMediaType($request);
-            $view = $this->getErrorView($mediaType);
-            $view->setException($e);
-            return $response->withHeader("Content-type", $mediaType)
-                            ->withStatus(400)
-                            ->write($view->render());
+            return $this->fail($request, $response, $e, 400);
         }
     }
 

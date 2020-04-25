@@ -26,12 +26,7 @@ class GetUser extends AbstractHandler {
             return $response->withHeader("Content-type", $mediaType)
                             ->write($view->render());
         } catch (UserNotFoundException $e) {
-            $mediaType = $this->getErrorMediaType($request);
-            $view = $this->getErrorView($mediaType);
-            $view->setException($e);
-            return $response->withHeader("Content-type", $mediaType)
-                            ->withStatus(404)
-                            ->write($view->render());
+            return $this->fail($request, $response, $e, 404);
         }
     }
 

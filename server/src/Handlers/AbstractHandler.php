@@ -42,6 +42,20 @@ abstract class AbstractHandler implements HandlerInterface {
         return $factory->create($mediaType);
     }
 
+    protected function fail(
+        Request   $request,
+        Response  $response,
+        Exception $e,
+        int       $status=400
+    ) {
+        $mediaType = $this->getErrorMediaType($request);
+        $view = $this->getErrorView($mediaType);
+        $view->setException($e);
+        return $response->withHeader("Content-type", $mediaType)
+                         ->withStatus($status)
+                         ->write($view->render());
+    }
+
     protected function negotiateType(Request $request, array $supported): string {
         $clientAccept = $request->getHeaderLine("Accept");
         if (empty($clientAccept))
