@@ -3,8 +3,8 @@
 namespace Cora\Services;
 
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
+use Cora\Domain\Systems\Petrinet\View\PetrinetsViewInterface as View;
 use Cora\Utils\Paginator;
-use Cora\Views\PetrinetsViewInterface as View;
 
 class GetPetrinetsService {
     public function get(View &$view, $page, $limit, PetriRepo $repo) {

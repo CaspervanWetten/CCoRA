@@ -9,8 +9,8 @@ use Cora\Handlers\AbstractRequestHandler;
 
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Systems\Petrinet\View\PetrinetImageViewFactory;
 use Cora\Services\GetPetrinetImageService;
-use Cora\Views\PetrinetImageViewFactory;
 
 class GetPetrinetImage extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {

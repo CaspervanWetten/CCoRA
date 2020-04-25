@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\Systems\Petrinet\View;
+
+use Cora\Views\ViewInterface;
 
 interface PetrinetsViewInterface extends ViewInterface {
     public function getPetrinets(): array;

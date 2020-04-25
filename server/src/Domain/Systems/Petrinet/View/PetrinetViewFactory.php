@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\Systems\Petrinet\View;
+
+use Cora\Views\AbstractViewFactory;
 
 class PetrinetViewFactory extends AbstractViewFactory {
     protected function getMediaAssociations(): array {

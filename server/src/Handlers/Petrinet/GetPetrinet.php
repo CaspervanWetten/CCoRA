@@ -7,8 +7,8 @@ use Slim\Http\Response;
 
 use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Systems\Petrinet\View\PetrinetViewFactory;
 use Cora\Services\GetPetrinetService;
-use Cora\Views\PetrinetViewFactory;
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 
 class GetPetrinet extends AbstractRequestHandler {

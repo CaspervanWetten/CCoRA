@@ -9,7 +9,7 @@ use Cora\Converters\PetrinetTranslator;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
-use Cora\Views\PetrinetCreatedViewInterface as View;
+use Cora\Domain\Systems\Petrinet\View\PetrinetCreatedViewInterface as View;
 use Cora\Utils\FileUploadUtils;
 
 use Exception;
