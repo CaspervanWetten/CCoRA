@@ -12,7 +12,7 @@ use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\StartSessionService;
-use Cora\Views\SessionCreatedViewFactory;
+use Cora\Domain\Session\Views\SessionCreatedViewFactory;
 
 class CreateSession extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {

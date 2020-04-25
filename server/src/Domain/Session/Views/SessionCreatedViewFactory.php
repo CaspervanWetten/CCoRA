@@ -1,11 +1,13 @@
 <?php
 
-namespace Cora\Views;
+namespace Cora\Domain\Session\Views;
+
+use Cora\Views\AbstractViewFactory;
 
 class SessionCreatedViewFactory extends AbstractViewFactory {
     protected function getMediaAssociations(): array {
         return [
-            "application/json" => Json\JsonSessionCreatedView::class
+            "application/json" => JsonSessionCreatedView::class
         ];
     }
 }
