@@ -2,12 +2,13 @@
 
 namespace Cora\Handlers\Petrinet;
 
-use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Handlers\AbstractHandler;
-use Cora\Repositories\PetrinetRepository as PetrinetRepo;
+
+use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetImageService;
 use Cora\Views\PetrinetImageViewFactory;
 

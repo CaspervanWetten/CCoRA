@@ -5,7 +5,7 @@ namespace Cora\Services;
 use Cora\Converters\PetrinetToDot;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
-use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Views\ImageViewInterface as View;
 
 use Exception;

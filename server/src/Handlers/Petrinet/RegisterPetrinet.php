@@ -8,7 +8,7 @@ use Slim\Http\Response;
 
 use Cora\Handlers\AbstractHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Repositories\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Services\RegisterPetrinetService;
 use Cora\Views\PetrinetCreatedViewFactory;
 use Exception;

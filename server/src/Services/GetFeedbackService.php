@@ -4,7 +4,7 @@ namespace Cora\Services;
 
 use Cora\Converters\JsonToGraph;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
-use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\SystemCheckers\CheckCoverabilityGraph;

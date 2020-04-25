@@ -4,7 +4,7 @@ namespace Cora\Services;
 
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
-use Cora\Repositories\PetrinetRepository as PetriRepo;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Views\PetrinetViewInterface as PetrinetView;
 
 class GetPetrinetService {

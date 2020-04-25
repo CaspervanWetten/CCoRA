@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Repositories;
+namespace Cora\Domain\Systems\Petrinet;
+
+use Cora\Repositories\AbstractRepository;
 
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarkedPetrinet;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
