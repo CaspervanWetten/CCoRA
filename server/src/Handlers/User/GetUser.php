@@ -5,14 +5,14 @@ namespace Cora\Handlers\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\GetUserService;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\Exception\UserNotFoundException;
 use Cora\Domain\User\View\UserViewFactory;
 use Exception;
 
-class GetUser extends AbstractHandler {
+class GetUser extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         $id = $args["id"];
         if (!isset($id))

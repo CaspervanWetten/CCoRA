@@ -7,10 +7,10 @@ use Slim\Http\Response;
 
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\View\UsersViewFactory;
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\GetUsersService;
 
-class GetUsers extends AbstractHandler {
+class GetUsers extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         $mediaType = $this->getMediaType($request);
         $repo      = $this->container->get(UserRepo::class);

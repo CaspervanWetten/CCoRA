@@ -17,8 +17,8 @@ class TrailingSlash implements MiddleWareInterface {
     public function __invoke(
         Request $request,
         Response $response,
-        callable $next): Response
-    {
+        callable $next
+    ): Response {
         switch ($this->option) {
         case self::ADD_TRAILING_SLASH:
                 return $this->addTrailingSlash($request, $response, $next);

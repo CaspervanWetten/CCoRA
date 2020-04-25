@@ -5,12 +5,12 @@ namespace Cora\Handlers\Petrinet;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetsService;
 use Cora\Views\PetrinetsViewFactory;
 
-class GetPetrinets extends AbstractHandler {
+class GetPetrinets extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         $repo      = $this->container->get(PetrinetRepo::class);
         $service   = $this->container->get(GetPetrinetsService::class);

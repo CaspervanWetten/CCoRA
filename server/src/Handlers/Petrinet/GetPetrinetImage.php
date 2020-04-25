@@ -5,14 +5,14 @@ namespace Cora\Handlers\Petrinet;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Services\GetPetrinetImageService;
 use Cora\Views\PetrinetImageViewFactory;
 
-class GetPetrinetImage extends AbstractHandler {
+class GetPetrinetImage extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         try {
             $id        = $args["id"];

@@ -8,13 +8,13 @@ use Slim\Http\Response;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\Exception\UserRegistrationException;
 use Cora\Domain\User\View\UserCreatedViewFactory;
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\RegisterUserService;
 use Cora\Views\AbstractViewFactory;
 
 use Exception;
 
-class RegisterUser extends AbstractHandler {
+class RegisterUser extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         $body = $request->getParsedBody();
         if (!isset($body["name"]))

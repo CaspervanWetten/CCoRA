@@ -7,14 +7,14 @@ use Cora\Domain\User\UserNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\GetSessionService;
 use Cora\Views\CurrentSessionViewFactory;
 use Exception;
 
-class GetCurrentSession extends AbstractHandler {
+class GetCurrentSession extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         if (!isset($args["id"]))
             throw new Exception("No id supplied");

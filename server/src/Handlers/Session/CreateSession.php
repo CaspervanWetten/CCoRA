@@ -5,7 +5,7 @@ namespace Cora\Handlers\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractHandler;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
@@ -14,7 +14,7 @@ use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Services\StartSessionService;
 use Cora\Views\SessionCreatedViewFactory;
 
-class CreateSession extends AbstractHandler {
+class CreateSession extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         try {
             $mediaType   = $this->getMediaType($request);
