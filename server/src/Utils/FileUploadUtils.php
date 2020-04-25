@@ -2,8 +2,6 @@
 
 namespace Cora\Utils;
 
-use \Slim\Http\UploadedFile;
-
 class FileUploadUtils
 {
     /**
