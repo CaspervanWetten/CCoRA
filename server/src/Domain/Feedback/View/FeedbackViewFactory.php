@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Feedback\Views;
+namespace Cora\Domain\Feedback\View;
 
 use Cora\Views\AbstractViewFactory;
 

@@ -10,8 +10,8 @@ use Slim\Http\Response;
 use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
+use Cora\Domain\Session\View\CurrentSessionViewFactory;
 use Cora\Services\GetSessionService;
-use Cora\Domain\Session\Views\CurrentSessionViewFactory;
 use Exception;
 
 class GetCurrentSession extends AbstractRequestHandler {

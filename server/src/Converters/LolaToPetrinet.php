@@ -29,7 +29,7 @@ class LolaToPetrinet extends Converter {
         $markingLine = NULL;
         $builder = new PetrinetBuilder();
         foreach ($lines as $i => $line) {
-            if(preg_match('/PLACE/i', $line)) 
+            if(preg_match('/PLACE/i', $line))
                 $this->parsePlaces($line, $builder);
 
             if(preg_match('/MARKING/i', $line))
@@ -64,7 +64,7 @@ class LolaToPetrinet extends Converter {
         }
         return $builder->getMarking($petrinet);
     }
-    
+
     protected function parseTransition(array $lines, PetrinetBuilder &$builder) {
         $line = $lines[0];
         list($trans) = sscanf($line, "TRANSITION %s");

@@ -5,7 +5,7 @@ namespace Cora\Services;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
-use Cora\Domain\Session\Views\CurrentSessionViewInterface as View;
+use Cora\Domain\Session\View\CurrentSessionViewInterface as View;
 
 class GetSessionService {
     public function get(

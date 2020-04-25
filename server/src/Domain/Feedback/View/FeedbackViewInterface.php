@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Feedback\Views;
+namespace Cora\Domain\Feedback\View;
 
 use Cora\Domain\Feedback\Feedback;
 use Cora\Views\ViewInterface;

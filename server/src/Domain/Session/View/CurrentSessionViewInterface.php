@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Session\Views;
+namespace Cora\Domain\Session\View;
 
 use Cora\Views\ViewInterface;
 

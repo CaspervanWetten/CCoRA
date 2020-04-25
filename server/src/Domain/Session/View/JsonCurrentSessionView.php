@@ -1,16 +1,16 @@
 <?php
 
-namespace Cora\Domain\Session\Views;
+namespace Cora\Domain\Session\View;
 
-class JsonSessionCreatedView implements SessionCreatedViewInterface {
-    protected $sessionId;
+class JsonCurrentSessionView implements CurrentSessionViewInterface {
+    protected $id;
 
     public function getSessionId(): int {
-        return $this->sessionId;
+        return $this->id;
     }
 
     public function setSessionId(int $id): void {
-        $this->sessionId = $id;
+        $this->id = $id;
     }
 
     public function render(): string {
