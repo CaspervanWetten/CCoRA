@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-use Cora\Domain\Systems\MarkingInterface;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface;
 
 use JsonSerializable;
 

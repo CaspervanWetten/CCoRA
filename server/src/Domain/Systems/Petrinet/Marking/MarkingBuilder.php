@@ -1,11 +1,11 @@
 <?php
 
-namespace Cora\Domain\Systems;
+namespace Cora\Domain\Systems\Petrinet\Marking;
 
-use Cora\Domain\Systems\MarkingInterface as IMarking;
-use Cora\Domain\Systems\Tokens\TokenCountInterface as Tokens;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as IMarking;
+use Cora\Domain\Systems\Petrinet\Marking\Tokens\TokenCountInterface as Tokens;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
-use Cora\Domain\Systems\Petrinet\Place;
+use Cora\Domain\Systems\Petrinet\Place\Place;
 
 use Ds\Map;
 use Exception;

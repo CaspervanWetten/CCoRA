@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Systems\Tokens;
+namespace Cora\Domain\Systems\Petrinet\Marking\Tokens;
 
 use JsonSerializable;
 

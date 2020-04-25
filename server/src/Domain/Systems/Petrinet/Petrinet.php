@@ -2,14 +2,18 @@
 
 namespace Cora\Domain\Systems\Petrinet;
 
-use Cora\Domain\Systems\MarkingInterface as IMarking;
-use Cora\Domain\Systems\MarkingMapInterface as IMarkingMap;
-use Cora\Domain\Systems\MarkingMap;
-use Cora\Domain\Systems\MarkingBuilder;
-use Cora\Domain\Systems\Tokens\IntegerTokenCount;
 use Cora\Domain\Systems\Petrinet\PetrinetElementInterface as IElement;
-use Cora\Domain\Systems\Petrinet\PlaceContainerInterface as IPlaceContainer;
-use Cora\Domain\Systems\Petrinet\TransitionContainerInterface as ITransitionContainer;
+use Cora\Domain\Systems\Petrinet\Place\PlaceContainerInterface as IPlaces;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainer;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainerInterface as ITransitions;
+use Cora\Domain\SYstems\Petrinet\Flow\FlowMapInterface as IFlows;
+
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as IMarking;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingMapInterface as IMarkingMap;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingMap;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingBuilder;
+use Cora\Domain\Systems\Petrinet\Marking\Tokens\IntegerTokenCount;
 
 class Petrinet implements PetrinetInterface {
     protected $places;
@@ -17,9 +21,9 @@ class Petrinet implements PetrinetInterface {
     protected $flows;
 
     public function __construct (
-        PlaceContainer $p,
-        TransitionContainer $t,
-        FlowMap $f)
+        IPlaces $p,
+        ITransitions $t,
+        IFlows $f)
     {
         $this->places = $p;
         $this->transitions = $t;
@@ -88,15 +92,15 @@ class Petrinet implements PetrinetInterface {
         return $map;
     }
 
-    public function getPlaces(): IPlaceContainer {
+    public function getPlaces(): IPlaces {
         return $this->places;
     }
 
-    public function getTransitions(): ITransitionContainer {
+    public function getTransitions(): ITransitions {
         return $this->transitions;
     }
 
-    public function getFlows(): FlowMapInterface {
+    public function getFlows(): IFlows {
         return $this->flows;
     }
 

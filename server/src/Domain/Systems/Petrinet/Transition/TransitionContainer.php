@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet\Transition;
 
 use Ds\Set;
 use Traversable;

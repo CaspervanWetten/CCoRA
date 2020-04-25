@@ -3,7 +3,15 @@
 namespace Cora\Domain\Systems\Petrinet;
 
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
-use Cora\Domain\Systems\Petrinet\FlowInterface as IFlow;
+use Cora\Domain\Systems\Petrinet\Place\Place;
+use Cora\Domain\Systems\Petrinet\Place\PlaceContainer;
+use Cora\Domain\Systems\Petrinet\Place\PlaceContainerInterface;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainer;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainerInterface;
+use Cora\Domain\Systems\Petrinet\Flow\FlowInterface as IFlow;
+use Cora\Domain\Systems\Petrinet\Flow\FlowMap;
+use Cora\Domain\Systems\Petrinet\Flow\FlowMapInterface;
 
 use Exception;
 

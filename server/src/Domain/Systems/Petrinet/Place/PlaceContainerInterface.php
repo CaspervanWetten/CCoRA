@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Domain\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet\Place;
+
+use Cora\Domain\Systems\Petrinet\PetrinetElementContainerInterface;
 
 use IteratorAggregate;
 use JsonSerializable;

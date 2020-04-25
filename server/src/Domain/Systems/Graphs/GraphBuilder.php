@@ -5,7 +5,7 @@ namespace Cora\Domain\Systems\Graphs;
 use Cora\Domain\Systems\Graphs\EdgeInterface as Edge;
 use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as IPetrinet;
-use Cora\Domain\Systems\Petrinet\Transition;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
 
 use Cora\Utils\SetUtils;
 use Exception;

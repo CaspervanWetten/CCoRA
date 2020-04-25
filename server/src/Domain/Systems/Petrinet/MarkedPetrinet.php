@@ -3,7 +3,7 @@
 namespace Cora\Domain\Systems\Petrinet;
 
 use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
-use Cora\Domain\Systems\MarkingInterface as Marking;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as Marking;
 
 class MarkedPetrinet implements MarkedPetrinetInterface {
     public function __construct(Petrinet $p, Marking $m) {

@@ -2,13 +2,13 @@
 
 namespace Cora\Converters;
 
-use Cora\Domain\Systems\MarkingBuilder;
+use Cora\Domain\Systems\Petrinet\PetrinetBuilder;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarkedPetrinet;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
-use Cora\Domain\Systems\Petrinet\Place;
-use Cora\Domain\Systems\Petrinet\Transition;
-use Cora\Domain\Systems\Petrinet\Flow;
-use Cora\Domain\Systems\Petrinet\PetrinetBuilder;
+use Cora\Domain\Systems\Petrinet\Place\Place;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Flow\Flow;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingBuilder;
 
 use Ds\Map;
 use Exception;

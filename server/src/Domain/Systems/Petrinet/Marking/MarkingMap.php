@@ -1,10 +1,11 @@
 <?php
 
-namespace Cora\Domain\Systems;
+namespace Cora\Domain\Systems\Petrinet\Marking;
 
-use Cora\Domain\Systems\MarkingInterface as Marking;
-use Cora\Domain\Systems\Petrinet\Transition;
-use Cora\Domain\Systems\Petrinet\TransitionContainer as Transitions;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as Marking;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainer as Transitions;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainerInterface as ITransitions;
 
 use Ds\Map;
 
@@ -27,7 +28,7 @@ class MarkingMap implements MarkingMapInterface {
         return $this->map->hasKey($t);
     }
 
-    public function transitions(): Transitions {
+    public function transitions(): ITransitions {
         return new Transitions($this->map->keys());
     }
 

@@ -1,9 +1,8 @@
 <?php
 
-namespace Cora\Domain\Systems\Tokens;
+namespace Cora\Domain\Systems\Petrinet\Marking\Tokens;
 
-class IntegerTokenCount extends AbstractTokenCount
-{
+class IntegerTokenCount extends AbstractTokenCount {
     public $value;
 
     public function __construct($val=0)

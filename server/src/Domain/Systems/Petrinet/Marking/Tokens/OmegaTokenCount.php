@@ -1,9 +1,8 @@
 <?php
 
-namespace Cora\Domain\Systems\Tokens;
+namespace Cora\Domain\Systems\Petrinet\Marking\Tokens;
 
-class OmegaTokenCount extends AbstractTokenCount
-{
+class OmegaTokenCount extends AbstractTokenCount {
     public function add($b): TokenCountInterface {return $this;}
     public function subtract($b): TokenCountInterface {return $this;}
 

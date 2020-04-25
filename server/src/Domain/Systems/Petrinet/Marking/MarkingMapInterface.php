@@ -1,10 +1,10 @@
 <?php
 
-namespace Cora\Domain\Systems;
+namespace Cora\Domain\Systems\Petrinet\Marking;
 
-use Cora\Domain\Systems\MarkingInterface as Marking;
-use Cora\Domain\Systems\Petrinet\Transition;
-use Cora\Domain\Systems\Petrinet\TransitionContainerInterface as Transitions;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as Marking;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Transition\TransitionContainerInterface as Transitions;
 
 use IteratorAggregate;
 use JsonSerializable;

@@ -5,8 +5,8 @@ namespace Cora\SystemCheckers;
 use Cora\Feedback\Feedback;
 use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarked;
-use Cora\Domain\Systems\Petrinet\Transition;
-use Cora\Domain\Systems\MarkingInterface as IMarking;
+use Cora\Domain\Systems\Petrinet\Transition\Transition;
+use Cora\Domain\Systems\Petrinet\Marking\MarkingInterface as IMarking;
 
 use Cora\Utils\SetUtils;
 

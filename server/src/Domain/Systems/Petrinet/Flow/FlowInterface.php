@@ -1,6 +1,8 @@
 <?php
 
-namespace Cora\Domain\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet\Flow;
+
+use Cora\Domain\Systems\Petrinet\PetrinetElementInterface;
 
 use JsonSerializable;
 

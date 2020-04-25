@@ -1,9 +1,9 @@
 <?php
 
-namespace Cora\Domain\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet\Flow;
 
-use Cora\Domain\Systems\Petrinet\FlowInterface as Flow;
-use Cora\Domain\Systems\Petrinet\FlowContainerInterface as Flows;
+use Cora\Domain\Systems\Petrinet\Flow\FlowInterface as Flow;
+use Cora\Domain\Systems\Petrinet\Flow\FlowContainerInterface as Flows;
 
 use IteratorAggregate;
 use JsonSerializable;

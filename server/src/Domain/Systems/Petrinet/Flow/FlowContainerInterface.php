@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Domain\Systems\Petrinet;
+namespace Cora\Domain\Systems\Petrinet\Flow;
 
 use IteratorAggregate;
 use JsonSerializable;
