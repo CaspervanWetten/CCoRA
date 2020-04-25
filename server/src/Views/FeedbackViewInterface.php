@@ -2,7 +2,7 @@
 
 namespace Cora\Views;
 
-use Cora\Feedback\Feedback;
+use Cora\Domain\Feedback\Feedback;
 
 interface FeedbackViewInterface extends ViewInterface {
     public function getFeedback(): Feedback;

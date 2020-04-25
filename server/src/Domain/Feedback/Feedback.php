@@ -1,6 +1,6 @@
 <?php
 
-namespace Cora\Feedback;
+namespace Cora\Domain\Feedback;
 
 use \Ds\Map as Map;
 use \Ds\Set as Set;

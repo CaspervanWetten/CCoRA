@@ -2,7 +2,7 @@
 
 namespace Cora\SystemCheckers;
 
-use Cora\Feedback\Feedback;
+use Cora\Domain\Feedback\Feedback;
 use Cora\Domain\Systems\Graphs\GraphInterface as IGraph;
 use Cora\Domain\Systems\Petrinet\MarkedPetrinetInterface as IMarked;
 use Cora\Domain\Systems\Petrinet\Transition\Transition;

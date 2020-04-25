@@ -2,7 +2,7 @@
 
 namespace Cora\Views\Json;
 
-use Cora\Feedback\Feedback;
+use Cora\Domain\Feedback\Feedback;
 use Cora\Views;
 
 class JsonFeedbackView implements Views\FeedbackViewInterface {
