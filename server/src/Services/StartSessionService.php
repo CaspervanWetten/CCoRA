@@ -3,8 +3,8 @@
 namespace Cora\Services;
 
 use Cora\Domain\Session\SessionRepository as SessionRepo;
-use Cora\Repositories\PetrinetRepository as PetriRepo;
-use Cora\Repositories\PetrinetNotFoundException;
+use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
+use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Views\SessionCreatedViewInterface as View;
