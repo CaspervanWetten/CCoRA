@@ -2,8 +2,8 @@
 
 namespace Cora\Services;
 
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
-use Cora\Domain\Systems\Petrinet\View\PetrinetsViewInterface as View;
+use Cora\Domain\Petrinet\PetrinetRepository as PetriRepo;
+use Cora\Domain\Petrinet\View\PetrinetsViewInterface as View;
 use Cora\Utils\Paginator;
 
 class GetPetrinetsService {

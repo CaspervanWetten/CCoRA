@@ -5,9 +5,9 @@ namespace Cora\Handlers\Petrinet;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+use Cora\Domain\Petrinet\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Petrinet\View\PetrinetsViewFactory;
 use Cora\Handlers\AbstractRequestHandler;
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
-use Cora\Domain\Systems\Petrinet\View\PetrinetsViewFactory;
 use Cora\Services\GetPetrinetsService;
 
 class GetPetrinets extends AbstractRequestHandler {

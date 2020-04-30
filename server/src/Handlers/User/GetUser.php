@@ -5,11 +5,11 @@ namespace Cora\Handlers\User;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractRequestHandler;
-use Cora\Services\GetUserService;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\Exception\UserNotFoundException;
 use Cora\Domain\User\View\UserViewFactory;
+use Cora\Handlers\AbstractRequestHandler;
+use Cora\Services\GetUserService;
 use Exception;
 
 class GetUser extends AbstractRequestHandler {

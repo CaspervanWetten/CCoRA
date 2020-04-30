@@ -2,10 +2,10 @@
 
 namespace Cora\Services;
 
-use Cora\Domain\Systems\Petrinet\MarkedPetrinet;
-use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
-use Cora\Domain\Systems\Petrinet\View\PetrinetViewInterface as PetrinetView;
+use Cora\Domain\Petrinet\MarkedPetrinet;
+use Cora\Domain\Petrinet\PetrinetNotFoundException;
+use Cora\Domain\Petrinet\PetrinetRepository as PetriRepo;
+use Cora\Domain\Petrinet\View\PetrinetViewInterface as PetrinetView;
 
 class GetPetrinetService {
     public function get(PetrinetView &$view, $id, PetriRepo $petriRepo) {

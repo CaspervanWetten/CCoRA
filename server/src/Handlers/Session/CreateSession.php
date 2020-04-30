@@ -5,13 +5,13 @@ namespace Cora\Handlers\Session;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractRequestHandler;
-use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Domain\User\UserNotFoundException;
-use Cora\Domain\Systems\Petrinet\PetrinetNotFoundException;
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetriRepo;
+use Cora\Domain\Petrinet\PetrinetNotFoundException;
+use Cora\Domain\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\Session\View\SessionCreatedViewFactory;
+use Cora\Domain\User\UserRepository as UserRepo;
+use Cora\Domain\User\UserNotFoundException;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\StartSessionService;
 
 class CreateSession extends AbstractRequestHandler {

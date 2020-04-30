@@ -2,15 +2,15 @@
 
 namespace Cora\Converters;
 
-use Cora\Domain\Systems\Graphs\Edge;
-use Cora\Domain\Systems\Graphs\GraphBuilder;
-use Cora\Domain\Systems\Graphs\GraphBuilderInterface as IGraphBuilder;
+use Cora\Domain\Graphs\Edge;
+use Cora\Domain\Graphs\GraphBuilder;
+use Cora\Domain\Graphs\GraphBuilderInterface as IGraphBuilder;
 
-use Cora\Domain\Systems\Petrinet\PetrinetInterface as Petrinet;
-use Cora\Domain\Systems\Petrinet\Place\Place;
-use Cora\Domain\Systems\Petrinet\Marking\MarkingBuilder;
-use Cora\Domain\Systems\Petrinet\Marking\Tokens\IntegerTokenCount;
-use Cora\Domain\Systems\Petrinet\Marking\Tokens\OmegaTokenCount;
+use Cora\Domain\Petrinet\PetrinetInterface as Petrinet;
+use Cora\Domain\Petrinet\Place\Place;
+use Cora\Domain\Petrinet\Marking\MarkingBuilder;
+use Cora\Domain\Petrinet\Marking\Tokens\IntegerTokenCount;
+use Cora\Domain\Petrinet\Marking\Tokens\OmegaTokenCount;
 
 use Exception;
 

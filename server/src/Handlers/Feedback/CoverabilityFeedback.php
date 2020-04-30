@@ -6,10 +6,10 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Handlers\AbstractRequestHandler;
-use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
-use Cora\Domain\Session\SessionRepository as SessionRepo;
 use Cora\Domain\Feedback\View\FeedbackViewFactory;
+use Cora\Domain\Petrinet\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Session\SessionRepository as SessionRepo;
+use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Services\GetFeedbackService;
 
 class CoverabilityFeedback extends AbstractRequestHandler {

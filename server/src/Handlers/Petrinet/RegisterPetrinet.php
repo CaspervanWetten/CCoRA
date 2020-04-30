@@ -6,10 +6,10 @@ use Cora\Domain\User\UserNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
-use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\User\UserRepository as UserRepo;
-use Cora\Domain\Systems\Petrinet\PetrinetRepository as PetrinetRepo;
-use Cora\Domain\Systems\Petrinet\View\PetrinetCreatedViewFactory;
+use Cora\Domain\Petrinet\PetrinetRepository as PetrinetRepo;
+use Cora\Domain\Petrinet\View\PetrinetCreatedViewFactory;
+use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\RegisterPetrinetService;
 use Exception;
 
