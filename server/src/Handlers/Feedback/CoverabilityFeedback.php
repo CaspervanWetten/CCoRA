@@ -19,7 +19,8 @@ class CoverabilityFeedback extends AbstractRequestHandler {
         $petrinetId  = isset($body["petrinet_id"]) ? $body["petrinet_id"] : NULL;
         $sessionId   = isset($body["session_id"]) ? $body["session_id"] : NULL;
         $graph       = isset($body["graph"]) ? $body["graph"] : NULL;
-        $markingId   = $request->getParam("marking_id", NULL);
+        $markingId   = isset($body["initial_marking_id"]) ?
+                     $body["initial_marking_id"] : NULL;
         $userRepo    = $this->container->get(UserRepo::class);
         $petriRepo   = $this->container->get(PetrinetRepo::class);
         $sessionRepo = $this->container->get(SessionRepo::class);
