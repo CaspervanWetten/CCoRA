@@ -4,9 +4,6 @@ defined("CONFIG_FOLDER") or exit("No direct script access allowed.");
 /** Slim classes **/
 use Slim\App;
 
-use \Psr\Http\Message\RequestInterface as Request;
-use \Psr\Http\Message\ResponseInterface as Response;
-
 use Cora\MiddleWare;
 use Cora\Handlers;
 use Cora\Utils;
@@ -47,12 +44,12 @@ $container[Cora\Domain\User\UserRepository::class] = function($c) {
     return new Cora\Domain\User\UserRepository($c->get('db'));
 };
 
-$container[Cora\Repositories\PetrinetRepository::class] = function($c) {
-    return new Cora\Repositories\PetrinetRepository($c->get('db'));
+$container[Cora\Domain\Petrinet\PetrinetRepository::class] = function($c) {
+    return new Cora\Domain\Petrinet\PetrinetRepository($c->get('db'));
 };
 
-$container[Cora\Repositories\SessionRepository::class] = function($c) {
-    return new Cora\Repositories\SessionRepository($c->get('db'));
+$container[Cora\Domain\Session\SessionRepository::class] = function($c) {
+    return new Cora\Domain\Session\SessionRepository($c->get('db'));
 };
 
 // register the Services
@@ -123,30 +120,6 @@ if (CORS_ENABLED) {
 **************************************/
 
 /**
- * Set debug group
- */
-$app->group('/debug', function(){
-    $this->post(
-        '/formdata', function(Request $request, Response $response) {
-            $body = $request->getParsedBody();
-            $response = $response->withJson($body);
-
-            return $response;
-        }
-    );
-    $this->group('/graph', function(){
-        $this->post("/cover/{pid:[0-9]+}", function(Request $request, Response $response, $args) {
-            $pid  = $args["pid"];
-            $model = new Cora\Models\PetrinetModel($this->get('db'));
-            $petrinet = $model->getPetrinet($pid);
-            $graph = $request->getParsedBody();
-            $converter = new Cora\Converters\JsonToGraph($graph, $petrinet);
-            return $response->withJson($converter->convert());
-        });
-    });
-});
-
-/**
  * Setup api group
  */
 $app->group('/' . API_GROUP, function() {
@@ -170,19 +143,19 @@ $app->group('/' . API_GROUP, function() {
      */
     $this->group('/' . PETRINET_GROUP, function() {
         $this->get(
-            '/{id:[0-9]+}', Handlers\Petrinet\GetPetrinet::class
+            '/{petrinet_id:[0-9]+}', Handlers\Petrinet\GetPetrinet::class
         )->setName("getPetrinet");
         $this->get(
             '[/{limit:[0-9]+}/{page:[0-9]+}]', Handlers\Petrinet\GetPetrinets::class
         )->setName("getPetrinets");
         $this->get(
-            '/{id:[0-9]+}/image', Handlers\Petrinet\GetPetrinetImage::class
+            '/{petrinet_id:[0-9]+}/image', Handlers\Petrinet\GetPetrinetImage::class
         )->setName('getPetrinetImage');
         $this->post(
             '/{id:[0-9]+}/new', Handlers\Petrinet\RegisterPetrinet::class
         )->setName("setPetrinet");
         $this->post(
-            '/{user_id:[0-9]+}/{petrinet_id:[0-9]+}/{session_id:[0-9]+}/feedback',
+            '/feedback',
             Handlers\Feedback\CoverabilityFeedback::class
         )->setName("getFeedback");
     });
@@ -190,11 +163,9 @@ $app->group('/' . API_GROUP, function() {
      * All functions regarding session management
      */
     $this->group('/' . SESSION_GROUP, function() {
-        // get the current session for a user
         $this->get(
             '/{id:[0-9]+}/current', Handlers\Session\GetCurrentSession::class
         )->setName("getCurrentSession");
-        // start a new session for the user for a Petri net
         $this->post(
             '/{id:[0-9]+}/{pid:[0-9]+}/new', Handlers\Session\CreateSession::class
         )->setName("newSession");
