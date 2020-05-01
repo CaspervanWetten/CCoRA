@@ -42,6 +42,18 @@ class SessionRepository extends AbstractRepository {
         $this->writeSessionLog($sessionLog);
     }
 
+    public function sessionExists(
+        int $sessionId,
+        int $userId,
+        int $petrinetId
+    ): bool {
+        $logPath = $this->getSessionLogPath($userId, $sessionId);
+        if (!file_exists($logPath))
+            return FALSE;
+        $log = $this->getSessionLog($userId, $sessionId);
+        return $log->getPetrinetId() === $petrinetId;
+    }
+
     protected function getMetaLog(int $userId): MetaSessionLog {
         $logPath = $this->getMetaLogPath($userId);
         if (!file_exists($logPath))
