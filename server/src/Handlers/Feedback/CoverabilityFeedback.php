@@ -59,7 +59,7 @@ class CoverabilityFeedback extends AbstractRequestHandler {
         } catch (UserNotFoundException |
                  PetrinetNotFoundException |
                  MarkingNotFoundException $e) {
-           $this->fail($request, $response, $e, 404);
+            return $this->fail($request, $response, $e, 404);
         }
     }
 
