@@ -3,18 +3,23 @@
 namespace Cora\Converters;
 
 use Cora\Domain\Petrinet\PetrinetInterface as Petrinet;
+use Cora\Domain\Petrinet\Marking\MarkingInterface as Marking;
+use Cora\Domain\Petrinet\Marking\Tokens\IntegerTokenCount;
 
 class PetrinetToDot extends Converter {
     protected $petrinet;
+    protected $marking;
 
-    public function __construct(Petrinet $net) {
+    public function __construct(Petrinet $net, ?Marking $marking=NULL) {
         $this->petrinet = $net;
+        $this->marking  = $marking;
     }
 
     public function convert() {
-        $placeStrings = $this->placesToArray();
-        $transStrings = $this->transitionsToArray();
-        $flowStrings  = $this->flowsToArray();
+        $placeStrings   = $this->placesToArray();
+        $transStrings   = $this->transitionsToArray();
+        $flowStrings    = $this->flowsToArray();
+        $markingStrings = $this->markingToArray();
 
         $font = "monospace";
         $fontSizeNode = "20";
@@ -37,6 +42,10 @@ class PetrinetToDot extends Converter {
         $s .= implode("\n\t", $transStrings);
         $s .= "\n\t";
         $s .= implode("\n\t", $flowStrings);
+        if (!is_null($this->marking)) {
+            $s .= "\n\t";
+            $s .= implode("\n\t", $markingStrings);
+        }
         $s .= "\n";
         $s .= "}";
         return $s;
@@ -84,5 +93,19 @@ class PetrinetToDot extends Converter {
             array_push($res, $row);
         }
         return $res;
+    }
+
+    protected function markingToArray() {
+        $result = [];
+        if (is_null($this->marking))
+            return $result;
+        foreach($this->marking as $place => $tokens) {
+            if ($tokens instanceof IntegerTokenCount &&
+                $tokens->getValue() <= 0)
+                continue;
+            $l = sprintf('%s [label="%s"];', $place, $tokens);
+            array_push($result, $l);
+        }
+        return $result;
     }
 }

@@ -15,12 +15,13 @@ use Cora\Services\GetPetrinetImageService;
 class GetPetrinetImage extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         try {
-            $id        = $args["id"];
+            $pid       = $args["petrinet_id"];
+            $mid       = $request->getParam("marking_id", NULL);
             $repo      = $this->container->get(PetrinetRepo::class);
             $service   = $this->container->get(GetPetrinetImageService::class);
             $mediaType = $this->getMediaType($request);
             $view      = $this->getView($mediaType);
-            $service->get($view, $id, $repo);
+            $service->get($view, $pid, $mid, $repo);
             return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(200)
                             ->write($view->render());

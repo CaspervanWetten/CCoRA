@@ -35,7 +35,7 @@ class Petrinet implements PetrinetInterface {
         foreach($preset as $place => $weight) {
             $tokens = $marking->get($place);
             if ($tokens instanceof IntegerTokenCount &&
-                $tokens->value < $weight)
+                $tokens->getValue() < $weight)
                 return false;
         }
         return true;

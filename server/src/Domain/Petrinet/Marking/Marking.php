@@ -22,7 +22,7 @@ class Marking implements IMarking {
         $filtered = new Map();
         foreach($map as $place => $tokens)
             if (!($tokens instanceof IntegerTokenCount &&
-                  $tokens->value === 0))
+                  $tokens->getValue() === 0))
                 $filtered->put($place, $tokens);
         $this->map = $filtered;
     }
@@ -83,7 +83,7 @@ class Marking implements IMarking {
         $result = [];
         foreach($this->map as $place => $tokens) {
             if (!($tokens instanceof IntegerTokenCount &&
-                  $tokens->value == 0))
+                  $tokens->getValue() == 0))
                 $result[$place->hash()] = $tokens->hash();
         }
         return $result;

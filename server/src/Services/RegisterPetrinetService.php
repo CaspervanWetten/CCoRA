@@ -39,7 +39,10 @@ class RegisterPetrinetService {
             $translator = new PetrinetTranslator($marked);
             $marked = $translator->convert();
         }
-        $petrinetId = $petriRepo->savePetrinet($marked, $uid);
-        $view->setId($petrinetId);
+        $result = $petriRepo->saveMarkedPetrinet(
+            $marked->getPetrinet(),
+            $marked->getMarking(),
+            $uid);
+        $view->setResult($result);
     }
 }

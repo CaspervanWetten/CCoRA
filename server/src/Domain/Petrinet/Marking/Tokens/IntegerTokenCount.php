@@ -3,10 +3,9 @@
 namespace Cora\Domain\Petrinet\Marking\Tokens;
 
 class IntegerTokenCount extends AbstractTokenCount {
-    public $value;
+    protected $value;
 
-    public function __construct($val=0)
-    {
+    public function __construct(int $val=0) {
         $this->value = intval($val);
     }
 
@@ -56,6 +55,10 @@ class IntegerTokenCount extends AbstractTokenCount {
         else {
             return false;
         }
+    }
+
+    public function getValue(): int {
+        return $this->value;
     }
 
     public function hash() {

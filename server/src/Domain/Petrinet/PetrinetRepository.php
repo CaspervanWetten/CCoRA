@@ -4,7 +4,6 @@ namespace Cora\Domain\Petrinet;
 
 use Cora\Repositories\AbstractRepository;
 
-use Cora\Domain\Petrinet\MarkedPetrinetInterface as IMarkedPetrinet;
 use Cora\Domain\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Petrinet\PetrinetBuilder as PetrinetBuilder;
 use Cora\Domain\Petrinet\Place\Place;
@@ -70,11 +69,25 @@ class PetrinetRepository extends AbstractRepository {
         return $statement->fetchAll();
     }
 
-    public function savePetrinet(IMarkedPetrinet $marked, $user, ?string $name=NULL) {
+    public function saveMarkedPetrinet(
+        IPetrinet $pet,
+        IMarking $marking,
+        $user,
+        ?string $name=NULL
+    ): MarkedPetrinetRegisteredResult {
+        $petrinetId = $this->savePetrinet($pet, $user, $name);
+        $markingId = $this->saveMarking($marking, $petrinetId);
+        return new MarkedPetrinetRegisteredResult($petrinetId, $markingId);
+    }
+
+    public function savePetrinet(
+        IPetrinet $petrinet,
+        $user,
+        ?string $name=NULL
+    ): int {
         $this->db->beginTransaction();
         if (is_null($name))
             $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
-        $petrinet = $marked->getPetrinet();
         // insert meta
         $query = sprintf(
             "INSERT INTO %s (`creator`, `name`) VALUES (:creator, :name)",
@@ -89,7 +102,6 @@ class PetrinetRepository extends AbstractRepository {
             $this->savePlaces($petrinet, $petrinetId);
             $this->saveTransitions($petrinet, $petrinetId);
             $this->saveFlows($petrinet, $petrinetId);
-            $this->saveMarking($marked->getMarking(), $petrinetId);
         } catch (Exception $e) {
             $this->db->rollBack();
             throw $e;
@@ -119,10 +131,18 @@ class PetrinetRepository extends AbstractRepository {
             $statement->bindValue(sprintf(":%st", $place), $tokens, PDO::PARAM_STR);
         }
         $statement->execute();
+        return $markingId;
     }
 
     public function petrinetExists($id) {
         $query = sprintf("SELECT * FROM %s WHERE `id` = :id", PETRINET_TABLE);
+        $statement = $this->db->prepare($query);
+        $statement->execute([":id" => $id]);
+        return !empty($statement->fetchAll());
+    }
+
+    public function markingExists($id) {
+        $query = sprintf("SELECT * FROM %s WHERE `id` = :id", PETRINET_MARKING_TABLE);
         $statement = $this->db->prepare($query);
         $statement->execute([":id" => $id]);
         return !empty($statement->fetchAll());

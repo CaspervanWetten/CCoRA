@@ -2,22 +2,25 @@
 
 namespace Cora\Domain\Petrinet\View\Json;
 
+use Cora\Domain\Petrinet\MarkedPetrinetRegisteredResult as Result;
 use Cora\Domain\Petrinet\View\PetrinetCreatedViewInterface;
 
 class JsonPetrinetCreatedView implements PetrinetCreatedViewInterface {
-    protected $id;
+    protected $result;
 
-    public function getId(): int {
-        return $this->id;
+    public function setResult(Result $result) {
+        $this->result = $result;
     }
 
-    public function setId(int $id): void {
-        $this->id = $id;
+    public function getResult(): Result {
+        return $this->result;
     }
 
     public function render(): string {
+        $result = $this->getResult();
         return json_encode([
-            "petrinet_id" => $this->getId()
+            "petrinet_id" => $result->getPetrinetId(),
+            "marking_id" => $result->getMarkingId()
         ]);
     }
 }
