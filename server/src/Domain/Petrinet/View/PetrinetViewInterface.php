@@ -7,4 +7,5 @@ use Cora\Views\ViewInterface;
 
 interface PetrinetViewInterface extends ViewInterface {
     public function setPetrinet(IPetrinet $petrinet): void;
+    public function getPetrinet(): IPetrinet;
 }

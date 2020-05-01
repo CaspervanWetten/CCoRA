@@ -14,7 +14,12 @@ use Cora\Services\GetFeedbackService;
 
 class CoverabilityFeedback extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
-        $graph       = $request->getBody()->getContents();
+        $body        = $request->getParsedBody();
+        $userId      = isset($body["user_id"]) ? $body["user_id"] : NULL;
+        $petrinetId  = isset($body["petrinet_id"]) ? $body["petrinet_id"] : NULL;
+        $sessionId   = isset($body["session_id"]) ? $body["session_id"] : NULL;
+        $graph       = isset($body["graph"]) ? $body["graph"] : NULL;
+        $markingId   = $request->getParam("marking_id", NULL);
         $userRepo    = $this->container->get(UserRepo::class);
         $petriRepo   = $this->container->get(PetrinetRepo::class);
         $sessionRepo = $this->container->get(SessionRepo::class);
@@ -24,9 +29,10 @@ class CoverabilityFeedback extends AbstractRequestHandler {
         $service->get(
             $view,
             $graph,
-            $args["user_id"],
-            $args["petrinet_id"],
-            $args["session_id"],
+            $userId,
+            $petrinetId,
+            $sessionId,
+            $markingId,
             $userRepo,
             $petriRepo,
             $sessionRepo);

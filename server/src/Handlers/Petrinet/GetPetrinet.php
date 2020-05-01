@@ -6,8 +6,8 @@ use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Domain\Petrinet\PetrinetRepository as PetrinetRepo;
-use Cora\Domain\Petrinet\View\PetrinetViewFactory;
 use Cora\Domain\Petrinet\PetrinetNotFoundException;
+use Cora\Domain\Petrinet\View\MarkedPetrinetViewFactory;
 use Cora\Handlers\AbstractRequestHandler;
 use Cora\Services\GetPetrinetService;
 
@@ -18,7 +18,8 @@ class GetPetrinet extends AbstractRequestHandler {
             $mediaType = $this->getMediaType($request);
             $view      = $this->getView($mediaType);
             $service   = $this->container->get(GetPetrinetService::class);
-            $service->get($view, $args["id"], $petriRepo);
+            $markingId = $request->getParam("marking_id", NULL);
+            $service->get($view, $args["petrinet_id"], $markingId, $petriRepo);
             return $response->withHeader("Content-type", $mediaType)
                             ->withStatus(200)
                             ->write($view->render());
@@ -28,6 +29,6 @@ class GetPetrinet extends AbstractRequestHandler {
     }
 
     protected function getViewFactory(): \Cora\Views\AbstractViewFactory {
-        return new PetrinetViewFactory();
+        return new MarkedPetrinetViewFactory();
     }
 }

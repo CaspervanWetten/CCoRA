@@ -18,8 +18,8 @@ class JsonToGraph extends Converter {
     protected $json;
     protected $petrinet;
 
-    public function __construct(string $json, Petrinet $petrinet) {
-        $this->json = json_decode($json, true);
+    public function __construct(array $json, Petrinet $petrinet) {
+        $this->json = $json;
         $this->petrinet = $petrinet;
     }
 

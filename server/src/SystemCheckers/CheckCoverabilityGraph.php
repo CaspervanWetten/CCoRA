@@ -4,7 +4,7 @@ namespace Cora\SystemCheckers;
 
 use Cora\Domain\Feedback\Feedback;
 use Cora\Domain\Graphs\GraphInterface as IGraph;
-use Cora\Domain\Petrinet\MarkedPetrinetInterface as IMarked;
+use Cora\Domain\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Petrinet\Transition\Transition;
 use Cora\Domain\Petrinet\Marking\MarkingInterface as IMarking;
 
@@ -16,16 +16,22 @@ use \Ds\Map as Map;
 
 class CheckCoverabilityGraph {
     protected $graph;
-    protected $marked;
+    protected $petrinet;
+    protected $initial;
 
-    public function __construct(IGraph $graph, IMarked $marked) {
-        $this->graph = $graph;
-        $this->marked = $marked;
+    public function __construct(
+        IGraph $graph,
+        IPetrinet $petrinet,
+        ?IMarking $initial
+    ) {
+        $this->graph    = $graph;
+        $this->petrinet = $petrinet;
+        $this->initial  = $initial;
     }
 
     public function check() {
-        $petrinet = $this->marked->getPetrinet();
-        $initialP = $this->marked->getMarking();
+        $petrinet = $this->petrinet;
+        $initialP = $this->initial;
         $graph = $this->graph;
 
         $feedback = new Feedback();
@@ -240,7 +246,7 @@ class CheckCoverabilityGraph {
         $preset = $graph->preset($current);
         if($preset->isEmpty())
             return $covered;
-        $petrinet = $this->marked->getPetrinet();
+        $petrinet = $this->petrinet;
         foreach($preset as $edge) {
             if(!$visited->contains($edge->getFrom())) {
                 $presetMarking = $graph->getVertex($edge->getFrom());
