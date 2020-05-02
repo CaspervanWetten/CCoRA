@@ -12,11 +12,18 @@ use Cora\Domain\Session\View\SessionCreatedViewFactory;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\User\UserNotFoundException;
 use Cora\Handlers\AbstractRequestHandler;
+use Cora\Handlers\BadRequestException;
 use Cora\Services\StartSessionService;
 
 class CreateSession extends AbstractRequestHandler {
     public function handle(Request $request, Response $response, $args) {
         try {
+            $userId = $request->getParsedBodyParam("user_id", NULL);
+            if (is_null($userId))
+                throw new BadRequestException("No user id provided");
+            $netId = $request->getParsedBodyParam("petrinet_id", NULL);
+            if (is_null($netId))
+                throw new BadRequestException("No Petri net id provided");
             $mediaType   = $this->getMediaType($request);
             $service     = $this->container->get(StartSessionService::class);
             $userRepo    = $this->container->get(UserRepo::class);
@@ -25,8 +32,8 @@ class CreateSession extends AbstractRequestHandler {
             $view        = $this->getView($mediaType);
             $service->start(
                 $view,
-                $args["id"],
-                $args["pid"],
+                $userId,
+                $netId,
                 $sessionRepo,
                 $userRepo,
                 $petriRepo

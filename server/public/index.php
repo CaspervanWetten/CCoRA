@@ -164,10 +164,10 @@ $app->group('/' . API_GROUP, function() {
      */
     $this->group('/' . SESSION_GROUP, function() {
         $this->get(
-            '/{id:[0-9]+}/current', Handlers\Session\GetCurrentSession::class
+            '/current', Handlers\Session\GetCurrentSession::class
         )->setName("getCurrentSession");
         $this->post(
-            '/{id:[0-9]+}/{pid:[0-9]+}/new', Handlers\Session\CreateSession::class
+            '/new', Handlers\Session\CreateSession::class
         )->setName("newSession");
     });
 });

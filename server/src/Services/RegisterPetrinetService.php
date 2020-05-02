@@ -20,8 +20,8 @@ class RegisterPetrinetService {
         $uid,
         File $file,
         UserRepo $userRepo,
-        PetriRepo $petriRepo)
-    {
+        PetriRepo $petriRepo
+    ) {
         $uid = filter_var($uid, FILTER_SANITIZE_NUMBER_INT);
         if (!$userRepo->userExists("id", $uid))
             throw new UserNotFoundException("No user with this id exists");
