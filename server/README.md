@@ -71,37 +71,33 @@ initial state. The value of this field should be an integer.
 The following is an example of a valid feedback request body.
 ```json
 {
-  "states": [
-    {
-      "state": "p1: 1, p2: 5",
-      "id": 1
-    },
-    {
-      "state": "p1: 1, p2: ω",
-      "id": 2
-    },
-    {
-      "state": "p2: 5, p3: 1",
-      "id": 11
-    }
-  ],
-  "edges": [
-    {
-      "fromId": 1,
-      "toId": 2,
-      "transition": "t1",
-      "id": 3
-    },
-    {
-      "fromId": 1,
-      "toId": 11,
-      "transition": "t2",
-      "id": 12
-    }
-  ],
-  "initial": {
-    "id": 1
-  }
+	"user_id": 1570,
+	"petrinet_id": 1560,
+	"session_id": 5,
+	"initial_marking_id": 1557,
+	"graph": {
+		"states": [
+			{
+				"state": "p1: 2",
+				"id": 0
+			},
+			{
+				"state": "p1: 1, p2: ω",
+				"id": 1
+			}
+		],
+		"edges": [
+			{
+				"fromId": 0,
+				"toId": 10,
+				"transition": "t1",
+				"id": 2
+			}
+		],
+		"initial": {
+			"id": 0
+		}
+	}
 }
 ```
 
