@@ -16,7 +16,7 @@
 
 $apiGroup = "api";
 
-$userGroup = "users";
+$userGroup = "user";
 
 $petrinetGroup = "petrinet";
 
