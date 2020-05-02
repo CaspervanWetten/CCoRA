@@ -41,7 +41,6 @@ class PetrinetImager implements IResponseInterpreter
         }
     }
     public ReceiveFailure(code : number, responseText : string) {
-        console.log(responseText);
         let subs = this.SubInterpreters;
         for(let i = 0; i < subs.length; i++) {
             this.SubInterpreters[i].ReceiveFailure(code, responseText);
@@ -50,7 +49,7 @@ class PetrinetImager implements IResponseInterpreter
     public ReceiveSuccess(code : number, responseText : string) {
         let img : HTMLElement;
         try {
-            img = SVGParser.ParseSvg(JSON.parse(responseText));
+            img = SVGParser.ParseSvg(responseText);
             img.classList.add("petrinetSVG");
             img.style.height        = "100%";
         } catch (e) {

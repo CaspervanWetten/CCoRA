@@ -195,4 +195,9 @@ class Graph
         }
     }
     //#endregion
+
+    public toJSON(param) {
+	let converter = new GraphToJson(this);
+	return converter.Convert();
+    }
 }

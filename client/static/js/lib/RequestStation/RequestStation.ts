@@ -17,7 +17,6 @@ class RequestStation
     {
         let store = Store.GetInstance();
         let id = store.GetUserId();
-
         let generator = RequestStation.GetURLGenerator();
         let url       = generator.GetURL("petrinet", id.toString(), "new");
         let request   = new AjaxRequest(interpreter, url, "post", true, data);
@@ -34,28 +33,34 @@ class RequestStation
     public static GetPetrinetImage(interpreter : IResponseInterpreter, id : number) {
         let generator = RequestStation.GetURLGenerator();
         let url       = generator.GetURL("petrinet", id.toString(), "image");
-        let request   = new AjaxRequest(interpreter, url, "GET", true);
+	url += "?marking_id=" + Store.GetInstance().GetMarkingId();
+        let request   = new AjaxRequest(
+	    interpreter, url, "GET", true, undefined, "", "image/svg+xml, */*");
         request.Send();
     }
     
-    public static GetFeedback(interpreter : IResponseInterpreter, graph : Graph | string) {
-        if(graph instanceof Graph) {
-            graph = new GraphToJson(graph).Convert();
-        }
-        
+    public static GetFeedback(interpreter : IResponseInterpreter, graph : Graph) {
         let uid = Store.GetInstance().GetUserId();
         let pid = Store.GetInstance().GetPetrinetId();
         let sid = Store.GetInstance().GetSessionId();
+	let mid = Store.GetInstance().GetMarkingId();
 
         let generator = RequestStation.GetURLGenerator();
-        let url = generator.GetURL("petrinet", uid.toString(), pid.toString(), sid.toString(), "feedback");
-        let request = new AjaxRequest(interpreter, url, "POST", true, graph, "application/json");
+	let url = generator.GetURL("petrinet", "feedback");
+	let data = JSON.stringify({
+	    user_id: uid,
+	    petrinet_id: pid,
+	    session_id: sid,
+	    initial_marking_id: mid,
+	    graph: graph
+	});
+        let request = new AjaxRequest(interpreter, url, "POST", true, data, "application/json");
         request.Send();
     }
 
     public static SetSession(interpreter : IResponseInterpreter, uid: number, pid : number) {
         let generator = RequestStation.GetURLGenerator();
-        let url = generator.GetURL("session", uid.toString(), pid.toString(), "new_session");
+        let url = generator.GetURL("session", uid.toString(), pid.toString(), "new");
         let request = new AjaxRequest(interpreter, url, "POST", true);
         request.Send();
     }

@@ -15,6 +15,7 @@ class Store implements IObservable
     protected Petrinet  : Petrinet;
     protected UserId    : number | undefined;
     protected PetrinetId: number | undefined;
+    protected MarkingId : number | undefined;
     protected SessionId : number | undefined;
     
     protected constructor()
@@ -26,6 +27,7 @@ class Store implements IObservable
     {
         this.UserId     = undefined;
         this.PetrinetId = undefined;
+	this.MarkingId  = undefined;
         this.SessionId  = undefined;
 
         this.Graph = new Graph();
@@ -82,6 +84,16 @@ class Store implements IObservable
     {
         this.PetrinetId = id;
         this.Notify();
+    }
+
+    public GetMarkingId()
+    {
+	return this.MarkingId;
+    }
+
+    public SetMarkingId(id: number) {
+	this.MarkingId = id;
+	this.Notify();
     }
 
     public GetSessionId()

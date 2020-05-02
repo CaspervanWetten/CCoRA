@@ -32,7 +32,7 @@ class CheckCoverabilityGraph {
     public function check() {
         $petrinet = $this->petrinet;
         $initialP = $this->initial;
-        $graph = $this->graph;
+        $graph    = $this->graph;
 
         $feedback = new Feedback();
         // check the initial marking

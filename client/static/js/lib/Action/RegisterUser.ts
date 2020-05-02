@@ -25,7 +25,7 @@ class RegisterUser extends RequestingAction
         try{
             let response : UserCreatedResponse = JSON.parse(responseText);
             let store = Store.GetInstance();
-            store.SetUserId(response.id);
+            store.SetUserId(response.user_id);
         }
         catch(e) {
             console.log(responseText);            

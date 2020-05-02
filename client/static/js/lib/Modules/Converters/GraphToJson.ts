@@ -48,7 +48,7 @@ class GraphToJson implements IConverter
         obj["edges"] = e;
         obj["initial"] = inij;
         
-        return JSON.stringify(obj);
+	return obj;
     }
 }
 

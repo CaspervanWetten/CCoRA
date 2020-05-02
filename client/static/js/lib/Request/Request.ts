@@ -9,6 +9,7 @@ class AjaxRequest
     public Async : boolean;
     public Data ?: Object;
     public ContentType ?: string;
+    public Accept ?: string;
 
     public constructor (
         caller : IResponseInterpreter,
@@ -16,7 +17,8 @@ class AjaxRequest
         method : string = "GET",
         async : boolean = true,
         data = undefined,
-        contentType = "")
+        contentType = "",
+        accept = "*/*")
     {
         this.Caller = caller;
         this.Url = url;
@@ -24,6 +26,7 @@ class AjaxRequest
         this.Async = async;
         this.Data = data;
         this.ContentType = contentType;
+	this.Accept = accept;
     }
 
     public Send()
@@ -34,6 +37,7 @@ class AjaxRequest
         if(this.ContentType.length > 0) {
             request.setRequestHeader("Content-Type", "application/json");
         }
+	request.setRequestHeader("Accept", this.Accept);
 
         request.onreadystatechange = (e) => {
             if(request.readyState === request.DONE) {

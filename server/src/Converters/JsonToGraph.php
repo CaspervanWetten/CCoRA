@@ -79,7 +79,7 @@ class JsonToGraph extends Converter {
     protected function stringToMarking(string $s) {
         $builder = new MarkingBuilder();
         $s = preg_replace('/ /', '', $s);
-        $pairs = explode(",", $s);
+        $pairs = array_filter(explode(",", $s), 'strlen');
         foreach($pairs as $pair) {
             list($p, $t) = preg_split("/:/", $pair, NULL, PREG_SPLIT_NO_EMPTY);
             if (is_numeric($t))
