@@ -152,7 +152,7 @@ $app->group('/' . API_GROUP, function() {
             '/{petrinet_id:[0-9]+}/image', Handlers\Petrinet\GetPetrinetImage::class
         )->setName('getPetrinetImage');
         $this->post(
-            '/{id:[0-9]+}/new', Handlers\Petrinet\RegisterPetrinet::class
+            '/new', Handlers\Petrinet\RegisterPetrinet::class
         )->setName("setPetrinet");
         $this->post(
             '/feedback',

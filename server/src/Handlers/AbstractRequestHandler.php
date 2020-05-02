@@ -16,7 +16,11 @@ abstract class AbstractRequestHandler extends AbstractHandler {
     }
 
     public function __invoke(Request $request, Response $response, $args) {
-        return $this->handle($request, $response, $args);
+        try {
+            return $this->handle($request, $response, $args);
+        } catch (BadRequestException $e) {
+            return $this->fail($request, $response, $e, 400);
+        }
     }
 
     public abstract function handle(Request $req, Response $res, $args);

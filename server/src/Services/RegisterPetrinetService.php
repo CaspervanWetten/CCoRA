@@ -6,7 +6,7 @@ use Psr\Http\Message\UploadedFileInterface as File;
 
 use Cora\Converters\LolaToPetrinet;
 use Cora\Converters\PetrinetTranslator;
-use Cora\Domain\User\UserNotFoundException;
+use Cora\Domain\User\Exception\UserNotFoundException;
 use Cora\Domain\User\UserRepository as UserRepo;
 use Cora\Domain\Petrinet\PetrinetRepository as PetriRepo;
 use Cora\Domain\Petrinet\View\PetrinetCreatedViewInterface as View;
