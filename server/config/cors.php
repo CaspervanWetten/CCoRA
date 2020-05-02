@@ -13,7 +13,7 @@
  * default: false
  * @var bool
  */
-$enableCors = true;
+$enableCors = false;
 
 /**
  * Which origins should be allowed by the CORS.
