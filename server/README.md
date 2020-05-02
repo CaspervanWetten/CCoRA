@@ -102,7 +102,11 @@ The following is an example of a valid feedback request body.
 ```
 
 ## Sessions
-1. GET `session/{uid}`: get the current session for the user with
-   `id=uid`
-2. POST `session/{uid}/{pid}/new`: start a new session for the user
-   with `id=uid` for a Petri net with `id=pid`.
+1. GET `session/current`: get the current session for the user. Supply
+   the user id by putting it in the body of the request. The
+   multipart/form-data media type does not work unfortunately. This is
+   because of a limitation in both PHP and Slim.
+2. POST `session/new`: create a new session for the user. A session
+   describes how a user creates a coverability graph for a certain
+   petrinet. As such, you need to supply the `user_id` and
+   `petrinet_id` in the body of the request.
