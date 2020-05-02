@@ -190,6 +190,9 @@ class CheckCoverabilityGraph {
                     if (SetUtils::isStrictSubset($unbounded->toSet(), $pre))
                         $feedback->add(Feedback::OMEGA_FROM_PRESET_OMITTED,
                                        $edge->getTo());
+                    else
+                        $feedback->add(Feedback::NOT_REACHABLE_FROM_PRESET,
+                                       $edge->getTo());
                 }
 
                 if ($correctEdge)
