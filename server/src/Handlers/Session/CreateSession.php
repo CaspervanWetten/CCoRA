@@ -28,11 +28,11 @@ class CreateSession extends AbstractRequestHandler {
             $markingId = $request->getParsedBodyParam("marking_id", NULL);
             if (is_null($markingId))
                 throw new BadRequestException("No marking id provided");
-            $mediaType   = $this->getMediaType($request);
             $service     = $this->container->get(StartSessionService::class);
             $userRepo    = $this->container->get(UserRepo::class);
             $petriRepo   = $this->container->get(PetriRepo::class);
             $sessionRepo = $this->container->get(SessionRepo::class);
+            $mediaType   = $this->getMediaType($request);
             $view        = $this->getView($mediaType);
             $service->start(
                 $view,
@@ -43,9 +43,9 @@ class CreateSession extends AbstractRequestHandler {
                 $userRepo,
                 $petriRepo
             );
-            $response->withHeader("Content-type", $mediaType)
-                     ->withStatus(201)
-                     ->write($view->render());
+            return $response->withHeader("Content-type", $mediaType)
+                            ->withStatus(201)
+                            ->write($view->render());
         } catch (UserNotFoundException |
                  PetrinetNotFoundException |
                  MarkingNotFoundException $e) {
