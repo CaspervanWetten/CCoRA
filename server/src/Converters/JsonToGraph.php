@@ -71,8 +71,12 @@ class JsonToGraph extends Converter {
         if (array_key_exists("initial", $json)) {
             if (!array_key_exists("id", $json["initial"]))
                 throw new Exception("Could not parse graph: incorrect format");
-            $id = intval($json["initial"]["id"]);
-            $builder->setInitial($id);
+            if (is_null($json["initial"]["id"]))
+                $builder->setInitial(NULL);
+            else {
+                $id = intval($json["initial"]["id"]);
+                $builder->setInitial($id);
+            }
         }
     }
 

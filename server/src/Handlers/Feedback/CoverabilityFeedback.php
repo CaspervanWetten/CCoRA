@@ -2,22 +2,15 @@
 
 namespace Cora\Handlers\Feedback;
 
-use Cora\Domain\Feedback\NoInitialMarkingException;
-use Cora\Domain\Feedback\NoPetrinetException;
-use Cora\Domain\Feedback\NoSessionException;
-use Cora\Domain\Feedback\NoUserException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
 use Cora\Handlers\AbstractRequestHandler;
 use Cora\Domain\Feedback\View\FeedbackViewFactory;
-use Cora\Domain\Petrinet\Marking\MarkingNotFoundException;
-use Cora\Domain\Petrinet\PetrinetNotFoundException;
 use Cora\Domain\Petrinet\PetrinetRepository as PetrinetRepo;
 use Cora\Domain\Session\InvalidSessionException;
 use Cora\Domain\Session\NoSessionLogException;
 use Cora\Domain\Session\SessionRepository as SessionRepo;
-use Cora\Domain\User\Exception\UserNotFoundException;
 use Cora\Services\GetFeedbackService;
 
 class CoverabilityFeedback extends AbstractRequestHandler {

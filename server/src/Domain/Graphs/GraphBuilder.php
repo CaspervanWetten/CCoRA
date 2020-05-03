@@ -30,7 +30,7 @@ class GraphBuilder implements GraphBuilderInterface {
         $this->edges->addEdge($id, $edge);
     }
 
-    public function setInitial(int $id): void {
+    public function setInitial(?int $id): void {
         $this->initial = $id;
     }
 
