@@ -10,6 +10,7 @@ class SessionLog implements JsonSerializable {
     protected $sessionId;
     protected $userId;
     protected $petrinetId;
+    protected $markingId;
     protected $startTime;
     protected $graphs;
 
@@ -17,12 +18,15 @@ class SessionLog implements JsonSerializable {
         int $session,
         int $user,
         int $petrinet,
+        int $marking,
         int $start = NULL,
         array $graphs = NULL
     ) {
         $this->sessionId = $session;
         $this->userId = $user;
         $this->petrinetId = $petrinet;
+        $this->markingId = $marking;
+
         if (is_null($start))
             $this->startTime = $this->timeStamp();
         else
@@ -49,6 +53,10 @@ class SessionLog implements JsonSerializable {
         return $this->petrinetId;
     }
 
+    public function getMarkingId(): int {
+        return $this->markingId;
+    }
+
     public function getStartTime(): int {
         return $this->startTime;
     }
@@ -62,6 +70,7 @@ class SessionLog implements JsonSerializable {
             "user_id"       => $this->getUserId(),
             "session_id"    => $this->getSessionId(),
             "petrinet_id"   => $this->getPetrinetId(),
+            "marking_id"    => $this->getMarkingId(),
             "session_start" => date(DATE_ATOM, $this->getStartTime()),
             "graphs"        => $this->getGraphs()
         ];

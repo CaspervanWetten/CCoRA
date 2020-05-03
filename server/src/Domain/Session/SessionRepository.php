@@ -12,14 +12,23 @@ class SessionRepository extends AbstractRepository {
         return $session;
     }
 
-    public function createNewSession(int $userId, int $petrinetId): Session {
+    public function createNewSession(
+        int $userId,
+        int $petrinetId,
+        int $markingId
+    ): Session {
         try {
             $metaLog = $this->getMetaLog($userId);
         } catch (NoMetaLogException $e) {
             $metaLog = $this->createMetaLog($userId);
         }
         $sessionId = $metaLog->getSessionCount();
-        $sessionLog = $this->createSessionLog($userId, $petrinetId, $sessionId);
+        $sessionLog = $this->createSessionLog(
+            $userId,
+            $petrinetId,
+            $markingId,
+            $sessionId
+        );
         $metaLog->incrementSessionCounter();
         $this->writeMetaLog($metaLog);
         $this->writeSessionLog($sessionLog);
@@ -30,31 +39,22 @@ class SessionRepository extends AbstractRepository {
     public function appendGraph(
         int $userId,
         int $sessionId,
-        int $petrinetId,
         IGraph $graph
     ) {
         $sessionLog = $this->getSessionLog($userId, $sessionId);
-        if ($sessionLog->getPetrinetId() !== $petrinetId)
-            throw new InvalidSessionException(
-                "Could not add graph: the Petri net for this session does " .
-                "not correspond to the given Petri net id");
         $sessionLog->addGraph($graph);
         $this->writeSessionLog($sessionLog);
     }
 
     public function sessionExists(
-        int $sessionId,
         int $userId,
-        int $petrinetId
+        int $sessionId
     ): bool {
-        $logPath = $this->getSessionLogPath($userId, $sessionId);
-        if (!file_exists($logPath))
-            return FALSE;
-        $log = $this->getSessionLog($userId, $sessionId);
-        return $log->getPetrinetId() === $petrinetId;
+        $path = $this->getSessionLogPath($userId, $sessionId);
+        return file_exists($path);
     }
 
-    protected function getMetaLog(int $userId): MetaSessionLog {
+    public function getMetaLog(int $userId): MetaSessionLog {
         $logPath = $this->getMetaLogPath($userId);
         if (!file_exists($logPath))
             throw new NoMetaLogException(
@@ -65,7 +65,7 @@ class SessionRepository extends AbstractRepository {
             intval($array["session_counter"]));
     }
 
-    protected function getSessionLog(int $userId, int $sessionId): SessionLog {
+    public function getSessionLog(int $userId, int $sessionId): SessionLog {
         $logPath = $this->getSessionLogPath($userId, $sessionId);
         if (!file_exists($logPath))
             throw new NoSessionLogException(
@@ -75,6 +75,7 @@ class SessionRepository extends AbstractRepository {
             intval($array["session_id"]),
             intval($array["user_id"]),
             intval($array["petrinet_id"]),
+            intval($array["marking_id"]),
             strtotime($array["session_start"]),
             $array["graphs"]);
     }
@@ -86,9 +87,10 @@ class SessionRepository extends AbstractRepository {
     protected function createSessionLog(
         int $userId,
         int $petrinetId,
+        int $markingId,
         int $sessionId
     ): SessionLog {
-        return new SessionLog($sessionId, $userId, $petrinetId);
+        return new SessionLog($sessionId, $userId, $petrinetId, $markingId);
     }
 
     protected function writeMetaLog(MetaSessionLog $log): void {

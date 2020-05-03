@@ -2,6 +2,7 @@
 
 namespace Cora\Handlers\Session;
 
+use Cora\Domain\Petrinet\Marking\MarkingNotFoundException;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -24,6 +25,9 @@ class CreateSession extends AbstractRequestHandler {
             $netId = $request->getParsedBodyParam("petrinet_id", NULL);
             if (is_null($netId))
                 throw new BadRequestException("No Petri net id provided");
+            $markingId = $request->getParsedBodyParam("marking_id", NULL);
+            if (is_null($markingId))
+                throw new BadRequestException("No marking id provided");
             $mediaType   = $this->getMediaType($request);
             $service     = $this->container->get(StartSessionService::class);
             $userRepo    = $this->container->get(UserRepo::class);
@@ -34,6 +38,7 @@ class CreateSession extends AbstractRequestHandler {
                 $view,
                 $userId,
                 $netId,
+                $markingId,
                 $sessionRepo,
                 $userRepo,
                 $petriRepo
@@ -41,7 +46,9 @@ class CreateSession extends AbstractRequestHandler {
             $response->withHeader("Content-type", $mediaType)
                      ->withStatus(201)
                      ->write($view->render());
-        } catch (UserNotFoundException | PetrinetNotFoundException $e) {
+        } catch (UserNotFoundException |
+                 PetrinetNotFoundException |
+                 MarkingNotFoundException $e) {
             return $this->fail($request, $response, $e, 404);
         }
     }
