@@ -8,7 +8,7 @@ class RequestStation
     public static RegisterUser(interpreter : IResponseInterpreter, data : FormData)
     {
         let generator = RequestStation.GetURLGenerator();
-        let url       = generator.GetURL("users", "new");
+        let url       = generator.GetURL("user", "new");
         let request   = new AjaxRequest(interpreter, url, "post", true, data);
         request.Send();
     }
@@ -16,9 +16,8 @@ class RequestStation
     public static RegisterPetrinet(interpreter : IResponseInterpreter, data : FormData)
     {
         let store = Store.GetInstance();
-        let id = store.GetUserId();
         let generator = RequestStation.GetURLGenerator();
-        let url       = generator.GetURL("petrinet", id.toString(), "new");
+        let url       = generator.GetURL("petrinet", "new");
         let request   = new AjaxRequest(interpreter, url, "post", true, data);
         request.Send();
     }
@@ -49,19 +48,17 @@ class RequestStation
 	let url = generator.GetURL("petrinet", "feedback");
 	let data = JSON.stringify({
 	    user_id: uid,
-	    petrinet_id: pid,
 	    session_id: sid,
-	    initial_marking_id: mid,
 	    graph: graph
 	});
         let request = new AjaxRequest(interpreter, url, "POST", true, data, "application/json");
         request.Send();
     }
 
-    public static SetSession(interpreter : IResponseInterpreter, uid: number, pid : number) {
+    public static SetSession(interpreter : IResponseInterpreter, data : FormData) {
         let generator = RequestStation.GetURLGenerator();
-        let url = generator.GetURL("session", uid.toString(), pid.toString(), "new");
-        let request = new AjaxRequest(interpreter, url, "POST", true);
+	let url = generator.GetURL("session", "new");
+        let request = new AjaxRequest(interpreter, url, "POST", true, data);
         request.Send();
     }
 

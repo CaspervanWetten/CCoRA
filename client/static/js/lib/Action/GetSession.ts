@@ -3,10 +3,17 @@ class GetSession extends RequestingAction {
     public Invoke()
     {
         let store = Store.GetInstance();
-        if(store.GetPetrinetId() != null && store.GetUserId() != null) {
+        if (store.GetPetrinetId() != null &&
+	    store.GetUserId() != null &&
+	    store.GetMarkingId() != null) {
             let uid = store.GetUserId();
             let pid = store.GetPetrinetId();
-            RequestStation.SetSession(this, uid, pid);
+	    let mid = store.GetMarkingId();
+	    let data = new FormData();
+	    data.set("user_id", uid.toString());
+	    data.set("petrinet_id", pid.toString());
+	    data.set("marking_id", mid.toString());
+            RequestStation.SetSession(this, data);
         }
     }
     

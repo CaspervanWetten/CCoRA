@@ -14,7 +14,10 @@ class RegisterPetrinet extends RequestingAction
 
     public Invoke()
     {
-        RequestStation.RegisterPetrinet(this, this.FormData);
+	let store = Store.GetInstance();
+	let data = this.FormData;
+	data.set("user_id", store.GetUserId().toString());
+        RequestStation.RegisterPetrinet(this, data);
     }
     
     protected PerformSuccess(code: number, responseText: string) {
