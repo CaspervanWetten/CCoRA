@@ -25,7 +25,7 @@ class Transition implements PetrinetElementInterface, JsonSerializable {
         return $this->getName() === $obj->getName();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->getName();
     }
 

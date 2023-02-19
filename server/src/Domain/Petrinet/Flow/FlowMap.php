@@ -6,6 +6,7 @@ use Cora\Domain\Petrinet\Flow\FlowInterface as Flow;
 use Cora\Domain\Petrinet\Flow\FlowContainerInterface as Flows;
 
 use Ds\Map;
+use Traversable;
 
 class FlowMap implements FlowMapInterface {
     protected $map;
@@ -32,11 +33,11 @@ class FlowMap implements FlowMapInterface {
         return new FlowContainer($this->map->keys());
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->map->getIterator();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         $res = [];
         foreach($this->map as $flow => $weight)
             array_push($res, [

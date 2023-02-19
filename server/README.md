@@ -1,14 +1,33 @@
-# Coverability OZP
-This is the repository for the Information Science research project by
-Lucas Steehouwer (4172248, l.steehouwer@students.uu.nl).
+# CoRA Server
+The server component of CoRA provides a simple REST API. It manages users, Petri
+nets, and modelling sessions.
 
 # Installation
-To install the server you need to have
-[composer](https://www.getcomposer.org "get composer") installed. Once
-installed, you must run `composer install` to install the required
-dependencies. Then, you must set up the project's namespaces by
-running `composer dumpautoload -o`. In the `deploy/` folder an
-sql-file is included containing commands to set up the database.
+You can run the server in two ways, manually or with a Docker container. Do not
+forget the configure the application first!
+
+## Docker
+The provided Dockerfile builds a production-ready image of CoRA's back
+end. There is also a docker-compose file, which also sets a docker container for
+a MySQL-compatible database. **DO NOTE**, however, that this docker-compose file
+is **not** intended for use in a production environment.
+
+## Manual
+You will need to place the files in this directory on a host with PHP
+installed. We provide .htaccess files that change the behavior of the Apache web
+server, which we assume you use to serve requests. If you use a different web
+server, you will have to mimic the settings of these files.
+
+Once you have put the files onto your host, you need to install its
+dependencies. For this you need to have [composer](https://www.getcomposer.org
+"get composer") installed. You can then run `composer install` in the directory
+where the composer.lock file resides to install the required dependencies. Then,
+you must set up the project's namespaces by running `composer dumpautoload
+-a`.
+
+CoRA persists its data in a MySQL database, which you will also have to set up
+yourself. In the `deploy/` folder an sql-file is included containing commands
+to set up the database tables.
 
 ## Configuration 
 All of the configuration takes place in the files in the `config/`

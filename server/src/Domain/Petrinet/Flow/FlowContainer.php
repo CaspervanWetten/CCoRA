@@ -5,6 +5,7 @@ namespace Cora\Domain\Petrinet\Flow;
 use Cora\Domain\Petrinet\Flow\FlowInterface as Flow;
 
 use Ds\Set;
+use Traversable;
 
 class FlowContainer implements FlowContainerInterface {
     protected $set;
@@ -21,11 +22,11 @@ class FlowContainer implements FlowContainerInterface {
         $this->set->add($flow);
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->set->getIterator();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->set;
     }
 }

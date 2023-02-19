@@ -25,7 +25,7 @@ class MetaSessionLog implements JsonSerializable {
         $this->sessionCount++;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "user_id" => $this->getUserId(),
             "session_counter" => $this->getSessionCount()

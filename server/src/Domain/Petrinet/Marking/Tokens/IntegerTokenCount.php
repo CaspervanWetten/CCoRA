@@ -69,7 +69,7 @@ class IntegerTokenCount extends AbstractTokenCount {
         return $this->value === $other->value;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->value;
     }
 

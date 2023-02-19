@@ -26,7 +26,7 @@ class Place implements PetrinetElementInterface, JsonSerializable, Hashable {
         return $this->getName() === $obj->getName();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->getName();
     }
 

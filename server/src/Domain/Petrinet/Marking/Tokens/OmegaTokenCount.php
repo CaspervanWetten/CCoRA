@@ -22,8 +22,7 @@ class OmegaTokenCount extends AbstractTokenCount {
         return true;
     }
 
-    public function jsonSerialize()
-    {
+    public function jsonSerialize() :mixed {
         return $this->__toString();
     }
 

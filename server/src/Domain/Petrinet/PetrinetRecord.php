@@ -21,7 +21,7 @@ class PetrinetRecord implements JsonSerializable {
         return $this->name;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "id" => $this->getId(),
             "name" => $this->getName()

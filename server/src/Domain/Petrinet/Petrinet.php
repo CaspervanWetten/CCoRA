@@ -44,7 +44,7 @@ class Petrinet implements PetrinetInterface {
     public function fire(IMarking $marking, Transition $t): IMarking {
         $pre = $this->preset($t);
         $post = $this->postset($t);
-        
+
         $builder = new MarkingBuilder();
         foreach($this->places as $place) {
             $preWeight = new IntegerTokenCount($pre->get($place));
@@ -77,8 +77,8 @@ class Petrinet implements PetrinetInterface {
     public function preset(IElement $e): PrePostSetMap {
         $flows = $this->flows;
         $map = new PrePostSetMap();
-        foreach($flows as $flow => $weight) 
-            if ($flow->getTo() == $e) 
+        foreach($flows as $flow => $weight)
+            if ($flow->getTo() == $e)
                 $map->put($flow->getFrom(), $weight);
         return $map;
     }
@@ -86,8 +86,8 @@ class Petrinet implements PetrinetInterface {
     public function postset(IElement $e): PrePostSetMap {
         $flows = $this->flows;
         $map = new PrePostSetMap();
-        foreach($flows as $flow => $weight) 
-            if ($flow->getFrom() == $e) 
+        foreach($flows as $flow => $weight)
+            if ($flow->getFrom() == $e)
                 $map->put($flow->getTo(), $weight);
         return $map;
     }
@@ -104,7 +104,7 @@ class Petrinet implements PetrinetInterface {
         return $this->flows;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "places"      => $this->getPlaces(),
             "transitions" => $this->getTransitions(),

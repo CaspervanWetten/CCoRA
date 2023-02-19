@@ -3,6 +3,7 @@
 namespace Cora\Domain\Petrinet\Place;
 
 use Ds\Set;
+use Traversable;
 
 class PlaceContainer implements PlaceContainerInterface {
     protected $set;
@@ -23,11 +24,11 @@ class PlaceContainer implements PlaceContainerInterface {
         return $this->set->isEmpty();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->set;
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->set->getIterator();
     }
 

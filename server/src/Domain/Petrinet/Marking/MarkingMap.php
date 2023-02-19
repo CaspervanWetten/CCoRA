@@ -8,6 +8,7 @@ use Cora\Domain\Petrinet\Transition\TransitionContainer as Transitions;
 use Cora\Domain\Petrinet\Transition\TransitionContainerInterface as ITransitions;
 
 use Ds\Map;
+use Traversable;
 
 class MarkingMap implements MarkingMapInterface {
     protected $map;
@@ -19,7 +20,7 @@ class MarkingMap implements MarkingMapInterface {
     public function get(Transition $t): Marking {
         return $this->map->get($t);
     }
-    
+
     public function put(Transition $t, Marking $m): void {
         $this->map->put($t, $m);
     }
@@ -32,11 +33,11 @@ class MarkingMap implements MarkingMapInterface {
         return new Transitions($this->map->keys());
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->map->getIterator();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->map;
     }
 }

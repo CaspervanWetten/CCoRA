@@ -1,7 +1,7 @@
 <?php
 /**
  * Database configution
- * 
+ *
  * @author Lucas Steehouwer
  */
 

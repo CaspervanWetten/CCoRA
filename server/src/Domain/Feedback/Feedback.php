@@ -47,10 +47,10 @@ class Feedback implements JsonSerializable {
     * @return void
     **/
     public function add(int $code, ?int $element=NULL): void {
-        if (is_null($element)) 
+        if (is_null($element))
             $this->general->add($code);
         else {
-            if (!$this->specific->hasKey($element)) 
+            if (!$this->specific->hasKey($element))
                 $this->specific->put($element, new Set());
             $this->specific->get($element)->add($code);
         }
@@ -66,7 +66,7 @@ class Feedback implements JsonSerializable {
     * @return Set Set of feedback codes
     **/
     public function get($element = NULL): Set {
-        if (is_null($element)) 
+        if (is_null($element))
             return $this->general;
         else if ($this->specific->hasKey($element))
             return $this->specific->get($element);
@@ -82,12 +82,12 @@ class Feedback implements JsonSerializable {
     public function remove($code, $element): void {
         if($this->specific->hasKey($element)) {
             $f = $this->specific->get($element);
-            if($f->contains($code)) 
+            if($f->contains($code))
                 $f->remove($code);
         }
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "general" => $this->general,
             "specific" => $this->specific

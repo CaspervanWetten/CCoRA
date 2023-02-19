@@ -2,7 +2,7 @@
 
 namespace Cora\Domain\Session;
 
-use Cora\Domain\Graphs\GraphInterface as IGraph;
+use Cora\Domain\Graph\GraphInterface as IGraph;
 
 use JsonSerializable;
 
@@ -65,7 +65,7 @@ class SessionLog implements JsonSerializable {
         return $this->graphs;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "user_id"       => $this->getUserId(),
             "session_id"    => $this->getSessionId(),

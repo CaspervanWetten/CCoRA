@@ -15,7 +15,7 @@ class Session implements JsonSerializable {
         return $this->sessionId;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "session_id" => $this->getId()
         ];

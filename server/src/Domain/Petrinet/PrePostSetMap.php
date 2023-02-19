@@ -5,6 +5,7 @@ namespace Cora\Domain\Petrinet;
 use Cora\Domain\Petrinet\PetrinetElementInterface as Element;
 
 use Ds\Map;
+use Traversable;
 
 class PrePostSetMap implements PrePostSetMapInterface {
     protected $map;
@@ -25,7 +26,7 @@ class PrePostSetMap implements PrePostSetMapInterface {
         $this->map->put($e, $w);
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->map->getIterator();
     }
 }

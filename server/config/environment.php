@@ -2,7 +2,7 @@
 /**
  * Environment settings
  *
- * @author Lucas Steehouwer 
+ * @author Lucas Steehouwer
  */
 
 /**

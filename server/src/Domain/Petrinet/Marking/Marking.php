@@ -13,6 +13,8 @@ use Cora\Domain\Petrinet\Marking\Tokens\OmegaTokenCount;
 use Cora\Domain\Petrinet\Marking\Tokens\TokenCountInterface as Tokens;
 
 use Ds\Map;
+use Traversable;
+
 use Exception;
 
 class Marking implements IMarking {
@@ -60,7 +62,7 @@ class Marking implements IMarking {
 
     public function covered(IMarking $other, IPetrinet $net): Places {
         $res = new PlaceContainer();
-        if ($this->covers($other, $net)) 
+        if ($this->covers($other, $net))
             foreach($net->getPlaces() as $place)
                 if($this->get($place)->greater($other->get($place)))
                     $res->add($place);
@@ -93,13 +95,13 @@ class Marking implements IMarking {
         return $this->hash() === $other->hash();
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->map->getIterator();
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         $result = [];
-        foreach($this->map as $place => $tokens) 
+        foreach($this->map as $place => $tokens)
             $result[$place->getName()] = $tokens;
         return $result;
     }

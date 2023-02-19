@@ -12,7 +12,7 @@ use Exception;
 
 class MarkingBuilder implements MarkingBuilderInterface {
     protected $map;
-    
+
     public function __construct() {
         $this->map = new Map();
     }

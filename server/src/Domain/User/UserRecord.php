@@ -28,7 +28,7 @@ class UserRecord implements JsonSerializable {
         return $this->created;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return [
             "id"         => $this->getId(),
             "name"       => $this->getName(),

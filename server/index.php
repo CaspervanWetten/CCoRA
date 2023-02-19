@@ -1,8 +1,6 @@
 <?php
 
-$configFolder = "config";
-
-defined("CONFIG_FOLDER") or define("CONFIG_FOLDER", $configFolder);
+defined("CONFIG_FOLDER") or define("CONFIG_FOLDER", "config");
 
 $config = array();
 

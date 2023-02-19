@@ -26,12 +26,12 @@ class TransitionContainer implements TransitionContainerInterface {
     public function isEmpty(): bool {
         return $this->set->isEmpty();
     }
-    
-    public function jsonSerialize() {
+
+    public function jsonSerialize(): mixed {
         return $this->set;
     }
 
-    public function getIterator() {
+    public function getIterator(): Traversable {
         return $this->set->getIterator();
     }
 
