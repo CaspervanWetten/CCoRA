@@ -2,14 +2,12 @@
 
 namespace Cora\Utils;
 
-use \Exception as Exception;
+use Exception;
 
-class DatabaseUtils
-{
-    public static function connect($settings)
-    {
+class DatabaseUtils {
+    public static function connect(string $dsn, string $user, string $pass) {
         try {
-            $db = new \PDO($settings['dsn'], $settings['user'], $settings['pass']);
+            $db = new \PDO($dsn, $user, $pass);
 
             // standard attribute settings
             $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);

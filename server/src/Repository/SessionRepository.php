@@ -111,10 +111,10 @@ class SessionRepository extends AbstractRepository {
     }
 
     protected function getMetaLogPath(int $userId) {
-        return LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . ".json";
+        return $_ENV['LOG_FOLDER'] . DIRECTORY_SEPARATOR . $userId . ".json";
     }
 
     protected function getSessionLogPath(int $userId, int $sessionId) {
-        return LOG_FOLDER . DIRECTORY_SEPARATOR . $userId . "-" . $sessionId . ".json";
+        return $_ENV['LOG_FOLDER'] . DIRECTORY_SEPARATOR . $userId . "-" . $sessionId . ".json";
     }
 }

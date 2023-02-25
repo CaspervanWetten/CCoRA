@@ -39,7 +39,7 @@ class PetrinetRepository extends AbstractRepository {
 
         $query = sprintf(
             "SELECT `place`, `tokens` FROM %s WHERE marking = :mid",
-            PETRINET_MARKING_PAIR_TABLE);
+            $_ENV['PETRINET_MARKING_PAIR_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":mid" => $mid]);
         $builder = new MarkingBuilder();
@@ -54,14 +54,15 @@ class PetrinetRepository extends AbstractRepository {
     public function getMarkings(int $pid) {
         $query = sprintf(
             "SELECT `id` FROM %s WHERE `petrinet` = :pid",
-            PETRINET_MARKING_TABLE);
+            $_ENV['PETRINET_MARKING_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $pid]);
         return $statement->fetchAll();
     }
 
     public function getPetrinets(int $limit = 0, int $offset = 0) {
-        $query = sprintf("SELECT `id`, `name` FROM %s", PETRINET_TABLE);
+        $query = sprintf("SELECT `id`, `name` FROM %s",
+                         $_ENV['PETRINET_TABLE']);
         if ($limit > 0)
             $query .= sprintf(" LIMIT %d", $limit);
         if ($offset > 0)
@@ -93,7 +94,7 @@ class PetrinetRepository extends AbstractRepository {
         // insert meta
         $query = sprintf(
             "INSERT INTO %s (`creator`, `name`) VALUES (:creator, :name)",
-            PETRINET_TABLE);
+            $_ENV['PETRINET_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->bindValue(":creator", $user, PDO::PARAM_INT);
         $statement->bindValue(":name", $name, PDO::PARAM_STR);
@@ -115,7 +116,7 @@ class PetrinetRepository extends AbstractRepository {
     public function saveMarking(IMarking $marking, int $pid) {
         // insert meta information
         $query = sprintf("INSERT INTO %s (`petrinet`) VALUES (:pid)",
-                         PETRINET_MARKING_TABLE);
+                         $_ENV['PETRINET_MARKING_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->bindParam(":pid", $pid);
         $statement->execute();
@@ -125,7 +126,7 @@ class PetrinetRepository extends AbstractRepository {
         foreach($marking->places() as $place)
             array_push($values, sprintf("(:mid, :%sp, :%st)", $place, $place));
         $query = sprintf("INSERT INTO %s (`marking`, `place`, `tokens`) VALUES %s",
-                         PETRINET_MARKING_PAIR_TABLE, implode(", ", $values));
+                         $_ENV['PETRINET_MARKING_PAIR_TABLE'], implode(", ", $values));
         $statement = $this->db->prepare($query);
         $statement->bindValue(":mid", $markingId);
         foreach($marking as $place => $tokens) {
@@ -137,14 +138,16 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     public function petrinetExists($id) {
-        $query = sprintf("SELECT * FROM %s WHERE `id` = :id", PETRINET_TABLE);
+        $query = sprintf("SELECT * FROM %s WHERE `id` = :id",
+                         $_ENV['PETRINET_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":id" => $id]);
         return !empty($statement->fetchAll());
     }
 
     public function markingExists($id) {
-        $query = sprintf("SELECT * FROM %s WHERE `id` = :id", PETRINET_MARKING_TABLE);
+        $query = sprintf("SELECT * FROM %s WHERE `id` = :id",
+                         $_ENV['PETRINET_MARKING_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":id" => $id]);
         return !empty($statement->fetchAll());
@@ -153,7 +156,7 @@ class PetrinetRepository extends AbstractRepository {
     protected function getPlaces(int $id): PlaceContainerInterface {
         $places = new PlaceContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
-                         PETRINET_PLACE_TABLE);
+                         $_ENV['PETRINET_PLACE_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
@@ -166,7 +169,7 @@ class PetrinetRepository extends AbstractRepository {
     protected function getTransitions(int $id): TransitionContainerInterface {
         $transitions = new TransitionContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
-                         PETRINET_TRANSITION_TABLE);
+                         $_ENV['PETRINET_TRANSITION_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         foreach($statement->fetchAll() as $row) {
@@ -183,7 +186,8 @@ class PetrinetRepository extends AbstractRepository {
         $weightCol = "weight";
         // place -> transition
         $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
-                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_PT_TABLE);
+                         $fromCol, $toCol, $weightCol,
+                         $_ENV['PETRINET_FLOW_PT_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         $flows = $statement->fetchAll();
@@ -194,7 +198,8 @@ class PetrinetRepository extends AbstractRepository {
         }
         // transition -> place
         $query = sprintf("SELECT %s, %s, %s FROM %s WHERE `petrinet` = :pid",
-                         $fromCol, $toCol, $weightCol, PETRINET_FLOW_TP_TABLE);
+                         $fromCol, $toCol, $weightCol,
+                         $_ENV['PETRINET_FLOW_TP_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute([":pid" => $id]);
         $flows = $statement->fetchAll();
@@ -211,7 +216,7 @@ class PetrinetRepository extends AbstractRepository {
         $values = implode(", ", array_map(function($place) {
             return sprintf("(:pid, :%sname)", $place); }, $places->toArray()));
         $query = sprintf("INSERT INTO %s (`petrinet`, `name`) VALUES %s",
-                         PETRINET_PLACE_TABLE, $values);
+                         $_ENV['PETRINET_PLACE_TABLE'], $values);
         $statement = $this->db->prepare($query);
         $statement->bindParam(":pid", $id, PDO::PARAM_INT);
         foreach($places as $place)
@@ -224,7 +229,7 @@ class PetrinetRepository extends AbstractRepository {
         $values = implode(", ", array_map(function($trans) {
             return sprintf("(:pid, :%sname)", $trans); }, $transitions->toArray()));
         $query = sprintf("INSERT INTO %s (`petrinet`, `name`) VALUES %s",
-                         PETRINET_TRANSITION_TABLE, $values);
+                         $_ENV['PETRINET_TRANSITION_TABLE'], $values);
         $statement = $this->db->prepare($query);
         $statement->bindParam(":pid", $id, PDO::PARAM_INT);
         foreach($transitions as $trans)
@@ -256,8 +261,8 @@ class PetrinetRepository extends AbstractRepository {
         $tpValues = implode(", ", $tpValues);
         $queryFormat = "INSERT INTO %s (`petrinet`, `from_element`,"
                      . "`to_element`, `weight`) VALUES %s";
-        $ptQuery = sprintf($queryFormat, PETRINET_FLOW_PT_TABLE, $ptValues);
-        $tpQuery = sprintf($queryFormat, PETRINET_FLOW_TP_TABLE, $tpValues);
+        $ptQuery = sprintf($queryFormat, $_ENV['PETRINET_FLOW_PT_TABLE'], $ptValues);
+        $tpQuery = sprintf($queryFormat, $_ENV['PETRINET_FLOW_TP_TABLE'], $tpValues);
         $ptStatement = $this->db->prepare($ptQuery);
         $tpStatement = $this->db->prepare($tpQuery);
         $ptStatement->bindParam(":pid", $id, PDO::PARAM_INT);

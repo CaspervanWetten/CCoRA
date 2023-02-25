@@ -1,4 +1,5 @@
 <?php
+
 namespace Cora\Repository;
 
 use Cora\Domain\User\User;
@@ -18,7 +19,7 @@ class UserRepository extends AbstractRepository {
         $columns = is_null($project) ? "*" : implode(",", $project);
         $query = sprintf("SELECT DISTINCT %s FROM %s WHERE %s = :value",
                          $columns,
-                         USER_TABLE,
+                         $_ENV['USER_TABLE'],
                          $key);
         $statement = $this->db->prepare($query);
         $statement->execute([
@@ -47,7 +48,7 @@ class UserRepository extends AbstractRepository {
         int $offset = NULL
     ) {
         $columns = is_null($project) ? "*" : implode(",", $project);
-        $query = sprintf("SELECT %s FROM %s", $columns, USER_TABLE);
+        $query = sprintf("SELECT %s FROM %s", $columns, $_ENV['USER_TABLE']);
         if (!is_null($limit))
             $query .= sprintf(" LIMIT %d", $limit);
         if (!is_null($offset))
@@ -72,7 +73,7 @@ class UserRepository extends AbstractRepository {
         $this->db->beginTransaction();
         $query = sprintf(
             "INSERT INTO %s (`name`) VALUES (:name)",
-            USER_TABLE);
+            $_ENV['USER_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->bindValue(':name', $name, \PDO::PARAM_STR);
         $statement->execute();
@@ -88,7 +89,8 @@ class UserRepository extends AbstractRepository {
      */
     public function deleteUser($id) {
         $this->db->beginTransaction();
-        $query = sprintf("DELETE FROM %s WHERE `id` = :id", USER_TABLE);
+        $query = sprintf("DELETE FROM %s WHERE `id` = :id",
+                         $_ENV['USER_TABLE']);
         $statement = $this->db->prepare($query);
         $statement->execute(["id" => $id]);
         $this->commit();

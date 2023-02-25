@@ -33,7 +33,7 @@ class GetPetrinetImageService {
         $converter = new PetrinetToDot($petrinet, $marking);
         $command = sprintf('echo %s | %s -Tsvg',
                            escapeshellarg($converter->convert()),
-                           escapeshellcmd(DOT_PATH));
+                           escapeshellcmd($_ENV['DOT_PATH']));
         exec($command, $lines, $status);
         if ($status != 0)
             throw new Exception("Dot exited with non-zero status");

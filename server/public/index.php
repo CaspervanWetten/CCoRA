@@ -1,5 +1,4 @@
 <?php
-defined("CONFIG_FOLDER") or exit("No direct script access allowed.");
 
 use Slim\Factory\AppFactory;
 use Slim\Exception\HttpNotFoundException;
@@ -12,9 +11,6 @@ use Cora\Repository;
 use Cora\Handler;
 use Cora\Utils;
 
-/** load the classes via composer **/
-require_once VENDOR_FOLDER . DIRECTORY_SEPARATOR . 'autoload.php';
-
 /**************************************
 *               SLIM SETUP            *
 **************************************/
@@ -25,17 +21,17 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 /**
- * Pimple Dependency Inection Container (DIC). Holds all objects which
+ * Pimple Dependency Injection Container (DIC). Holds all objects which
  * may be used by controllers, models and so forth.
  */
 $container = $app->getContainer();
 
-$container->set('config', $config);
-
 # Register database connection
 $container->set('db', function($c) {
-    $settings = $c->get('config');
-    $pdo = Utils\DatabaseUtils::connect($settings['db']);
+    $dsn = $_ENV['DSN'];
+    $user = $_ENV['DB_USER'];
+    $pass= $_ENV['DB_PASS'];
+    $pdo = Utils\DatabaseUtils::connect($dsn, $user, $pass);
     return $pdo;
 });
 
@@ -79,11 +75,11 @@ $app->options('/{routes:.+}', function($request, $response, $args) {
 /**
  * Setup api group
  */
-$app->group('/' . API_GROUP, function($api_group) {
+$app->group('/' . $_ENV['API_GROUP'], function($api_group) {
     /**
      * All functions regarding the creation and retrieval of users
      */
-    $api_group->group('/' . USER_GROUP, function($user_group) {
+    $api_group->group('/' . $_ENV['USER_GROUP'], function($user_group) {
         // get all users
         $user_group->get(
             '/{id:[0-9]+}', Handler\User\GetUser::class
@@ -98,7 +94,7 @@ $app->group('/' . API_GROUP, function($api_group) {
     /**
      * All functions regarding the registration and retrieval of petrinets
      */
-    $api_group->group('/' . PETRINET_GROUP, function($petri_group) {
+    $api_group->group('/' . $_ENV['PETRINET_GROUP'], function($petri_group) {
         $petri_group->get(
             '/{petrinet_id:[0-9]+}', Handler\Petrinet\GetPetrinet::class
         )->setName("getPetrinet");
@@ -119,7 +115,7 @@ $app->group('/' . API_GROUP, function($api_group) {
     /**
      * All functions regarding session management
      */
-    $api_group->group('/' . SESSION_GROUP, function($session_group) {
+    $api_group->group('/' . $_ENV['SESSION_GROUP'], function($session_group) {
         $session_group->post(
             '/current', Handler\Session\GetCurrentSession::class
         )->setName("getCurrentSession");

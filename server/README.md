@@ -30,11 +30,10 @@ yourself. In the `deploy/` folder an sql-file is included containing commands
 to set up the database tables.
 
 ## Configuration 
-All of the configuration takes place in the files in the `config/`
-folder. The only file that you **need** to set up is the
-`database.php` file. In this file you have to specify the database's
-dsn, user and password. All other settings aim to be sensible
-defaults.
+CoRA is configured with an environment file. To configure the application, copy
+the `.env.example` file and call it `.env`. Edit the file to fit your needs. The
+example provides sensible defaults for almost all variables. The only thing you
+**must** configure is the connection with the database.
 
 # Api
 Currently CoRA can only return responses in JSON format, with the only

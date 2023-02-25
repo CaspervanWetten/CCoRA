@@ -5,7 +5,8 @@
         "willdurand/negotiation": "^3.0",
         "guzzlehttp/psr7": "^2",
         "php-di/php-di": "^7.0",
-        "tuupola/cors-middleware": "^1.4"
+        "tuupola/cors-middleware": "^1.4",
+        "vlucas/phpdotenv": "*"
     },
     "autoload": {
         "psr-4": {
