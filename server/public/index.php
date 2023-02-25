@@ -1,5 +1,7 @@
 <?php
 
+use Psr\Container\ContainerInterface;
+
 use Slim\Factory\AppFactory;
 use Slim\Exception\HttpNotFoundException;
 
@@ -21,31 +23,16 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 /**
- * Pimple Dependency Injection Container (DIC). Holds all objects which
- * may be used by controllers, models and so forth.
+ * Dependency Injection Container (DIC). Holds all objects which may be used by
+ * controllers, models and so forth.
  */
 $container = $app->getContainer();
 
-# Register database connection
-$container->set('db', function($c) {
-    $dsn = $_ENV['DSN'];
+$container->set(\PDO::class, function(ContainerInterface $container) {
+    $dsn  = $_ENV['DSN'];
     $user = $_ENV['DB_USER'];
-    $pass= $_ENV['DB_PASS'];
-    $pdo = Utils\DatabaseUtils::connect($dsn, $user, $pass);
-    return $pdo;
-});
-
-// Register the repositories
-$container->set(Repository\UserRepository::class, function($c) {
-    return new Repository\UserRepository($c->get('db'));
-});
-
-$container->set(Repository\PetrinetRepository::class, function($c) {
-    return new Repository\PetrinetRepository($c->get('db'));
-});
-
-$container->set(Repository\SessionRepository::class, function($c) {
-    return new Repository\SessionRepository($c->get('db'));
+    $pass = $_ENV['DB_PASS'];
+    return Utils\DatabaseUtils::connect($dsn, $user, $pass);
 });
 
 /**************************************
