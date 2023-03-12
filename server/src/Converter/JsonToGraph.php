@@ -11,8 +11,7 @@ use Cora\Domain\Petrinet\Place\Place;
 use Cora\Domain\Petrinet\Marking\MarkingBuilder;
 use Cora\Domain\Petrinet\Marking\Tokens\IntegerTokenCount;
 use Cora\Domain\Petrinet\Marking\Tokens\OmegaTokenCount;
-
-use Exception;
+use Cora\Exception\BadInputException;
 
 class JsonToGraph extends Converter {
     protected $json;
@@ -27,7 +26,8 @@ class JsonToGraph extends Converter {
         $json = $this->json;
         if (!array_key_exists("states", $json) ||
             !array_key_exists("edges", $json))
-            throw new Exception("Could not parse graph: incorrect format");
+            throw new BadInputException(
+                "Could not parse graph: incorrect format");
 
         $builder = new GraphBuilder($this->petrinet);
         $this->addVertexes($builder);
@@ -42,7 +42,8 @@ class JsonToGraph extends Converter {
         foreach($states as $stateA) {
             if (!array_key_exists("state", $stateA) ||
                 !array_key_exists("id", $stateA))
-                throw new Exception("Could not parse graph: incorrect format");
+                throw new BadInputException(
+                    "Could not parse graph: incorrect format");
             $vertexId = intval($stateA["id"]);
             $marking = $this->stringToMarking($stateA["state"]);
             $builder->addVertex($vertexId, $marking);
@@ -56,7 +57,8 @@ class JsonToGraph extends Converter {
                 !array_key_exists("toId", $edgeA) ||
                 !array_key_exists("transition", $edgeA) ||
                 !array_key_exists("id", $edgeA))
-                throw new Exception("Could not parse graph: invalid format");
+                throw new BadInputException(
+                    "Could not parse graph: incorrect format");
             $from = intval($edgeA["fromId"]);
             $to = intval($edgeA["toId"]);
             $transition = trim($edgeA["transition"]);
@@ -70,7 +72,8 @@ class JsonToGraph extends Converter {
         $json = $this->json;
         if (array_key_exists("initial", $json)) {
             if (!array_key_exists("id", $json["initial"]))
-                throw new Exception("Could not parse graph: incorrect format");
+                throw new BadInputException(
+                    "Could not parse graph: incorrect format");
             if (is_null($json["initial"]["id"]))
                 $builder->setInitial(NULL);
             else {

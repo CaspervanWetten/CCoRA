@@ -10,7 +10,7 @@ use Cora\Domain\Petrinet\Marking\Tokens\IntegerTokenCount;
 use Cora\Domain\Petrinet\Marking\MarkingBuilder;
 use Cora\Domain\Petrinet\MarkedPetrinet;
 
-use Exception;
+use Cora\Exception\BadInputException;
 
 class LolaToPetrinet extends Converter {
     protected $lola;
@@ -42,7 +42,7 @@ class LolaToPetrinet extends Converter {
         }
         $petrinet = $builder->getPetrinet();
         if (is_null($markingLine))
-            throw new Exception("Could not parse Lola: no marking");
+            throw new BadInputException("Could not parse Lola: no marking");
         $marking = $this->parseMarking($markingLine, $petrinet);
         return new MarkedPetrinet($petrinet, $marking);
     }

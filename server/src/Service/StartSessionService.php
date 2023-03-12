@@ -6,9 +6,7 @@ use Cora\Repository\SessionRepository as SessionRepo;
 use Cora\Repository\PetrinetRepository as PetriRepo;
 use Cora\Repository\UserRepository as UserRepo;
 
-use Cora\Exception\UserNotFoundException;
-use Cora\Exception\PetrinetNotFoundException;
-use Cora\Exception\MarkingNotFoundException;
+use Cora\Exception\NotFoundException;
 
 class StartSessionService {
     private $userRepository, $petrinetRepository, $sessionRepository;
@@ -25,13 +23,13 @@ class StartSessionService {
         $mid = filter_var($mid, FILTER_SANITIZE_NUMBER_INT);
 
         if (!$this->userRepository->userExists("id", $uid))
-            throw new UserNotFoundException(
+            throw new NotFoundException(
                 "Could not start session: user does not exist");
         if (!$this->petrinetRepository->petrinetExists($pid))
-            throw new PetrinetNotFoundException(
+            throw new NotFoundException(
                 "Could not start session: Petri net does not exist");
         if (!$this->petrinetRepository->markingExists($mid))
-            throw new MarkingNotFoundException(
+            throw new NotFoundException(
                 "Could not start session: Marking does not exist");
 
         return $this->sessionRepository->createNewSession($uid, $pid, $mid);

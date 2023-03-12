@@ -7,10 +7,7 @@ use Cora\Domain\Session\SessionLog;
 use Cora\Domain\Session\MetaSessionLog;
 use Cora\Domain\Graph\GraphInterface as IGraph;
 
-use Cora\Exception\NoSessionException;
-use Cora\Exception\NoSessionLogException;
-use Cora\Exception\NoMetaLogException;
-use Cora\Exception\InvalidSessionException;
+use Cora\Exception\NotFoundException;
 
 class SessionRepository extends AbstractRepository {
     public function getCurrentSession(int $userId): Session {
@@ -26,7 +23,7 @@ class SessionRepository extends AbstractRepository {
     ): Session {
         try {
             $metaLog = $this->getMetaLog($userId);
-        } catch (NoMetaLogException $e) {
+        } catch (NotFoundException $e) {
             $metaLog = $this->createMetaLog($userId);
         }
         $sessionId = $metaLog->getSessionCount();
@@ -64,8 +61,8 @@ class SessionRepository extends AbstractRepository {
     public function getMetaLog(int $userId): MetaSessionLog {
         $logPath = $this->getMetaLogPath($userId);
         if (!file_exists($logPath))
-            throw new NoMetaLogException(
-                "User with id $userId does not have any sessions");
+            throw new NotFoundException(
+                "User with id=$userId does not have any sessions");
         $array = json_decode(file_get_contents($logPath), TRUE);
         return new MetaSessionLog(
             intval($array["user_id"]),
@@ -74,9 +71,11 @@ class SessionRepository extends AbstractRepository {
 
     public function getSessionLog(int $userId, int $sessionId): SessionLog {
         $logPath = $this->getSessionLogPath($userId, $sessionId);
-        if (!file_exists($logPath))
-            throw new NoSessionLogException(
-                "User $userId does not have a session with id $sessionId");
+        if (!file_exists($logPath)) {
+            $message = "User with id=$userId does not have a session "
+                     . "with id=$sessionId";
+            throw new NotFoundException($message);
+        }
         $array = json_decode(file_get_contents($logPath), TRUE);
         return new SessionLog(
             intval($array["session_id"]),

@@ -9,9 +9,9 @@ use Cora\Domain\Petrinet\Place\Place;
 use Cora\Domain\Petrinet\Transition\Transition;
 use Cora\Domain\Petrinet\Flow\Flow;
 use Cora\Domain\Petrinet\Marking\MarkingBuilder;
+use Cora\Exception\BadInputException;
 
 use Ds\Map;
-use Exception;
 
 class PetrinetTranslator extends Converter {
     protected $markedPetrinet;
@@ -74,8 +74,8 @@ class PetrinetTranslator extends Converter {
                 $newFlow = new Flow($this->transitionTranslations->get($from),
                                     $this->placeTranslations->get($to));
             else
-                throw new Exception("Could not translate flows: " .
-                                    "misformed translations");
+                throw new BadInputException("Could not translate flows: " .
+                                            "misformed translations");
             $this->petrinetBuilder->addFlow($newFlow, $weight);
         }
     }

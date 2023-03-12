@@ -7,7 +7,7 @@ use Cora\Domain\Petrinet\PetrinetInterface as IPetrinet;
 use Cora\Domain\Petrinet\Marking\MarkingInterface as IMarking;
 use Cora\Repository\PetrinetRepository;
 
-use Cora\Exception\PetrinetNotFoundException;
+use Cora\Exception\NotFoundException;
 
 class GetPetrinetImageService {
     private $repository;
@@ -19,13 +19,19 @@ class GetPetrinetImageService {
     public function get(int $pid, ?int $mid) {
         $pid = filter_var($pid, FILTER_SANITIZE_NUMBER_INT);
         if (!$this->repository->petrinetExists($pid))
-            throw new PetrinetNotFoundException(
-                "A Petri net with this id does not exist");
+            throw new NotFoundException(
+                "A Petri net with id=$pid does not exist");
         $mid = filter_var($mid, FILTER_SANITIZE_NUMBER_INT);
         $marking = NULL;
         $petrinet = $this->repository->getPetrinet($pid);
-        if ($this->repository->markingExists($mid))
+
+        if (!is_null($mid)) {
             $marking = $this->repository->getMarking($mid, $petrinet);
+            if (is_null($marking))
+                throw new NotFoundException(
+                    "Could not find marking with id=$mid");
+        }
+
         return $this->generateImage($petrinet, $marking);
     }
 

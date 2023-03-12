@@ -4,7 +4,9 @@ namespace Cora\Handler\Session;
 
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+
 use Slim\Exception\HttpNotFoundException;
+use Slim\Exception\HttpBadRequestException;
 
 use Cora\Handler\AbstractHandler;
 use Cora\Service\GetSessionService;
@@ -16,7 +18,7 @@ class GetCurrentSession extends AbstractHandler {
         $parsedBody = $request->getParsedBody();
         $userId = $parsedBody["user_id"] ?? NULL;
         if (is_null($userId))
-            throw new HttpNotFoundException($request, "No user id supplied");
+            throw new HttpBadRequestException($request, "No user id supplied");
 
         $service = $this->container->get(GetSessionService::class);
         $result = $service->get($userId);

@@ -8,8 +8,8 @@ use Slim\Exception\HttpNotFoundException;
 use DI\Container;
 
 use Tuupola\Middleware\CorsMiddleware;
+use Cora\Middleware\HttpErrorMiddleware;
 
-use Cora\Repository;
 use Cora\Handler;
 use Cora\Utils;
 
@@ -41,9 +41,17 @@ $container->set(\PDO::class, function(ContainerInterface $container) {
 
 $app->addBodyParsingMiddleware();
 $app->addRoutingMiddleware();
-$app->addErrorMiddleware(true, true, true);
 
-$app->add(new CorsMiddleware([
+$errorHandlerMiddleware = new HttpErrorMiddleware(
+    $app->getCallableResolver(),
+    $app->getResponseFactory(),
+    false,
+    true,
+    true
+);
+$app->addMiddleware($errorHandlerMiddleware);
+
+$app->addMiddleware(new CorsMiddleware([
     "origin"        => ["*"],
     "methods"       => ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     "headers.allow" => ["Content-Type", "Accept", "Origin",

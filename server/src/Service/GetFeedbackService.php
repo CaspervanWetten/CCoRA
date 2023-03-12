@@ -7,7 +7,7 @@ use Cora\Repository\PetrinetRepository;
 use Cora\Repository\SessionRepository;
 use Cora\SystemChecker\CheckCoverabilityGraph;
 
-use Cora\Exception\InvalidSessionException;
+use Cora\Exception\NotFoundException;
 
 class GetFeedbackService {
     private $petrinetRepository, $sessionRepository;
@@ -21,8 +21,11 @@ class GetFeedbackService {
         $userId    = intval(filter_var($userId, FILTER_SANITIZE_NUMBER_INT));
         $sessionId = intval(filter_var($sessionId, FILTER_SANITIZE_NUMBER_INT));
 
-        if (!$this->sessionRepository->sessionExists($userId, $sessionId))
-            throw new InvalidSessionException("The session id is invalid");
+        if (!$this->sessionRepository->sessionExists($userId, $sessionId)) {
+            $message = "No session with id=$sessionId exists for user with "
+                     . "id=$userId";
+            throw new NotFoundException($message);
+        }
 
         $log        = $this->sessionRepository->getSessionLog($userId, $sessionId);
         $petrinetId = $log->getPetrinetId();

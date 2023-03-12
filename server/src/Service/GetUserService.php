@@ -3,7 +3,7 @@
 namespace Cora\Service;
 
 use Cora\Repository\UserRepository;
-use Cora\Exception\UserNotFoundException;
+use Cora\Exception\NotFoundException;
 
 class GetUserService {
     protected $repository;
@@ -15,6 +15,11 @@ class GetUserService {
     public function getUser($id) {
         $id = filter_var($id, FILTER_SANITIZE_NUMBER_INT);
         $user = $this->repository->getUser('id', $id);
+
+        if (is_null($user)) {
+            throw new NotFoundException("Could not find user with id=$id");
+        }
+
         return $user;
     }
 }

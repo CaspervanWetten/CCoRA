@@ -4,6 +4,8 @@ namespace Cora\Service;
 
 use Cora\Domain\Petrinet\Marking\MarkingBuilder;
 use Cora\Domain\Petrinet\MarkedPetrinet;
+use Cora\Exception\NotFoundException;
+
 use Cora\Repository\PetrinetRepository;
 
 class GetPetrinetService {
@@ -20,8 +22,14 @@ class GetPetrinetService {
 
         if (is_null($petrinet))
             return NULL;
-        if (!is_null($mid))
+        if (!is_null($mid)) {
             $marking = $this->repository->getMarking($mid, $petrinet);
+            if (is_null($marking)) {
+                throw new NotFoundException("Could not find marking with " .
+                                            "id=$mid for Petri net with " .
+                                            "id=$pid");
+            }
+        }
         if (is_null($mid) || is_null($marking))
             $marking = $this->getEmptyMarking($petrinet);
 

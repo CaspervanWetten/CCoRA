@@ -21,9 +21,6 @@ class GetUser extends AbstractHandler {
         $service = $this->container->get(GetUserService::class);
         $user = $service->getUser($id);
 
-        if (is_null($user)) throw new HttpNotFoundException(
-            $request, "No user found for this id");
-
         $view = $this->getView();
         $view->setUser($user);
         $response->getBody()->write($view->render());
