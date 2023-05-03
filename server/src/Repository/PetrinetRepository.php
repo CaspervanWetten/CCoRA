@@ -23,6 +23,8 @@ use PDO;
 
 class PetrinetRepository extends AbstractRepository {
     public function getPetrinet($id): ?IPetrinet {
+        $this->logger->info("getting petri net", ["id" => $id]);
+
         if (!$this->petrinetExists($id))
             return NULL;
         $builder = new PetrinetBuilder();
@@ -34,8 +36,12 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     public function getMarking(int $mid, IPetrinet $p): ?IMarking {
-        if (!$this->markingExists($mid))
+        $this->logger->info("getting marking", ["id" => $mid]);
+
+        if (!$this->markingExists($mid)) {
+            $this->logger->error("Unable to retrieve marking", ["id" => $mid]);
             return NULL;
+        }
 
         $query = sprintf(
             "SELECT `place`, `tokens` FROM %s WHERE marking = :mid",
@@ -52,6 +58,9 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     public function getMarkings(int $pid) {
+        $this->logger->info("getting all markings for petrinet",
+                            ["petrinet_id" => $pid]);
+
         $query = sprintf(
             "SELECT `id` FROM %s WHERE `petrinet` = :pid",
             $_ENV['PETRINET_MARKING_TABLE']);
@@ -61,6 +70,9 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     public function getPetrinets(int $limit = 0, int $offset = 0) {
+        $this->logger->info("getting petri nets",
+                            ["limit" => $limit, "offset" => $offset]);
+
         $query = sprintf("SELECT `id`, `name` FROM %s",
                          $_ENV['PETRINET_TABLE']);
         if ($limit > 0)
@@ -78,6 +90,8 @@ class PetrinetRepository extends AbstractRepository {
         $user,
         ?string $name=NULL
     ): MarkedPetrinetRegisteredResult {
+        $this->logger->info("saving marked petri net");
+
         $petrinetId = $this->savePetrinet($pet, $user, $name);
         $markingId = $this->saveMarking($marking, $petrinetId);
         return new MarkedPetrinetRegisteredResult($petrinetId, $markingId);
@@ -88,6 +102,8 @@ class PetrinetRepository extends AbstractRepository {
         $user,
         ?string $name=NULL
     ): int {
+        $this->logger->info("saving petri net", ["name" => $name]);
+
         $this->db->beginTransaction();
         if (is_null($name))
             $name = sprintf("%s-%s", $user, date("Y-m-d-H:i:s"));
@@ -114,6 +130,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     public function saveMarking(IMarking $marking, int $pid) {
+        $this->logger->info("saving marking", ["petrinet_id" => $pid]);
+
         // insert meta information
         $query = sprintf("INSERT INTO %s (`petrinet`) VALUES (:pid)",
                          $_ENV['PETRINET_MARKING_TABLE']);
@@ -154,6 +172,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function getPlaces(int $id): PlaceContainerInterface {
+        $this->logger->info("getting places", ["petrinet_id" => $id]);
+
         $places = new PlaceContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          $_ENV['PETRINET_PLACE_TABLE']);
@@ -167,6 +187,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function getTransitions(int $id): TransitionContainerInterface {
+        $this->logger->info("getting transitions", ["petrinet_id" => $id]);
+
         $transitions = new TransitionContainer();
         $query = sprintf("SELECT `name` FROM %s WHERE petrinet = :pid",
                          $_ENV['PETRINET_TRANSITION_TABLE']);
@@ -180,6 +202,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function getFlows(int $id): FlowMapInterface {
+        $this->logger->info("getting flows", ["petrinet_id" => $id]);
+
         $flowMap = new FlowMap();
         $fromCol   = "from_element";
         $toCol     = "to_element";
@@ -212,6 +236,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function savePlaces(IPetrinet $petrinet, int $id) {
+        $this->logger->info("saving places", ["petrinet_id" => $id]);
+
         $places = $petrinet->getPlaces();
         $values = implode(", ", array_map(function($place) {
             return sprintf("(:pid, :%sname)", $place); }, $places->toArray()));
@@ -225,6 +251,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function saveTransitions(IPetrinet $petrinet, int $id) {
+        $this->logger->info("saving transitions", ["petrinet_id" => $id]);
+
         $transitions = $petrinet->getTransitions();
         $values = implode(", ", array_map(function($trans) {
             return sprintf("(:pid, :%sname)", $trans); }, $transitions->toArray()));
@@ -238,6 +266,8 @@ class PetrinetRepository extends AbstractRepository {
     }
 
     protected function saveFlows(IPetrinet $petrinet, int $id) {
+        $this->logger->info("saving flows", ["petrinet_id" => $id]);
+
         $places = $petrinet->getPlaces();
         $transitions = $petrinet->getTransitions();
         $flows = $petrinet->getFlows();

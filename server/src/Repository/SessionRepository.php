@@ -21,6 +21,11 @@ class SessionRepository extends AbstractRepository {
         int $petrinetId,
         int $markingId
     ): Session {
+        $this->logger->info("starting new session",
+                            ["user_id"     => $userId,
+                             "petrinet_id" => $petrinetId,
+                             "marking_id"  => $markingId]);
+
         try {
             $metaLog = $this->getMetaLog($userId);
         } catch (NotFoundException $e) {
@@ -45,6 +50,9 @@ class SessionRepository extends AbstractRepository {
         int $sessionId,
         IGraph $graph
     ) {
+        $this->logger->info("appending graph", ["user_id" => $userId,
+                                                "session_id" => $sessionId]);
+
         $sessionLog = $this->getSessionLog($userId, $sessionId);
         $sessionLog->addGraph($graph);
         $this->writeSessionLog($sessionLog);
@@ -59,6 +67,8 @@ class SessionRepository extends AbstractRepository {
     }
 
     public function getMetaLog(int $userId): MetaSessionLog {
+        $this->logger->info("getting meta log", ["user_id" => $userId]);
+
         $logPath = $this->getMetaLogPath($userId);
         if (!file_exists($logPath))
             throw new NotFoundException(
@@ -70,6 +80,9 @@ class SessionRepository extends AbstractRepository {
     }
 
     public function getSessionLog(int $userId, int $sessionId): SessionLog {
+        $this->logger->info("getting session log",
+                            ["user_id" => $userId, "session_id" => $sessionId]);
+
         $logPath = $this->getSessionLogPath($userId, $sessionId);
         if (!file_exists($logPath)) {
             $message = "User with id=$userId does not have a session "
@@ -87,6 +100,8 @@ class SessionRepository extends AbstractRepository {
     }
 
     protected function createMetaLog(int $userId): MetaSessionLog {
+        $this->logger->info("creating meta log", ["user_id" => $userId]);
+
         return new MetaSessionLog($userId);
     }
 
@@ -96,17 +111,28 @@ class SessionRepository extends AbstractRepository {
         int $markingId,
         int $sessionId
     ): SessionLog {
+        $this->logger->info("creating new session log",
+                            ["user_id"     => $userId,
+                             "petrinet_id" => $petrinetId,
+                             "marking_id"  => $markingId,
+                             "session_id"  => $sessionId]);
+
         return new SessionLog($sessionId, $userId, $petrinetId, $markingId);
     }
 
     protected function writeMetaLog(MetaSessionLog $log): void {
         $path = $this->getMetaLogPath($log->getUserId());
         file_put_contents($path, json_encode($log), LOCK_EX);
+
+        $this->logger->info("wrote meta log", ["user_id", $log->getUserId()]);
     }
 
     protected function writeSessionLog(SessionLog $log): void {
         $path = $this->getSessionLogPath($log->getUserId(), $log->getSessionId());
         file_put_contents($path, json_encode($log), LOCK_EX);
+
+        $this->logger->info("wrote session log", ["user_id"    => $log->getUserId(),
+                                                  "session_id" => $log->getSessionId()]);
     }
 
     protected function getMetaLogPath(int $userId) {

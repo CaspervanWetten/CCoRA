@@ -6,7 +6,8 @@
         "guzzlehttp/psr7": "^2",
         "php-di/php-di": "^7.0",
         "tuupola/cors-middleware": "^1.4",
-        "vlucas/phpdotenv": "*"
+        "vlucas/phpdotenv": "*",
+        "monolog/monolog": "^3.3"
     },
     "autoload": {
         "psr-4": {

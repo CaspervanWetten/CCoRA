@@ -16,6 +16,8 @@ class UserRepository extends AbstractRepository {
      * @return array the user as an assoc array
      */
     public function getUser(string $key, $value, array $project=NULL) {
+        $this->logger->info("getting user", ["key" => $key, "value" => $value]);
+
         $columns = is_null($project) ? "*" : implode(",", $project);
         $query = sprintf("SELECT DISTINCT %s FROM %s WHERE %s = :value",
                          $columns,
@@ -47,6 +49,9 @@ class UserRepository extends AbstractRepository {
         int $limit = NULL,
         int $offset = NULL
     ) {
+        $this->logger->info("getting users", ["limit" => $limit,
+                                              "offset" => $offset]);
+
         $columns = is_null($project) ? "*" : implode(",", $project);
         $query = sprintf("SELECT %s FROM %s", $columns, $_ENV['USER_TABLE']);
         if (!is_null($limit))
@@ -70,6 +75,8 @@ class UserRepository extends AbstractRepository {
      * @return int the id for the inserted user
      */
     public function saveUser($name) {
+        $this->logger->info("creating new user", ["name" => $name]);
+
         $this->db->beginTransaction();
         $query = sprintf(
             "INSERT INTO %s (`name`) VALUES (:name)",
@@ -88,7 +95,9 @@ class UserRepository extends AbstractRepository {
      * @return void
      */
     public function deleteUser($id) {
-        $this->db->beginTransaction();
+        $this->logger->info("deleting user", ["id" => $id]);
+
+       $this->db->beginTransaction();
         $query = sprintf("DELETE FROM %s WHERE `id` = :id",
                          $_ENV['USER_TABLE']);
         $statement = $this->db->prepare($query);

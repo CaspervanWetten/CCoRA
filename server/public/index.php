@@ -1,11 +1,17 @@
 <?php
 
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 use Slim\Factory\AppFactory;
 use Slim\Exception\HttpNotFoundException;
 
 use DI\Container;
+
+use Monolog\Logger;
+use Monolog\Level as LogLevel;
+use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
 
 use Tuupola\Middleware\CorsMiddleware;
 use Cora\Middleware\HttpErrorMiddleware;
@@ -28,11 +34,20 @@ $app = AppFactory::create();
  */
 $container = $app->getContainer();
 
-$container->set(\PDO::class, function(ContainerInterface $container) {
+$container->set(\PDO::class, function(ContainerInterface $c) {
     $dsn  = $_ENV['DSN'];
     $user = $_ENV['DB_USER'];
     $pass = $_ENV['DB_PASS'];
     return Utils\DatabaseUtils::connect($dsn, $user, $pass);
+});
+
+$container->set(LoggerInterface::class, function(ContainerInterface $c) {
+    $logger = new Logger('logger');
+    $formatter = new LineFormatter();
+    $streamHandler = new StreamHandler('log/production.log');
+    $streamHandler->setFormatter($formatter);
+    $logger->pushHandler($streamHandler);
+    return $logger;
 });
 
 /**************************************
@@ -47,7 +62,8 @@ $errorHandlerMiddleware = new HttpErrorMiddleware(
     $app->getResponseFactory(),
     false,
     true,
-    true
+    true,
+    $container->get(LoggerInterface::class)
 );
 $app->addMiddleware($errorHandlerMiddleware);
 
