@@ -1,0 +1,25 @@
+.loader {
+    display: block;
+    width: 5em;
+    height: 5em;
+    padding: 1em; 
+    margin: 1em;
+    background: transparent;
+    border-width: .75em;
+    border-top-color: grey;
+    border-left-color: lightgrey;
+    border-right-color: lightgrey;
+    border-bottom-color: grey;
+    border-style: solid;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}

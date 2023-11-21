@@ -1,0 +1,56 @@
+{
+  "name": "cmod",
+  "version": "1.0.0",
+  "description": "Alternative modeller for the Coverability Graph Assistant (CoRA)",
+  "private": true,
+  "scripts": {
+    "start": "NODE_ENV=development webpack-dev-server --mode development --progress --color --hot",
+    "build": "NODE_ENV=production webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukasios12/cmod.git"
+  },
+  "keywords": [
+    "modeller",
+    "coverbability",
+    "graphs",
+    "petrinets",
+    "cora"
+  ],
+  "author": "Lucas Steehouwer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lukasios12/cmod/issues"
+  },
+  "homepage": "https://github.com/lukasios12/cmod#readme",
+  "devDependencies": {
+    "@types/node": "^11.15.16",
+    "css-loader": "^2.1.1",
+    "html-webpack-plugin": "^3.2.0",
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^7.3.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.4.5",
+    "typescript": "^3.9.5",
+    "vue-class-component": "^7.2.3",
+    "vue-loader": "^15.9.2",
+    "vue-property-decorator": "^8.5.1",
+    "vue-template-compiler": "^2.6.11",
+    "vue-template-loader": "^1.1.0",
+    "vuex-module-decorators": "^0.9.11",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0",
+    "webpack-stream": "^5.2.1"
+  },
+  "dependencies": {
+    "10": "0.0.1",
+    "axios": "^0.18.1",
+    "vue": "^2.6.11",
+    "vue-focus": "^2.1.0",
+    "vue-multipane": "^0.9.5",
+    "vuex": "^3.4.0"
+  }
+}

@@ -1,0 +1,53 @@
+@import "src/components/variables.scss";
+@import "src/components/colors.scss";
+
+.modeller {
+    height: $modellerHeight;
+    width: 100%;
+    z-index: 1;
+
+    & > .pane {
+        background: white;
+        overflow: visible;
+
+        &.right {
+            flex-grow: 1;
+        }
+    }
+
+    & > .resizer {
+        background: lightgrey;
+        left: 0 !important; 
+        margin-left: 0 !important;
+        width: $dividerWidth !important;
+        z-index: 1;
+
+        &:before {
+            content: "";
+            display: block;
+            width: $resizerWidth;
+            height: $resizerHeight;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            background: darkgrey;
+            text-align: center;
+            transform: translate(-50%, -50%);
+            border-radius: 5px;
+        }
+    }
+
+    &.is-resizing {
+        & > .pane {
+            overflow: hidden;
+        }
+        
+        & > .resizer {
+            background: darkgrey;
+
+            &:before {
+                background: grey;
+            }
+        }
+    }
+}

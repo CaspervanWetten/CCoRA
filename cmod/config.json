@@ -1,0 +1,6 @@
+{
+    "API_URL": "http://localhost:7000/api/",
+    "SHOW_SUCCESS_MESSAGE": true,
+    "SHOW_QUESTIONNAIRE_MESSAGE": true,
+    "QUESTIONNAIRE_URL": ""
+}

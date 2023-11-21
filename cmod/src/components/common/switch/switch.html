@@ -1,0 +1,9 @@
+<div class="switch" v-bind:class="{ on: isOn(), off: isOff() }">
+    <div class="description left">
+        {{ descriptionOff }}
+    </div>
+    <div @click="toggle" class="input"></div>
+    <div class="description right">
+        {{ descriptionOn }}
+    </div>
+</div>

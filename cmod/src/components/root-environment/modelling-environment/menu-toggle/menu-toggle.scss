@@ -1,0 +1,84 @@
+@import "src/components/variables.scss";
+@import "src/components/colors.scss";
+
+.menu-toggle {
+    display: block;
+    position: absolute;
+    width: $menuToggleWidth;
+    height: $menuToggleHeight;
+    top: 0;
+    left: $menuToggleLeft;
+    background: transparent;
+    
+    z-index: 5;
+}
+
+.menu-toggle:hover {
+    background: rgba(0, 0, 0, .2);
+    cursor: pointer;
+}
+
+.menu-toggle .bar {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: .5em;
+    width: 2.5em;
+    height: .25em;
+    background: $white;
+    transform: translateY(-50%);
+    transition-property: background;
+    transition-duration: 0s;
+    transition-delay: $menuTransitionDuration / 2;
+    border-radius: 5px;
+}
+
+.menu-toggle .bar::before {
+    display: block;
+    position: relative;
+    content: "";
+    top: -0.75em;
+    left: 0em;
+    width: 2.5em;
+    height: .25em;
+    background: $white;
+    transition-property: top, transform;
+    transition-duration: $menuTransitionDuration / 2, $menuTransitionDuration / 2;
+    transition-delay: $menuTransitionDuration / 2, 0s;
+    border-radius: 5px;
+}
+
+.menu-toggle .bar::after {
+    display: block;
+    position: relative;
+    content: "";
+    top: .5em;
+    left: 0em;
+    width: 2.5em;
+    height: .25em;
+    background: $white;
+    transition-property: top, transform;
+    transition-duration:  $menuTransitionDuration / 2,  $menuTransitionDuration / 2;
+    transition-delay:  $menuTransitionDuration / 2, 0s;
+    border-radius: 5px;
+}
+
+.menu-toggle.open {
+    position: fixed;
+}
+
+.menu-toggle.open .bar {
+    background: transparent;
+}
+
+.menu-toggle.open .bar::before {
+    top: 0;
+    transform: rotate(45deg);
+    transition-delay: 0s,  $menuTransitionDuration / 2;
+}
+
+.menu-toggle.open .bar::after {
+    top: -0.25em;
+    transform: rotate(-45deg);
+    transition-delay: 0s,  $menuTransitionDuration / 2;
+}

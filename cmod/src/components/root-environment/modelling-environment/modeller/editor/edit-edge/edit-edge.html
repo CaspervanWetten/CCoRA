@@ -1,0 +1,11 @@
+<div class="editorMenu editEdge" :style="styleObject" v-show="show">
+    <div class="input">
+        <select v-model="label" v-focus="true" @keydown.enter.prevent="confirm">
+            <option v-for="lab in labels">{{ lab }}</option>
+        </select>
+    </div>
+    <div class="buttons">
+        <button @click="cancel" class="cancel">Cancel</button>
+        <button @click="confirm" class="confirm">Confirm</button>
+    </div>
+</div>

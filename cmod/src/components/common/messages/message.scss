@@ -1,0 +1,53 @@
+.message {
+    display: flex;
+    position: relative;
+    align-items: center;
+    width: 100%;
+    padding: .5em;
+    margin: 1rem 0rem;
+    font-size: 1em;
+
+    & > .icon {
+        display: block;
+        width: 2em;
+        height: 2em;
+        margin-right: .5em;
+        line-height: 2em;
+        font-size: 1.5em;
+        font-weight: bold;
+        text-align: center;
+        border-width: 2px;
+        border-style: solid;
+    }
+
+    & > .payload {
+        display: block;
+        flex: 80;
+    }
+
+    & > .buttonRow {
+        display: flex;
+        flex-direction: row-reverse;
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: initial;
+        height: 2em;
+        background: transparent;
+
+        & > button {
+            display: block;
+            width: 2em;
+            line-height: 1em;
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+
+            &:hover {
+                background: #D8000C;
+                color: white;
+                cursor: pointer;
+            }
+        }
+    }
+}

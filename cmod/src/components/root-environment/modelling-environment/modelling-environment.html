@@ -1,0 +1,8 @@
+<div>
+    <modeller-menu-toggle v-on:menu-toggle="toggleMenu" v-bind:isOpen="menuOpen"></modeller-menu-toggle>
+    <modeller-menu v-bind:isOpen="menuOpen"></modeller-menu>
+    <modeller-header></modeller-header>
+    <modeller></modeller>
+    <modeller-tutorial v-show="showTutorial" @close="toggleTutorial"/>
+    <modeller-success v-if="showSuccess" @close="toggleSuccess"/>
+</div>

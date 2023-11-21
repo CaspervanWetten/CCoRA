@@ -1,1 +1,0 @@
-/// <reference path='./URLGenerator.ts'/>

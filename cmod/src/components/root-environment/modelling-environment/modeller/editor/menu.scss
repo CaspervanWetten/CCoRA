@@ -1,0 +1,71 @@
+@import "src/components/colors.scss";
+
+.editorMenu {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    background: $white;
+    border: 1px solid $darkGrey;
+    box-shadow: 4px 4px 2px 0 rgba(0, 0, 0, .3);
+    z-index: 3;
+
+    & input {
+        &[type="text"] {
+            display: block;
+            width: 100%;
+            margin: .5em 0;
+            padding: .25em;
+        }
+    }
+
+    & select {
+        display: block;
+        width: 100%;
+        padding: .25em .5em;
+    }
+
+    & > .input {
+        border-bottom: 1px solid $darkGrey;
+    }
+
+    & > .buttons {
+        display: flex;
+        padding: .5em;
+
+        & > button {
+            flex: 1;
+            margin: 0 1em;
+            padding: .5em;
+            color: $black;
+            font-weight: bold;
+            border: 0;
+            border-radius: 10px;
+            cursor: pointer;
+
+            &.confirm {
+                background: $orange;
+
+                &:hover {
+                    background: $darkOrange;
+                }
+            }
+
+            &.cancel {
+                color: $darkBlue;
+                background: transparent;
+
+                &:hover {
+                    background: rgba(0, 0, 0, .2);
+                }
+            }
+
+            &:first-child {
+                margin-left: 0;
+            }
+
+            &:last-child {
+                margin-right: 0;
+            }
+        }
+    }
+}

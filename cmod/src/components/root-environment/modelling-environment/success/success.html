@@ -1,0 +1,9 @@
+<div class="popup">
+    <div class="backdrop" @click="close"></div>
+    <div class="body">
+        <h1>Success!</h1>
+        <p>Good job, your graph is completely correct.</p>
+        <p v-if="showQuestionnaireMessage">CoRA is a piece of software that is still actively developed and as such we require feedback on your experience. Therefore, please consider sharing your experiences with us by filling in the form at <a :href="questionnaireUrl" target="_blank">this link</a>. It is quite a short questionnaire. Filling it in should take <strong>at most</strong> five minutes.</p>
+        <p>Thank you for using CoRA.</p>
+    </div>
+</div>

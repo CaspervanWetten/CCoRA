@@ -1,0 +1,17 @@
+<div>
+    <h1>Welcome</h1>
+    <p>Welcome to CoRA, the Coverability and Reachability Graph Assistant.</p>
+    <p>Please start the application by picking a unique username</p>
+    <alert v-bind:closeable="true" @close-alert="closeAlert" :show="showAlert">
+        {{ error }}
+    </alert>
+    <form>
+        <div class="item text">
+            <label for="username">Username:</label>
+            <input v-model.trim="username" type="text" placeholder="username" name="username" v-on:keyup.enter="send"/>
+        </div>
+        <div class="item buttonrow">
+            <button @click.prevent="send($event)" class="confirm">Submit</button>
+        </div>
+    </form>
+</div>

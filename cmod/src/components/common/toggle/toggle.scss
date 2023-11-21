@@ -1,0 +1,74 @@
+@import "src/components/colors.scss";
+
+$borderWidth:             1px;
+$borderColor:             $lightGrey;
+$borderHoverColor:        $darkGrey;
+$activeColor:             $white;
+$inActiveColor:           $black;
+$activeBackgroundColor:   $orange;
+$inActiveBackgroundColor: $white;
+
+.toggle {
+    display: flex;
+
+    &.bar {
+        & > label {
+            flex: 1;
+            color: $inActiveColor;
+            background: $inActiveBackgroundColor;
+            border-width: $borderWidth;
+            border-right-width: 0;
+            border-style: solid;
+            border-color: $borderColor;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+
+            & > input[type="radio"] {
+                display: none;
+            }
+
+            &.active {
+                color: $activeColor;
+                background: $activeBackgroundColor;
+                border-color: $activeBackgroundColor;
+                border-left-color: $borderColor;
+
+                &:hover {
+                    border-color: $activeBackgroundColor;
+
+                    & + label {
+                        border-left-color: $activeBackgroundColor;
+                    }
+                }
+
+                &:first-child {
+                    border-left-color: $activeBackgroundColor;
+                }
+
+                &:last-child {
+                    border-right-color: $activeBackgroundColor;
+                }
+            }
+
+            &:first-child {
+                border-radius: 5px 0 0 5px;
+                border-left-color: $borderColor;
+            }
+
+            &:last-child {
+                border-radius: 0 5px 5px 0;
+                border-right-color: $borderColor;
+                border-right-width: $borderWidth;
+            }
+
+            &:hover {
+                border-color: $borderHoverColor;
+
+                & + label {
+                    border-left-color: $borderHoverColor;
+                }
+            }
+        }
+    }
+}

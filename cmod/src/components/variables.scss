@@ -1,0 +1,30 @@
+$headerInnerHeight: 2.5rem;
+$headerPaddingT: .5rem;
+$headerPaddingB: .5rem;
+$headerHeight: $headerInnerHeight + $headerPaddingT + $headerPaddingB;
+
+$menuToggleHeight: $headerHeight;
+$menuToggleWidth: $menuToggleHeight;
+$menuToggleLeft: 1rem;
+
+$menuWidth: 45vw;
+$menuMaxWidth: 30rem;
+$menuPaddingT: $menuToggleHeight + 1rem;
+$menuPaddingB: 1rem;
+$menuPaddingL: 1rem;
+$menuPaddingR: 1rem;
+
+$menuTransitionDuration: .3s;
+
+$headerPaddingR: 1rem;
+$headerPaddingL: $menuToggleWidth + $menuToggleLeft + $headerPaddingR;
+
+$footerPaddingT: 1rem;
+$footerPaddingB: 1rem;
+$footerPaddingL: $headerPaddingL;
+$footerPaddingR: $headerPaddingR;
+
+$modellerHeight: calc(100vh - #{$headerHeight});
+$dividerWidth: .75rem;
+$resizerWidth: $dividerWidth / 3;
+$resizerHeight: 5rem;

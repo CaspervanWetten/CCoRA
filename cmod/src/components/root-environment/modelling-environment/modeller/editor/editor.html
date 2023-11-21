@@ -1,0 +1,44 @@
+<div class="editor" @keyup.esc="closeMenus">
+  <canvas id="editorCanvas"
+          tabindex="1"
+          @dblclick="openEditMenu($event)"
+          @contextmenu="openContextMenu($event)"
+          @keyup.e="openEditMenu($event)"
+          @keyup.p="toggleStyle($event)">
+    Your browser does not support the HTML 5 Canvas API
+  </canvas>
+
+  <loader :style="feedbackLoaderStyle" v-show="loadingFeedback"/>
+
+  <div id="feedbackButtons" v-show="showFeedbackButtons">
+    <button class="editorButton"
+            @click="clearFeedback">Clear feedback</button>
+    <button class="editorButton"
+            @click="requestFeedback"
+            :disabled="feedbackButtonDisabled">{{ feedbackButtonText }}</button>
+  </div>
+
+  <div id="editorButtons">
+    <button class="editorButton" @click="addState">Add State</button>
+  </div>
+
+  <messenger v-bind:feedback="feedback" v-bind:id="hoverId"/>
+
+  <div class="backdrop" v-show="showingMenu"
+       @click="closeMenus"></div>
+  <edit-state :editor="editor"
+              :show="showEditState"
+              @close="closeMenus"/>
+  <edit-edge :editor="editor"
+             :show="showEditEdge"
+             @close="closeMenus"/>
+  <context-menu :editor="editor"
+                :top="contextTop"
+                :left="contextLeft"
+                :x="contextX"
+                :y="contextY"
+                v-if="showContextMenu"
+                @close="closeMenus"
+                @edit-state="openEditMenu($event)"
+                @edit-edge="openEditMenu($event)"/>
+</div>

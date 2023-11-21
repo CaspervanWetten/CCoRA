@@ -1,0 +1,79 @@
+.switch {
+    display: flex;
+
+    & .description {
+        flex: 1;
+        margin: 0 1em;
+
+        &.left {
+            text-align: right;
+        }
+
+        &.right {
+            text-align: left;
+        }
+    }
+
+    & .input {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+        max-width: 3.5em;
+        line-height: 1.6em;
+        margin: .2em 0;
+        cursor: pointer;
+
+        &::before, &::after {
+            content: '';
+            position: absolute;
+            display: block;
+        }
+
+        &::before {
+            width: 100%;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            border-radius: .8em;
+            // box-shadow: 0px 4px 3px 0px inset rgba(0, 0, 0, .3);
+            transition: background .2s ease;
+        }
+
+        &::after {
+            content: '';
+            width: 1.4em;
+            top: .1em;
+            bottom: .1em;
+            margin-left: .1em;
+            margin-right: .1em;
+            background: #fff;
+            border-radius: .7em;
+            // border-bottom: 2px solid #ddd;
+            transition: all .2s ease;
+        }
+    }
+
+    &.on {
+        & .input {
+            &::before {
+                background: #3a3;
+            }
+
+            &::after {
+                left: calc(100% - 1.7em);
+            }
+        }
+    }
+
+    &.off {
+        & .input {
+            &::before {
+                background: #bbb;
+            }
+
+            &::after {
+               left: .1em;
+            }
+        }
+    }
+}

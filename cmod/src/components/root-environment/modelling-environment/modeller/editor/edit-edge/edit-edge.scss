@@ -1,0 +1,15 @@
+.editEdge {
+    top: 50%;
+    left: 50%;
+    min-width: 10em;
+    transform: translateX(-50%);
+
+    & > .input {
+        padding: .5em;
+
+        & > select {
+            display: block;
+            width: 100%;
+        }
+    }
+}

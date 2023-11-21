@@ -1,0 +1,14 @@
+<div>
+    <h1>Upload a Petri net</h1>
+    <p>To start the modeller, upload a Petri net</p>
+    <p>The Petri net file has to be a .lola file</p>
+    <alert v-bind:closeable="true" v-bind:show="showError" @close-alert="closeAlert">{{ error }}</alert>
+    <form>
+        <div class="item upload">
+            <input name="petrinet" @change="selectFile($event)" type="file"/>
+        </div>
+        <div class="item buttonrow">
+            <button class="confirm" @click.prevent="send">Upload</button>
+        </div>
+    </form>
+</div>

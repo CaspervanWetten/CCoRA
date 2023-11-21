@@ -1,0 +1,24 @@
+.contextMenu {
+    display: block;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    width: 10em;
+    background: white;
+    border: 1px solid grey;
+    border-radius: 0;
+    box-shadow: 5px 5px 4px 0 rgba(0, 0, 0, .3);
+
+    & .item {
+        display: block;
+        margin: 0;
+        padding: 0 1em;
+        line-height: 2em;
+        cursor: pointer;
+
+        &:hover {
+            background-color: orange;
+            padding-left: 1.25em;
+        }
+    }
+}

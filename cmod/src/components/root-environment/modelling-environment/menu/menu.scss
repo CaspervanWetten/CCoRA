@@ -1,0 +1,55 @@
+@import "src/components/variables.scss";
+@import "src/components/colors.scss";
+
+.menu {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    color: $black;
+    padding: $menuPaddingT $menuPaddingR $menuPaddingB $menuPaddingL;
+    width: $menuWidth;
+    max-width: $menuMaxWidth;
+    height: calc(#{$headerHeight} + #{$modellerHeight});
+    background: $lightGrey;
+    border-right: 1px solid $darkGrey;
+    z-index: 3;
+    transition: all $menuTransitionDuration ease;
+
+    &.hidden {
+        left: -$menuWidth;
+    }
+
+    & .category {
+        display: block;
+        margin: 1rem 0;
+        border-bottom: 1px solid black;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+
+        h1 {
+            display: block;
+            margin: 0;
+            font-size: 1.25em;
+            font-weight: bold;
+            border-bottom: 0;
+        }
+
+        .option {
+            display: flex;
+            margin: 1rem 0;
+            line-height: 2em;
+
+            & .description {
+                flex: 4;
+            }
+
+            & .input {
+                flex: 6;
+            }
+        }
+    }
+}
+

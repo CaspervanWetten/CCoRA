@@ -1,0 +1,46 @@
+@import "src/components/colors.scss";
+
+.editState {
+    transform: translateX(-50%);
+
+    & > .input {
+        &.places {
+            display: flex;
+        }
+
+        & > .place {
+            flex: 1;
+            padding: .5em;
+            max-width: 7.5em;
+            border-right: 1px solid $grey;
+
+            &:last-child {
+                border-right: 0;
+            }
+
+            & > .name {
+                text-align: center;
+            }
+
+            & > input {
+                text-align: center;
+            }
+
+            & > .buttons {
+                display: flex;
+                border: 1px solid $black;
+
+                & button {
+                    flex: 1;
+                    border: 0;
+                    border-right: 1px solid $black;
+                    cursor: pointer;
+
+                    &:last-child {
+                        border-right: 0;
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pnml xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.3/notation" xmlns="http://www.pnml.org/version-2009/grammar/pnml">
+  <net type="http://org.pnml.tools/epnk/types/pnids" id="n1">
+    <name>
+      <text>Process1</text>
+    </name>
+    <page id="pg1">
+      <place id="p1">
+        <name>
+          <graphics>
+            <offset x="0.0" y="-62.0"/>
+          </graphics>
+          <text>rawrXD</text>
+        </name>
+        <graphics>
+          <position x="1230.0" y="110.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="57.0" y="-7.0"/>
+          </graphics>
+          <structure>
+            <token/>
+            <token/>
+            <token/>
+            <token/>
+            <token/>
+          </structure>
+          <text>5</text>
+        </initialMarking>
+      </place>
+      <transition id="t1">
+        <name>
+          <graphics>
+            <offset x="-9.0" y="-55.0"/>
+          </graphics>
+          <text>Springen</text>
+        </name>
+        <graphics>
+          <position x="1125.0" y="175.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+      </transition>
+      <place id="p2">
+        <name>
+          <graphics>
+            <offset x="26.0" y="-23.0"/>
+          </graphics>
+          <text>counter2</text>
+        </name>
+        <graphics>
+          <position x="1090.0" y="230.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+      </place>
+      <transition id="t2">
+        <name>
+          <graphics>
+            <offset x="40.0" y="-29.0"/>
+          </graphics>
+          <text>Klimmen</text>
+        </name>
+        <graphics>
+          <position x="1215.0" y="315.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+      </transition>
+      <place id="p3">
+        <name>
+          <graphics>
+            <offset x="83.0" y="37.0"/>
+          </graphics>
+          <text>counter3</text>
+        </name>
+        <graphics>
+          <position x="935.0" y="305.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+      </place>
+      <arc id="a1" source="t2" target="p1">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1235.0" y="304.0"/>
+          <position x="1417.0" y="210.0"/>
+        </graphics>
+      </arc>
+      <arc id="a2" source="p1" target="t1">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1210.0" y="109.0"/>
+          <position x="1083.0" y="98.0"/>
+        </graphics>
+      </arc>
+      <arc id="a3" source="t1" target="p2">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1123.0" y="175.0"/>
+          <position x="1067.0" y="176.0"/>
+        </graphics>
+      </arc>
+      <arc id="a4" source="p2" target="t2">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1086.0" y="249.0"/>
+          <position x="1084.0" y="311.0"/>
+        </graphics>
+      </arc>
+      <arc id="a5" source="t2" target="p3">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1195.0" y="311.0"/>
+          <position x="1119.0" y="298.0"/>
+        </graphics>
+      </arc>
+      <transition id="t3">
+        <name>
+          <graphics>
+            <offset x="-11.0" y="-53.0"/>
+          </graphics>
+          <text>Kussen</text>
+        </name>
+        <graphics>
+          <position x="1005.0" y="110.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+      </transition>
+      <arc id="a6" source="t3" target="p1">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1040.0" y="107.0"/>
+          <position x="1324.0" y="84.0"/>
+        </graphics>
+      </arc>
+      <arc id="a7" source="p3" target="t3">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="933.0" y="285.0"/>
+          <position x="925.0" y="93.0"/>
+        </graphics>
+        <inscription>
+          <graphics>
+            <offset x="-35.0" y="55.0"/>
+          </graphics>
+          <structure multiplicity="2"/>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a8" source="p2" target="t3">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1083.0" y="210.0"/>
+          <position x="1051.0" y="120.0"/>
+        </graphics>
+      </arc>
+      <place id="p4">
+        <name>
+          <graphics>
+            <offset x="56.0" y="-19.0"/>
+          </graphics>
+          <text>counter4</text>
+        </name>
+        <graphics>
+          <position x="1017.0" y="280.0"/>
+          <dimension x="40.0" y="40.0"/>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <fill color="#ffffff"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="-12.0" y="-65.0"/>
+          </graphics>
+          <structure>
+            <token/>
+            <token/>
+          </structure>
+          <text>2</text>
+        </initialMarking>
+      </place>
+      <arc id="a9" source="t3" target="p4">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1008.0" y="130.0"/>
+          <position x="1036.0" y="261.0"/>
+        </graphics>
+        <inscription>
+          <graphics>
+            <offset x="33.0" y="22.0"/>
+          </graphics>
+          <structure multiplicity="2"/>
+          <text>2</text>
+        </inscription>
+      </arc>
+      <arc id="a10" source="p4" target="t2">
+        <graphics>
+          <line shape="line" color="#b0b0b0" width="1.0"/>
+          <position x="1036.0" y="283.0"/>
+          <position x="1168.0" y="308.0"/>
+        </graphics>
+      </arc>
+    </page>
+  </net>
+</pnml>

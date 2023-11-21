@@ -1,0 +1,24 @@
+<div class="editState editorMenu" :style="styleObject" v-show="show">
+    <div class="input places">
+        <div class="place" v-for="(record, i) in map">
+            <div class="name">{{ record.place }}</div>
+            <input :id="inputId(i)"
+                   type="text"
+                   v-model="record.tokens"
+                   v-focus="i == focusIndex"
+                   @focus="select"
+                   @keydown.tab.prevent.exact="next"
+                   @keydown.tab.shift.prevent.exact="prev"
+                   @keyup.enter="confirm"/>
+            <div class="buttons">
+                <button @click="dec(i)">-</button>
+                <button @click="omega(i)">ω</button>
+                <button @click="inc(i)">+</button>
+            </div>
+        </div>
+    </div>
+    <div class="buttons">
+        <button @click="cancel" class="cancel">Cancel</button>
+        <button @click="confirm" class="confirm">Confirm</button>
+    </div>
+</div>

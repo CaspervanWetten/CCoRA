@@ -1,0 +1,52 @@
+<div class="menu" v-bind:class="{ hidden: !isOpen }">
+    <div class="category">
+        <h1>
+            Modeller Options
+        </h1>
+        <div class="option">
+            <div class="description">
+                Snap to grid
+            </div>
+            <div class="input">
+                <switcher descriptionOn="On"
+                          descriptionOff="Off"
+                          :on="snapToGrid"
+                          @switch-toggle="toggleSnap($event)">
+                </switcher>
+            </div>
+        </div>
+        <div class="option">
+            <div class="description">
+                Display Grid
+            </div>
+            <div class="input">
+                <switcher descriptionOn="On"
+                          descriptionOff="Off"
+                          :on="drawGrid"
+                          @switch-toggle="toggleDraw($event)">
+                </switcher>
+            </div>
+        </div>
+        <div class="option">
+            <div class="description">
+                Marking Style
+            </div>
+            <div class="input">
+                <toggler v-model="markingStringType" :values="markingStringTypes" class="bar"/>
+            </div>
+        </div>
+    </div>
+    <div class="category">
+        <h1>
+            Feedback Options
+        </h1>
+        <div class="option">
+            <div class="description">
+                Feedback Level
+            </div>
+            <div class="input">
+                <toggler v-model="difficulty" :values="difficulties" class="bar"/>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+.imager {
+    & .image {
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        height: 100%;
+        margin: 0 auto;
+        transform: translate(-50%, -50%);
+    }
+
+    & .loader {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        animation: central-spin 1s linear infinite;
+    }
+}
+
+@keyframes central-spin {
+    0% {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}

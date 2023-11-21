@@ -1,0 +1,19 @@
+.messenger {
+    display: block;
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+    max-width: 25em;
+    background: white;
+    border: 2px solid black;
+
+    & .item {
+        display: block;
+        padding: .5em .5em;
+        border-bottom: 1px solid grey;
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}

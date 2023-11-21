@@ -1,0 +1,12 @@
+<split-container class="modeller"
+             layout="vertical"
+             @paneResize="resize($event)"
+             @paneResizeStop="resizeStop($event)">
+    <div class="left pane" style="width:50%">
+        <imager/>
+    </div>
+    <split-container-resizer class="resizer"></split-container-resizer>
+    <div class="right pane">
+        <editor/>
+    </div>
+</split-container>

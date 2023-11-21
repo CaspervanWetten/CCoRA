@@ -1,0 +1,11 @@
+<div id="connection-status-container" :class="{ online: isOnline,
+                                              offline: isOffline }">
+  <div class="title">Connection status</div>
+  <div class="status" v-if="isOffline">
+    No internet connection. A lot of things won't work.
+  </div>
+  <div class="status" v-else>
+    Connected
+  </div>
+</div>
+
